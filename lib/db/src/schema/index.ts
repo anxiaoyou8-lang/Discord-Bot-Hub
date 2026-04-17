@@ -1,6 +1,18 @@
-import { pgTable, text, serial, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, boolean, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
+
+export const guildConfigsTable = pgTable(
+  "guild_configs",
+  {
+    id: serial("id").primaryKey(),
+    guildId: text("guild_id").notNull(),
+    configKey: text("config_key").notNull(),
+    configValue: text("config_value").notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [unique("uniq_guild_key").on(table.guildId, table.configKey)]
+);
 
 export const artworksTable = pgTable("artworks", {
   id: serial("id").primaryKey(),
@@ -43,3 +55,4 @@ export type InsertArtwork = z.infer<typeof insertArtworkSchema>;
 export type Artwork = typeof artworksTable.$inferSelect;
 export type ArtworkAccessLog = typeof artworkAccessLogsTable.$inferSelect;
 export type ReviewThread = typeof reviewThreadsTable.$inferSelect;
+export type GuildConfig = typeof guildConfigsTable.$inferSelect;

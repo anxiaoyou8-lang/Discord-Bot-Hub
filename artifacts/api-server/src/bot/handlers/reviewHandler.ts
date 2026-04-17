@@ -29,7 +29,7 @@ import {
   REVIEW_TEXT_MODAL_PREFIX,
   REVIEW_TEXT_INPUT,
 } from "../constants.js";
-import { getConfig, CONFIG_KEY_ADMIN_ROLE } from "../config.js";
+import { getConfig, CONFIG_KEY_ADMIN_ROLE, CONFIG_KEY_APPROVE_ROLE } from "../config.js";
 
 export function buildReviewPanel() {
   const embed = new EmbedBuilder()
@@ -56,6 +56,16 @@ export function buildReviewPanel() {
 
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
   return { embeds: [embed], components: [row] };
+}
+
+function isAdminMember(
+  interaction: ButtonInteraction,
+  adminRoleId: string | undefined
+): boolean {
+  const isAdmin = interaction.memberPermissions?.has(PermissionFlagsBits.Administrator) ?? false;
+  const member = interaction.member as GuildMember;
+  const hasAdminRole = adminRoleId ? member.roles.cache.has(adminRoleId) : false;
+  return isAdmin || hasAdminRole;
 }
 
 export async function handleReviewPanelButton(
@@ -118,13 +128,15 @@ export async function handleReviewPanelButton(
       }
     }
 
+    const autoDeleteAt = Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000);
+
     const instructionEmbed = new EmbedBuilder()
       .setTitle(`📋 审核申请 — ${interaction.user.username}`)
       .setDescription(
         [
           `**申请人：** <@${interaction.user.id}>`,
           `**创建时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
-          `**自动删除：** <t:${Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000)}:R>`,
+          `**自动删除：** <t:${autoDeleteAt}:R>`,
           "",
           "**请使用下方按钮提交所需材料：**",
           "📄 **提交文字** — 填写加入原因",
@@ -290,13 +302,11 @@ export async function handleReviewDeleteTicket(
     return;
   }
 
-  const isOwner = interaction.user.id === record.userId;
-  const isAdmin = interaction.memberPermissions?.has(PermissionFlagsBits.Administrator);
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
-  const member = interaction.member as GuildMember;
-  const hasAdminRole = adminRoleId ? member.roles.cache.has(adminRoleId) : false;
+  const isOwner = interaction.user.id === record.userId;
+  const canDelete = isOwner || isAdminMember(interaction, adminRoleId);
 
-  if (!isOwner && !isAdmin && !hasAdminRole) {
+  if (!canDelete) {
     await interaction.reply({ content: "你没有权限删除此工单。", flags: 64 });
     return;
   }
@@ -324,11 +334,7 @@ export async function handleReviewApprove(
   await interaction.deferReply({ flags: 64 });
 
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
-  const member = interaction.member as GuildMember;
-  const isAdmin = interaction.memberPermissions?.has(PermissionFlagsBits.Administrator);
-  const hasAdminRole = adminRoleId ? member.roles.cache.has(adminRoleId) : false;
-
-  if (!isAdmin && !hasAdminRole) {
+  if (!isAdminMember(interaction, adminRoleId)) {
     await interaction.editReply("你没有权限执行此操作。");
     return;
   }
@@ -354,14 +360,25 @@ export async function handleReviewApprove(
     await thread.setArchived(true);
 
     const targetMember = await guild.members.fetch(targetUserId).catch(() => null);
+
     if (targetMember) {
+      const approveRoleId = getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE);
+      if (approveRoleId) {
+        try {
+          await targetMember.roles.add(approveRoleId, "审核通过自动赋予");
+          logger.info({ targetUserId, approveRoleId }, "Assigned approve role to member");
+        } catch (err) {
+          logger.error({ err, targetUserId, approveRoleId }, "Failed to assign approve role");
+        }
+      }
+
       try {
         await targetMember.send({
           embeds: [
             new EmbedBuilder()
               .setTitle("审核结果通知")
               .setDescription(
-                `恭喜！你在 **${guild.name}** 的审核申请已 **通过**！\n\n欢迎正式加入！如有疑问请联系管理员。`
+                `恭喜！你在 **${guild.name}** 的审核申请已 **通过**！\n\n你已自动获得对应身分组，欢迎正式加入！`
               )
               .setColor(0x57f287)
               .setTimestamp(),
@@ -372,7 +389,9 @@ export async function handleReviewApprove(
       }
     }
 
-    await interaction.editReply(`已通过 <@${targetUserId}> 的审核，子区已锁定并归档。`);
+    await interaction.editReply(
+      `已通过 <@${targetUserId}> 的审核${getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE) ? "，并已自动赋予身分组" : ""}，子区已锁定并归档。`
+    );
   } catch (err) {
     logger.error({ err }, "Failed to approve review");
     await interaction.editReply("操作失败，请稍后再试。");
@@ -389,11 +408,7 @@ export async function handleReviewReject(
   await interaction.deferReply({ flags: 64 });
 
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
-  const member = interaction.member as GuildMember;
-  const isAdmin = interaction.memberPermissions?.has(PermissionFlagsBits.Administrator);
-  const hasAdminRole = adminRoleId ? member.roles.cache.has(adminRoleId) : false;
-
-  if (!isAdmin && !hasAdminRole) {
+  if (!isAdminMember(interaction, adminRoleId)) {
     await interaction.editReply("你没有权限执行此操作。");
     return;
   }
@@ -437,7 +452,9 @@ export async function handleReviewReject(
       }
     }
 
-    await interaction.editReply(`已拒绝 <@${targetUserId}> 的审核申请，子区已锁定并归档。`);
+    await interaction.editReply(
+      `已拒绝 <@${targetUserId}> 的审核申请，子区已锁定并归档。`
+    );
   } catch (err) {
     logger.error({ err }, "Failed to reject review");
     await interaction.editReply("操作失败，请稍后再试。");

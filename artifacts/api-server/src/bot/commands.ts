@@ -9,6 +9,7 @@ import {
   ARTWORK_UPLOAD_CMD,
   SET_LOG_CHANNEL_CMD,
   SET_ADMIN_ROLE_CMD,
+  SET_APPROVE_ROLE_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -58,6 +59,14 @@ export const commands = [
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addRoleOption((opt) =>
       opt.setName("role").setDescription("管理员身分组").setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(SET_APPROVE_ROLE_CMD)
+    .setDescription("设置审核通过后自动赋予的身分组")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addRoleOption((opt) =>
+      opt.setName("role").setDescription("审核通过身分组").setRequired(true)
     ),
 
   uploadArtworkCmd,

@@ -16,3 +16,4 @@ export const REVIEW_PANEL_CMD = "setup_review_panel";
 export const ARTWORK_PANEL_CMD = "setup_artwork_panel";
 export const SET_LOG_CHANNEL_CMD = "set_log_channel";
 export const SET_ADMIN_ROLE_CMD = "set_admin_role";
+export const SET_APPROVE_ROLE_CMD = "set_approve_role";

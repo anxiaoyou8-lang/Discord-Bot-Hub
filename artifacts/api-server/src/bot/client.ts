@@ -25,7 +25,13 @@ import {
   handleArtworkGetButton,
   handleArtworkGetModal,
 } from "./handlers/artworkHandler.js";
-import { setConfig, CONFIG_KEY_LOG_CHANNEL, CONFIG_KEY_ADMIN_ROLE } from "./config.js";
+import {
+  setConfig,
+  loadAllConfigs,
+  CONFIG_KEY_LOG_CHANNEL,
+  CONFIG_KEY_ADMIN_ROLE,
+  CONFIG_KEY_APPROVE_ROLE,
+} from "./config.js";
 import {
   REVIEW_PANEL_CUSTOM_ID,
   REVIEW_APPROVE_PREFIX,
@@ -41,6 +47,7 @@ import {
   ARTWORK_PANEL_CMD,
   SET_LOG_CHANNEL_CMD,
   SET_ADMIN_ROLE_CMD,
+  SET_APPROVE_ROLE_CMD,
 } from "./constants.js";
 
 export async function startBot(token: string) {
@@ -58,6 +65,7 @@ export async function startBot(token: string) {
 
   client.once(Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
+    await loadAllConfigs();
     await registerCommands(token, c.user.id);
     await runAutoDeleteScheduler(client);
   });
@@ -85,18 +93,27 @@ export async function startBot(token: string) {
         } else if (commandName === SET_LOG_CHANNEL_CMD) {
           const channel = interaction.options.getChannel("channel", true);
           if (!interaction.guildId) return;
-          setConfig(interaction.guildId, CONFIG_KEY_LOG_CHANNEL, channel.id);
+          await setConfig(interaction.guildId, CONFIG_KEY_LOG_CHANNEL, channel.id);
           await interaction.reply({
-            content: `已将记录频道设置为 <#${channel.id}>`,
+            content: `已将获取记录频道设置为 <#${channel.id}>`,
             flags: 64,
           });
 
         } else if (commandName === SET_ADMIN_ROLE_CMD) {
           const role = interaction.options.getRole("role", true);
           if (!interaction.guildId) return;
-          setConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE, role.id);
+          await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE, role.id);
           await interaction.reply({
             content: `已将管理员身分组设置为 <@&${role.id}>`,
+            flags: 64,
+          });
+
+        } else if (commandName === SET_APPROVE_ROLE_CMD) {
+          const role = interaction.options.getRole("role", true);
+          if (!interaction.guildId) return;
+          await setConfig(interaction.guildId, CONFIG_KEY_APPROVE_ROLE, role.id);
+          await interaction.reply({
+            content: `审核通过后将自动赋予身分组 <@&${role.id}>`,
             flags: 64,
           });
         }

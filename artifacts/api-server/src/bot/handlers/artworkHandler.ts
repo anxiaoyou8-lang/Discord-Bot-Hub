@@ -11,6 +11,7 @@ import {
   type ModalSubmitInteraction,
   type Client,
   type GuildTextBasedChannel,
+  type TextChannel,
 } from "discord.js";
 import { db } from "@workspace/db";
 import { artworksTable, artworkAccessLogsTable } from "@workspace/db";
@@ -37,7 +38,7 @@ export function buildArtworkPanel() {
         "**获取作品：**",
         "• 在作品贴中点击 **获取作品** 按钮",
         "• 输入作者告知的密码",
-        "• 并先对帖子首楼添加任意表情反应",
+        "• 并先对该频道第一条消息添加任意表情反应",
         "• 满足条件后即可收到仅你可见的作品原文件",
       ].join("\n")
     )
@@ -95,7 +96,7 @@ export async function handleArtworkUpload(
           description ? `**备注：** ${description}` : null,
           `**文件数量：** ${fileUrls.length} 个`,
           "",
-          "想获取原文件？点击下方按钮，输入密码并对此帖首楼添加反应后即可获取。",
+          "想获取原文件？点击下方按钮，输入密码并对频道第一条消息添加表情后即可获取。",
         ]
           .filter(Boolean)
           .join("\n")
@@ -167,6 +168,38 @@ export async function handleArtworkGetButton(
   await interaction.showModal(modal);
 }
 
+async function getFirstMessageInChannel(
+  channel: GuildTextBasedChannel
+): Promise<{ id: string } | null> {
+  try {
+    const messages = await (channel as TextChannel).messages.fetch({
+      limit: 1,
+      after: "0",
+    });
+    return messages.first() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function hasUserReactedToMessage(
+  channel: GuildTextBasedChannel,
+  messageId: string,
+  userId: string
+): Promise<boolean> {
+  try {
+    const message = await (channel as TextChannel).messages.fetch(messageId);
+    if (!message) return false;
+    for (const reaction of message.reactions.cache.values()) {
+      const users = await reaction.users.fetch();
+      if (users.has(userId)) return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export async function handleArtworkGetModal(
   interaction: ModalSubmitInteraction,
   messageId: string,
@@ -208,31 +241,23 @@ export async function handleArtworkGetModal(
     }
 
     const guildTextChannel = artChannel as GuildTextBasedChannel;
-    const artMessage = await guildTextChannel.messages
-      .fetch(artwork.messageId)
-      .catch(() => null);
 
-    if (!artMessage) {
-      await interaction.editReply("找不到作品贴，请联系管理员。");
+    const firstMsg = await getFirstMessageInChannel(guildTextChannel);
+    if (!firstMsg) {
+      await interaction.editReply("找不到频道首条消息，请联系管理员。");
       return;
     }
 
-    let hasReacted = false;
-    const userReactions = artMessage.reactions.cache;
-    if (userReactions.size > 0) {
-      for (const reaction of userReactions.values()) {
-        const users = await reaction.users.fetch();
-        if (users.has(interaction.user.id)) {
-          hasReacted = true;
-          break;
-        }
-      }
-    }
+    const hasReacted = await hasUserReactedToMessage(
+      guildTextChannel,
+      firstMsg.id,
+      interaction.user.id
+    );
 
     if (!hasReacted) {
-      const artLink = `https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId}`;
+      const firstMsgLink = `https://discord.com/channels/${guild.id}/${artwork.channelId}/${firstMsg.id}`;
       await interaction.editReply(
-        `密码正确！✅\n\n但你还需要先对 [作品帖首楼](${artLink}) 添加任意表情反应，完成后再次点击「获取作品」按钮即可。`
+        `密码正确！✅\n\n但你还需要先对 [频道第一条消息](${firstMsgLink}) 添加任意表情反应，完成后再次点击「获取作品」按钮即可。`
       );
       return;
     }
@@ -256,27 +281,37 @@ export async function handleArtworkGetModal(
 
     const logChannelId = getConfig(guild.id, CONFIG_KEY_LOG_CHANNEL);
     if (logChannelId) {
-      const logChannel = await client.channels.fetch(logChannelId).catch(() => null);
-      if (logChannel && logChannel.isTextBased()) {
-        const logTextChannel = logChannel as GuildTextBasedChannel;
-        const logEmbed = new EmbedBuilder()
-          .setTitle("📥 作品获取记录")
-          .setDescription(
-            [
-              `**作品：** ${artwork.title}`,
-              `**作者：** <@${artwork.authorId}>`,
-              `**获取者：** <@${interaction.user.id}> (${interaction.user.tag})`,
-              `**获取时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
-              `**作品贴：** [点击查看](https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId})`,
-            ].join("\n")
-          )
-          .setColor(0x5865f2)
-          .setTimestamp();
+      try {
+        const logChannel = await client.channels.fetch(logChannelId).catch(() => null);
+        if (logChannel && logChannel.isTextBased()) {
+          const logTextChannel = logChannel as GuildTextBasedChannel;
+          const logEmbed = new EmbedBuilder()
+            .setTitle("📥 作品获取记录")
+            .setDescription(
+              [
+                `**作品：** ${artwork.title}`,
+                `**作者：** <@${artwork.authorId}>`,
+                `**获取者：** <@${interaction.user.id}> (${interaction.user.tag})`,
+                `**获取时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
+                `**作品贴：** [点击查看](https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId})`,
+              ].join("\n")
+            )
+            .setColor(0x5865f2)
+            .setTimestamp();
 
-        await logTextChannel.send({ embeds: [logEmbed] }).catch((err: unknown) => {
-          logger.error({ err }, "Failed to send access log");
-        });
+          await logTextChannel.send({ embeds: [logEmbed] });
+          logger.info(
+            { logChannelId, artworkId: artwork.messageId, accessorId: interaction.user.id },
+            "Access log sent to log channel"
+          );
+        } else {
+          logger.warn({ logChannelId }, "Log channel not found or not text based");
+        }
+      } catch (err) {
+        logger.error({ err, logChannelId }, "Failed to send access log to log channel");
       }
+    } else {
+      logger.info({ guildId: guild.id }, "No log channel configured for this guild");
     }
   } catch (err) {
     logger.error({ err }, "Failed to deliver artwork");
