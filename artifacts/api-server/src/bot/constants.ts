@@ -7,7 +7,7 @@ export const REVIEW_DELETE_PREFIX = "review_delete_";
 export const REVIEW_TEXT_MODAL_PREFIX = "review_text_modal_";
 export const REVIEW_TEXT_INPUT = "review_text_input";
 
-export const ARTWORK_UPLOAD_CMD = "upload_artwork";
+export const ARTWORK_UPLOAD_CMD = "发布作品";
 export const ARTWORK_GET_CUSTOM_ID = "artwork_get_";
 export const ARTWORK_GET_MODAL_PREFIX = "artwork_get_modal_";
 export const ARTWORK_PASSWORD_INPUT = "artwork_password_input";
