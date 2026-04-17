@@ -11,9 +11,13 @@ import { registerCommands } from "./registerCommands.js";
 import {
   buildReviewPanel,
   handleReviewPanelButton,
-  handleReviewModalSubmit,
+  handleReviewSubmitTextBtn,
+  handleReviewTextModalSubmit,
+  handleReviewSubmitFileBtn,
+  handleReviewDeleteTicket,
   handleReviewApprove,
   handleReviewReject,
+  runAutoDeleteScheduler,
 } from "./handlers/reviewHandler.js";
 import {
   buildArtworkPanel,
@@ -26,7 +30,10 @@ import {
   REVIEW_PANEL_CUSTOM_ID,
   REVIEW_APPROVE_PREFIX,
   REVIEW_REJECT_PREFIX,
-  REVIEW_SUBMIT_MODAL,
+  REVIEW_SUBMIT_TEXT_PREFIX,
+  REVIEW_SUBMIT_FILE_PREFIX,
+  REVIEW_DELETE_PREFIX,
+  REVIEW_TEXT_MODAL_PREFIX,
   ARTWORK_UPLOAD_CMD,
   ARTWORK_GET_CUSTOM_ID,
   ARTWORK_GET_MODAL_PREFIX,
@@ -52,6 +59,7 @@ export async function startBot(token: string) {
   client.once(Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
     await registerCommands(token, c.user.id);
+    await runAutoDeleteScheduler(client);
   });
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
@@ -97,7 +105,18 @@ export async function startBot(token: string) {
         const { customId } = interaction;
 
         if (customId === REVIEW_PANEL_CUSTOM_ID) {
-          await handleReviewPanelButton(interaction);
+          await handleReviewPanelButton(interaction, client);
+
+        } else if (customId.startsWith(REVIEW_SUBMIT_TEXT_PREFIX)) {
+          const threadId = customId.slice(REVIEW_SUBMIT_TEXT_PREFIX.length);
+          await handleReviewSubmitTextBtn(interaction, threadId);
+
+        } else if (customId.startsWith(REVIEW_SUBMIT_FILE_PREFIX)) {
+          await handleReviewSubmitFileBtn(interaction);
+
+        } else if (customId.startsWith(REVIEW_DELETE_PREFIX)) {
+          const threadId = customId.slice(REVIEW_DELETE_PREFIX.length);
+          await handleReviewDeleteTicket(interaction, threadId);
 
         } else if (customId.startsWith(REVIEW_APPROVE_PREFIX)) {
           const targetUserId = customId.slice(REVIEW_APPROVE_PREFIX.length);
@@ -115,8 +134,9 @@ export async function startBot(token: string) {
       } else if (interaction.isModalSubmit()) {
         const { customId } = interaction;
 
-        if (customId === REVIEW_SUBMIT_MODAL) {
-          await handleReviewModalSubmit(interaction);
+        if (customId.startsWith(REVIEW_TEXT_MODAL_PREFIX)) {
+          const threadId = customId.slice(REVIEW_TEXT_MODAL_PREFIX.length);
+          await handleReviewTextModalSubmit(interaction, threadId);
 
         } else if (customId.startsWith(ARTWORK_GET_MODAL_PREFIX)) {
           const messageId = customId.slice(ARTWORK_GET_MODAL_PREFIX.length);
@@ -138,11 +158,9 @@ export async function startBot(token: string) {
     const message = err instanceof Error ? err.message : String(err);
     if (message.includes("disallowed intents") || message.includes("Disallowed")) {
       logger.error(
-        "Bot startup failed: Privileged Gateway Intents are not enabled.\n" +
-        "Please go to https://discord.com/developers/applications and enable:\n" +
-        "  - SERVER MEMBERS INTENT\n" +
-        "  - MESSAGE CONTENT INTENT\n" +
-        "under your application's Bot settings page."
+        "Bot startup failed: Privileged Gateway Intents not enabled.\n" +
+        "Please enable SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT\n" +
+        "in your Discord Developer Portal > Bot settings."
       );
     } else {
       logger.error({ err }, "Failed to login to Discord");

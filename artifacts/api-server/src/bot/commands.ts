@@ -11,6 +11,28 @@ import {
   SET_ADMIN_ROLE_CMD,
 } from "./constants.js";
 
+const uploadArtworkCmd = new SlashCommandBuilder()
+  .setName(ARTWORK_UPLOAD_CMD)
+  .setDescription("上传你的作品（最多10个文件）")
+  .addStringOption((opt) =>
+    opt.setName("title").setDescription("作品名称").setRequired(true)
+  )
+  .addStringOption((opt) =>
+    opt.setName("password").setDescription("获取作品所需密码").setRequired(true)
+  )
+  .addAttachmentOption((opt) =>
+    opt.setName("file1").setDescription("作品文件1（必填）").setRequired(true)
+  )
+  .addStringOption((opt) =>
+    opt.setName("description").setDescription("作品备注说明").setRequired(false)
+  );
+
+for (let i = 2; i <= 10; i++) {
+  uploadArtworkCmd.addAttachmentOption((opt) =>
+    opt.setName(`file${i}`).setDescription(`作品文件${i}`).setRequired(false)
+  );
+}
+
 export const commands = [
   new SlashCommandBuilder()
     .setName(REVIEW_PANEL_CMD)
@@ -19,7 +41,7 @@ export const commands = [
 
   new SlashCommandBuilder()
     .setName(ARTWORK_PANEL_CMD)
-    .setDescription("在当前频道发送作品交互面板")
+    .setDescription("在当前频道发送作品交互面板说明")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   new SlashCommandBuilder()
@@ -38,19 +60,5 @@ export const commands = [
       opt.setName("role").setDescription("管理员身分组").setRequired(true)
     ),
 
-  new SlashCommandBuilder()
-    .setName(ARTWORK_UPLOAD_CMD)
-    .setDescription("上传你的作品")
-    .addStringOption((opt) =>
-      opt.setName("title").setDescription("作品名称").setRequired(true)
-    )
-    .addAttachmentOption((opt) =>
-      opt.setName("file").setDescription("作品文件").setRequired(true)
-    )
-    .addStringOption((opt) =>
-      opt.setName("password").setDescription("获取作品所需密码").setRequired(true)
-    )
-    .addStringOption((opt) =>
-      opt.setName("description").setDescription("作品备注说明").setRequired(false)
-    ),
+  uploadArtworkCmd,
 ].map((cmd) => cmd.toJSON());

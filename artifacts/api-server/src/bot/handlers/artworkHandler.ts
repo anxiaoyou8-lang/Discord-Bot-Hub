@@ -10,7 +10,6 @@ import {
   type ButtonInteraction,
   type ModalSubmitInteraction,
   type Client,
-  type TextBasedChannel,
   type GuildTextBasedChannel,
 } from "discord.js";
 import { db } from "@workspace/db";
@@ -31,13 +30,15 @@ export function buildArtworkPanel() {
       [
         "欢迎来到作品展示区！",
         "",
-        "**作者：**",
-        "• 使用 `/upload_artwork` 指令上传你的作品",
-        "• 上传时需设置作品名称、文件、密码和备注",
+        "**作者上传作品：**",
+        "• 使用 `/upload_artwork` 指令上传你的作品（最多10个文件）",
+        "• 上传时需设置作品名称、密码（可选备注）",
         "",
-        "**观看者：**",
+        "**获取作品：**",
         "• 在作品贴中点击 **获取作品** 按钮",
-        "• 输入密码并对帖子首楼做出反应，即可收到作品原文件",
+        "• 输入作者告知的密码",
+        "• 并先对帖子首楼添加任意表情反应",
+        "• 满足条件后即可收到仅你可见的作品原文件",
       ].join("\n")
     )
     .setColor(0x5865f2);
@@ -47,18 +48,34 @@ export function buildArtworkPanel() {
 
 export async function handleArtworkUpload(
   interaction: ChatInputCommandInteraction,
-  client: Client
+  _client: Client
 ) {
   await interaction.deferReply({ flags: 64 });
 
   const title = interaction.options.getString("title", true);
   const password = interaction.options.getString("password", true);
   const description = interaction.options.getString("description");
-  const attachment = interaction.options.getAttachment("file", true);
   const guild = interaction.guild;
 
   if (!guild) {
     await interaction.editReply("此指令只能在服务器中使用。");
+    return;
+  }
+
+  const fileUrls: string[] = [];
+  const fileNames: string[] = [];
+
+  for (let i = 1; i <= 10; i++) {
+    const optName = i === 1 ? "file1" : `file${i}`;
+    const att = interaction.options.getAttachment(optName);
+    if (att) {
+      fileUrls.push(att.url);
+      fileNames.push(att.name);
+    }
+  }
+
+  if (fileUrls.length === 0) {
+    await interaction.editReply("请至少上传一个文件。");
     return;
   }
 
@@ -76,15 +93,15 @@ export async function handleArtworkUpload(
           `**作者：** <@${interaction.user.id}>`,
           `**上传时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
           description ? `**备注：** ${description}` : null,
+          `**文件数量：** ${fileUrls.length} 个`,
           "",
-          "想获取原文件？点击下方按钮，输入密码并对此帖作出反应即可。",
+          "想获取原文件？点击下方按钮，输入密码并对此帖首楼添加反应后即可获取。",
         ]
           .filter(Boolean)
           .join("\n")
       )
       .setColor(0x5865f2)
-      .setImage(attachment.contentType?.startsWith("image/") ? attachment.url : null)
-      .setFooter({ text: `文件名：${attachment.name}` })
+      .setFooter({ text: "作品系统 · 请向作者询问密码" })
       .setTimestamp();
 
     const placeholderBtn = new ButtonBuilder()
@@ -95,10 +112,7 @@ export async function handleArtworkUpload(
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(placeholderBtn);
 
-    const msg = await channel.send({
-      embeds: [embed],
-      components: [row],
-    });
+    const msg = await channel.send({ embeds: [embed], components: [row] });
 
     const realGetBtn = new ButtonBuilder()
       .setCustomId(`${ARTWORK_GET_CUSTOM_ID}${msg.id}`)
@@ -118,11 +132,13 @@ export async function handleArtworkUpload(
       title,
       description,
       password,
-      fileUrl: attachment.url,
-      fileName: attachment.name,
+      fileUrls,
+      fileNames,
     });
 
-    await interaction.editReply(`作品《${title}》已成功发布！`);
+    await interaction.editReply(
+      `作品《${title}》已成功发布！共 ${fileUrls.length} 个文件。`
+    );
   } catch (err) {
     logger.error({ err }, "Failed to upload artwork");
     await interaction.editReply("上传失败，请稍后再试。");
@@ -180,15 +196,12 @@ export async function handleArtworkGetModal(
   const artwork = artworks[0]!;
 
   if (password !== artwork.password) {
-    await interaction.editReply("密码错误，请重新确认后再试。");
+    await interaction.editReply("密码错误，请向作者确认密码后再试。");
     return;
   }
 
   try {
-    const artChannel = await client.channels
-      .fetch(artwork.channelId)
-      .catch(() => null);
-
+    const artChannel = await client.channels.fetch(artwork.channelId).catch(() => null);
     if (!artChannel || !artChannel.isTextBased()) {
       await interaction.editReply("找不到作品所在频道，请联系管理员。");
       return;
@@ -217,15 +230,21 @@ export async function handleArtworkGetModal(
     }
 
     if (!hasReacted) {
+      const artLink = `https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId}`;
       await interaction.editReply(
-        `密码正确！但你还需要先对作品帖首楼（https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId}）做出任意反应（添加任何表情），然后再点击获取按钮。`
+        `密码正确！✅\n\n但你还需要先对 [作品帖首楼](${artLink}) 添加任意表情反应，完成后再次点击「获取作品」按钮即可。`
       );
       return;
     }
 
+    const files = artwork.fileUrls.map((url, i) => ({
+      attachment: url,
+      name: artwork.fileNames[i] ?? `file_${i + 1}`,
+    }));
+
     await interaction.editReply({
-      content: `这是作品《${artwork.title}》的原文件，仅你可见：`,
-      files: [{ attachment: artwork.fileUrl, name: artwork.fileName }],
+      content: `这是作品《${artwork.title}》的原文件（共 ${files.length} 个），仅你可见：`,
+      files,
     });
 
     await db.insert(artworkAccessLogsTable).values({
@@ -237,14 +256,11 @@ export async function handleArtworkGetModal(
 
     const logChannelId = getConfig(guild.id, CONFIG_KEY_LOG_CHANNEL);
     if (logChannelId) {
-      const logChannel = await client.channels
-        .fetch(logChannelId)
-        .catch(() => null);
-
+      const logChannel = await client.channels.fetch(logChannelId).catch(() => null);
       if (logChannel && logChannel.isTextBased()) {
         const logTextChannel = logChannel as GuildTextBasedChannel;
         const logEmbed = new EmbedBuilder()
-          .setTitle("作品获取记录")
+          .setTitle("📥 作品获取记录")
           .setDescription(
             [
               `**作品：** ${artwork.title}`,

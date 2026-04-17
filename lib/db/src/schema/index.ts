@@ -12,8 +12,8 @@ export const artworksTable = pgTable("artworks", {
   title: text("title").notNull(),
   description: text("description"),
   password: text("password").notNull(),
-  fileUrl: text("file_url").notNull(),
-  fileName: text("file_name").notNull(),
+  fileUrls: text("file_urls").array().notNull(),
+  fileNames: text("file_names").array().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
