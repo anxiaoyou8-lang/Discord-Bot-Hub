@@ -1,20 +1,45 @@
-// Export your models here. Add one export per file
-// export * from "./posts";
-//
-// Each model/table should ideally be split into different files.
-// Each model/table should define a Drizzle table, insert schema, and types:
-//
-//   import { pgTable, text, serial } from "drizzle-orm/pg-core";
-//   import { createInsertSchema } from "drizzle-zod";
-//   import { z } from "zod/v4";
-//
-//   export const postsTable = pgTable("posts", {
-//     id: serial("id").primaryKey(),
-//     title: text("title").notNull(),
-//   });
-//
-//   export const insertPostSchema = createInsertSchema(postsTable).omit({ id: true });
-//   export type InsertPost = z.infer<typeof insertPostSchema>;
-//   export type Post = typeof postsTable.$inferSelect;
+import { pgTable, text, serial, timestamp, boolean } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
 
-export {}
+export const artworksTable = pgTable("artworks", {
+  id: serial("id").primaryKey(),
+  messageId: text("message_id").notNull().unique(),
+  channelId: text("channel_id").notNull(),
+  guildId: text("guild_id").notNull(),
+  authorId: text("author_id").notNull(),
+  authorTag: text("author_tag").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  password: text("password").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileName: text("file_name").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const artworkAccessLogsTable = pgTable("artwork_access_logs", {
+  id: serial("id").primaryKey(),
+  artworkId: text("artwork_id").notNull(),
+  artworkTitle: text("artwork_title").notNull(),
+  accessorId: text("accessor_id").notNull(),
+  accessorTag: text("accessor_tag").notNull(),
+  accessedAt: timestamp("accessed_at").defaultNow().notNull(),
+});
+
+export const reviewThreadsTable = pgTable("review_threads", {
+  id: serial("id").primaryKey(),
+  threadId: text("thread_id").notNull().unique(),
+  userId: text("user_id").notNull(),
+  guildId: text("guild_id").notNull(),
+  status: text("status").notNull().default("pending"),
+  locked: boolean("locked").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: text("reviewed_by"),
+});
+
+export const insertArtworkSchema = createInsertSchema(artworksTable).omit({ id: true, createdAt: true });
+export type InsertArtwork = z.infer<typeof insertArtworkSchema>;
+export type Artwork = typeof artworksTable.$inferSelect;
+export type ArtworkAccessLog = typeof artworkAccessLogsTable.$inferSelect;
+export type ReviewThread = typeof reviewThreadsTable.$inferSelect;
