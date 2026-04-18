@@ -137,16 +137,11 @@ export type WatermarkResult =
   | { ok: true; buffer: Buffer; method: string }
   | { ok: false; buffer: Buffer; method: "none"; reason: string };
 
-export async function applyWatermark(
-  fileUrl: string,
+export function applyWatermark(
+  buf: Buffer,
   filename: string,
   traceId: string
-): Promise<WatermarkResult> {
-  const res = await fetch(fileUrl);
-  if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
-  const arrayBuf = await res.arrayBuffer();
-  const buf = Buffer.from(arrayBuf);
-
+): WatermarkResult {
   const lower = filename.toLowerCase();
   const dotIdx = lower.lastIndexOf(".");
   const ext = dotIdx !== -1 ? lower.slice(dotIdx) : "";

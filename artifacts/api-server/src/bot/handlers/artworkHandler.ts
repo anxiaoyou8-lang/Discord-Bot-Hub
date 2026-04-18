@@ -26,6 +26,7 @@ import {
 import { getConfig, CONFIG_KEY_LOG_CHANNEL } from "../config.js";
 import { encodeFileInfo, buildRenamedFilename } from "../filenameCodec.js";
 import { generateTraceId, applyWatermark } from "../watermark.js";
+import { saveFileToStorage, loadFileFromStorage, isStorageKey } from "../botStorage.js";
 
 export function buildArtworkPanel() {
   const embed = new EmbedBuilder()
@@ -66,19 +67,13 @@ export async function handleArtworkUpload(
     return;
   }
 
-  const fileUrls: string[] = [];
-  const fileNames: string[] = [];
-
+  const attachments: Array<{ url: string; name: string }> = [];
   for (let i = 1; i <= 10; i++) {
-    const optName = i === 1 ? "file1" : `file${i}`;
-    const att = interaction.options.getAttachment(optName);
-    if (att) {
-      fileUrls.push(att.url);
-      fileNames.push(att.name);
-    }
+    const att = interaction.options.getAttachment(i === 1 ? "file1" : `file${i}`);
+    if (att) attachments.push({ url: att.url, name: att.name });
   }
 
-  if (fileUrls.length === 0) {
+  if (attachments.length === 0) {
     await interaction.editReply("请至少上传一个文件。");
     return;
   }
@@ -90,6 +85,20 @@ export async function handleArtworkUpload(
       return;
     }
 
+    await interaction.editReply(`正在保存文件（0/${attachments.length}）……`);
+
+    const storageKeys: string[] = [];
+    const fileNames: string[] = [];
+    for (const att of attachments) {
+      const res = await fetch(att.url);
+      if (!res.ok) throw new Error(`无法下载文件 ${att.name}：HTTP ${res.status}`);
+      const buf = Buffer.from(await res.arrayBuffer());
+      const key = await saveFileToStorage(buf, att.name);
+      storageKeys.push(key);
+      fileNames.push(att.name);
+      await interaction.editReply(`正在保存文件（${storageKeys.length}/${attachments.length}）……`);
+    }
+
     const embed = new EmbedBuilder()
       .setTitle(title)
       .setDescription(
@@ -97,7 +106,7 @@ export async function handleArtworkUpload(
           `**作者：** <@${interaction.user.id}>`,
           `**上传时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
           description ? `**备注：** ${description}` : null,
-          `**文件数量：** ${fileUrls.length} 个`,
+          `**文件数量：** ${storageKeys.length} 个`,
           "",
           "想获取原文件？点击下方按钮，输入密码并对频道第一条消息添加表情后即可获取。",
         ]
@@ -136,12 +145,12 @@ export async function handleArtworkUpload(
       title,
       description,
       password,
-      fileUrls,
+      fileUrls: storageKeys,
       fileNames,
     });
 
     await interaction.editReply(
-      `作品《${title}》已成功发布！共 ${fileUrls.length} 个文件。`
+      `作品《${title}》已成功发布！共 ${storageKeys.length} 个文件。`
     );
   } catch (err) {
     logger.error({ err }, "Failed to upload artwork");
@@ -275,13 +284,23 @@ export async function handleArtworkGetModal(
     }> = [];
 
     for (let i = 0; i < artwork.fileUrls.length; i++) {
-      const originalUrl = artwork.fileUrls[i]!;
+      const fileRef = artwork.fileUrls[i]!;
       const originalName = artwork.fileNames[i] ?? `file_${i + 1}`;
       const renamedFilename = buildRenamedFilename(originalName, encoded);
       const traceId = generateTraceId();
 
       try {
-        const result = await applyWatermark(originalUrl, originalName, traceId);
+        let buf: Buffer;
+        if (isStorageKey(fileRef)) {
+          buf = await loadFileFromStorage(fileRef);
+        } else {
+          // Legacy: fall back to direct URL fetch for old artworks
+          const res = await fetch(fileRef);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          buf = Buffer.from(await res.arrayBuffer());
+        }
+
+        const result = applyWatermark(buf, originalName, traceId);
         preparedFiles.push(new AttachmentBuilder(result.buffer, { name: renamedFilename }));
         watermarkRecords.push({
           traceId,
@@ -295,8 +314,7 @@ export async function handleArtworkGetModal(
           );
         }
       } catch (err) {
-        logger.error({ err, originalName }, "Failed to process file for watermarking");
-        preparedFiles.push(new AttachmentBuilder(originalUrl, { name: renamedFilename }));
+        logger.error({ err, originalName }, "Failed to process file for delivery");
         watermarkRecords.push({ traceId, filename: renamedFilename, method: "error" });
       }
     }
