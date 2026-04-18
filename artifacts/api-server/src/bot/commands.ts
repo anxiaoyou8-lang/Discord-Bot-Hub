@@ -84,12 +84,12 @@ export const commands = [
 
   new SlashCommandBuilder()
     .setName(LOOKUP_TRACE_CMD)
-    .setDescription("通过文件溯源ID查找获取者信息")
+    .setDescription("上传泄露的作品文件，自动提取溯源ID并查找获取者")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    .addStringOption((opt) =>
+    .addAttachmentOption((opt) =>
       opt
-        .setName("trace_id")
-        .setDescription("文件中嵌入的12位十六进制溯源ID")
+        .setName("file")
+        .setDescription("上传疑似泄露的原始文件（支持 PNG / JSON / 文本类文件）")
         .setRequired(true)
     ),
 

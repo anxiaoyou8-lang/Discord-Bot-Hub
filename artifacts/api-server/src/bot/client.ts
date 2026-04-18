@@ -52,6 +52,11 @@ import {
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import {
+  extractPngWatermark,
+  extractJsonWatermark,
+  extractTextWatermark,
+} from "./watermark.js";
 
 export async function startBot(token: string) {
   const client = new Client({
@@ -149,28 +154,75 @@ export async function startBot(token: string) {
           });
 
         } else if (commandName === LOOKUP_TRACE_CMD) {
-          const traceId = interaction.options.getString("trace_id", true).trim().toLowerCase();
           await interaction.deferReply({ flags: 64 });
+
+          const attachment = interaction.options.getAttachment("file", true);
+          const lower = attachment.name.toLowerCase();
+          const dotIdx = lower.lastIndexOf(".");
+          const ext = dotIdx !== -1 ? lower.slice(dotIdx) : "";
+
+          const res = await fetch(attachment.url);
+          if (!res.ok) {
+            await interaction.editReply("❌ 无法下载该文件，请重试。");
+            return;
+          }
+          const buf = Buffer.from(await res.arrayBuffer());
+
+          const TEXT_EXTS = new Set([
+            ".txt", ".md", ".csv", ".html", ".htm", ".xml",
+            ".js", ".ts", ".py", ".java", ".c", ".cpp", ".css",
+          ]);
+
+          let traceId: string | null = null;
+          let methodUsed = "";
+
+          if (ext === ".png") {
+            traceId = extractPngWatermark(buf);
+            methodUsed = "PNG tEXt 元数据";
+          } else if (ext === ".json") {
+            traceId = extractJsonWatermark(buf.toString("utf-8"));
+            methodUsed = "JSON 末尾空白";
+          } else if (TEXT_EXTS.has(ext)) {
+            traceId = extractTextWatermark(buf.toString("utf-8"));
+            methodUsed = "零宽字符隐写";
+          }
+
+          if (!traceId) {
+            await interaction.editReply(
+              [
+                "❌ 未能从该文件中提取到溯源ID。",
+                ext === ".png" || ext === ".json" || TEXT_EXTS.has(ext)
+                  ? "可能是文件在传播过程中被压缩或重新编码（如截图、重新保存等），导致水印丢失。"
+                  : `不支持此文件格式（${ext || "无扩展名"}），目前支持：PNG、JSON、TXT、MD、CSV 等文本类文件。`,
+              ].join("\n")
+            );
+            return;
+          }
+
           const rows = await db
             .select()
             .from(artworkWatermarksTable)
             .where(eq(artworkWatermarksTable.traceId, traceId))
             .limit(1);
+
           if (rows.length === 0) {
-            await interaction.editReply("❌ 找不到该溯源ID的记录，请确认ID是否正确。");
+            await interaction.editReply(
+              `❌ 成功提取到溯源ID \`${traceId}\`，但数据库中没有对应记录。可能是较旧版本的文件（水印系统上线前发出的）。`
+            );
             return;
           }
+
           const row = rows[0]!;
           const unixSec = Math.floor(row.accessedAt.getTime() / 1000);
           await interaction.editReply(
             [
-              "**🔍 溯源查询结果**",
+              "**🔍 溯源查询成功**",
               `**溯源ID：** \`${row.traceId}\``,
+              `**提取方式：** ${methodUsed}`,
               `**作品：** ${row.artworkTitle}`,
               `**获取者：** <@${row.accessorId}> (${row.accessorTag})`,
               `**获取时间：** <t:${unixSec}:F>（<t:${unixSec}:R>）`,
-              `**文件名：** \`${row.filename}\``,
-              `**水印方式：** ${row.watermarkMethod}`,
+              `**原始文件名：** \`${row.filename}\``,
             ].join("\n")
           );
         }
