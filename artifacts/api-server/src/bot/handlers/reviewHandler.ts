@@ -23,11 +23,10 @@ import {
   REVIEW_PANEL_CUSTOM_ID,
   REVIEW_APPROVE_PREFIX,
   REVIEW_REJECT_PREFIX,
-  REVIEW_SUBMIT_TEXT_PREFIX,
-  REVIEW_SUBMIT_FILE_PREFIX,
   REVIEW_DELETE_PREFIX,
-  REVIEW_TEXT_MODAL_PREFIX,
   REVIEW_TEXT_INPUT,
+  REVIEW_SUBMIT_MODAL_ID,
+  REVIEW_DONE_PREFIX,
 } from "../constants.js";
 import { getConfig, CONFIG_KEY_ADMIN_ROLE, CONFIG_KEY_APPROVE_ROLE } from "../config.js";
 
@@ -70,12 +69,10 @@ function isAdminMember(
 
 export async function handleReviewPanelButton(
   interaction: ButtonInteraction,
-  client: Client
+  _client: Client
 ) {
   const guild = interaction.guild;
   if (!guild) return;
-
-  await interaction.deferReply({ flags: 64 });
 
   const existing = await db
     .select()
@@ -89,15 +86,49 @@ export async function handleReviewPanelButton(
     .limit(1);
 
   if (existing.length > 0) {
-    await interaction.editReply(
-      `你已经有一个正在处理中的审核申请 <#${existing[0]!.threadId}>，请等待管理员审核完毕。`
-    );
+    await interaction.reply({
+      content: `你已经有一个正在处理中的审核申请 <#${existing[0]!.threadId}>，请等待管理员审核完毕。`,
+      flags: 64,
+    });
+    return;
+  }
+
+  const modal = new ModalBuilder()
+    .setCustomId(REVIEW_SUBMIT_MODAL_ID)
+    .setTitle("提交审核材料");
+
+  const reasonInput = new TextInputBuilder()
+    .setCustomId(REVIEW_TEXT_INPUT)
+    .setLabel("加入原因")
+    .setStyle(TextInputStyle.Paragraph)
+    .setPlaceholder("请如实说明你的加入原因……")
+    .setRequired(true)
+    .setMaxLength(1000);
+
+  modal.addComponents(
+    new ActionRowBuilder<TextInputBuilder>().addComponents(reasonInput)
+  );
+
+  await interaction.showModal(modal);
+}
+
+export async function handleReviewSubmitModal(
+  interaction: ModalSubmitInteraction,
+  client: Client
+) {
+  await interaction.deferReply({ flags: 64 });
+
+  const reason = interaction.fields.getTextInputValue(REVIEW_TEXT_INPUT);
+  const guild = interaction.guild;
+
+  if (!guild) {
+    await interaction.editReply("此操作只能在服务器中使用。");
     return;
   }
 
   const channel = interaction.channel;
   if (!channel || channel.type !== ChannelType.GuildText) {
-    await interaction.editReply("无法创建审核子区，请联系管理员。");
+    await interaction.editReply("无法在此频道创建审核子区，请联系管理员。");
     return;
   }
 
@@ -112,6 +143,103 @@ export async function handleReviewPanelButton(
     });
 
     await thread.members.add(interaction.user.id);
+
+    const autoDeleteAt = Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000);
+
+    const materialEmbed = new EmbedBuilder()
+      .setTitle(`📋 审核申请 — ${interaction.user.username}`)
+      .setDescription(
+        [
+          `**申请人：** <@${interaction.user.id}>`,
+          `**创建时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
+          `**自动删除：** <t:${autoDeleteAt}:R>`,
+          "",
+          "**已提交内容：**",
+          `📄 **加入原因：** ${reason}`,
+          "",
+          "🖼️ **年龄性别认证：** 请直接在此子区中发送图片/文件作为消息附件。",
+          "",
+          "材料提交完毕后，请点击「**完成**」按钮，管理员将会加入进行审核。",
+          "若需取消申请，点击「删除工单」按钮。",
+        ].join("\n")
+      )
+      .setColor(0xffa500)
+      .setThumbnail(interaction.user.displayAvatarURL());
+
+    const doneBtn = new ButtonBuilder()
+      .setCustomId(`${REVIEW_DONE_PREFIX}${thread.id}`)
+      .setLabel("完成")
+      .setStyle(ButtonStyle.Success)
+      .setEmoji("✅");
+
+    const deleteBtn = new ButtonBuilder()
+      .setCustomId(`${REVIEW_DELETE_PREFIX}${thread.id}`)
+      .setLabel("删除工单")
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji("🗑️");
+
+    const userRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      doneBtn,
+      deleteBtn
+    );
+
+    const panelMsg = await thread.send({
+      embeds: [materialEmbed],
+      components: [userRow],
+    });
+
+    await panelMsg.pin().catch(() => {});
+
+    await db.insert(reviewThreadsTable).values({
+      threadId: thread.id,
+      userId: interaction.user.id,
+      guildId: guild.id,
+      status: "pending",
+      locked: false,
+    });
+
+    await interaction.editReply(
+      `已为你创建专属审核子区 <#${thread.id}>，请前往上传年龄性别认证文件，完成后点击「完成」按钮。`
+    );
+  } catch (err) {
+    logger.error({ err, userId: interaction.user.id }, "Failed to create review thread");
+    await interaction.editReply("创建审核子区时出错，请联系管理员。");
+  }
+}
+
+export async function handleReviewDoneButton(
+  interaction: ButtonInteraction,
+  threadId: string,
+  client: Client
+) {
+  const guild = interaction.guild;
+  if (!guild) return;
+
+  const records = await db
+    .select()
+    .from(reviewThreadsTable)
+    .where(eq(reviewThreadsTable.threadId, threadId))
+    .limit(1);
+
+  const record = records[0];
+  if (!record) {
+    await interaction.reply({ content: "找不到对应的工单记录。", flags: 64 });
+    return;
+  }
+
+  if (interaction.user.id !== record.userId) {
+    await interaction.reply({ content: "只有申请人才能点击此按钮。", flags: 64 });
+    return;
+  }
+
+  await interaction.deferReply({ flags: 64 });
+
+  try {
+    const thread = interaction.channel;
+    if (!thread || !thread.isThread()) {
+      await interaction.editReply("无效的操作环境。");
+      return;
+    }
 
     const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
     if (adminRoleId) {
@@ -128,58 +256,14 @@ export async function handleReviewPanelButton(
       }
     }
 
-    const autoDeleteAt = Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000);
-
-    const instructionEmbed = new EmbedBuilder()
-      .setTitle(`📋 审核申请 — ${interaction.user.username}`)
-      .setDescription(
-        [
-          `**申请人：** <@${interaction.user.id}>`,
-          `**创建时间：** <t:${Math.floor(Date.now() / 1000)}:F>`,
-          `**自动删除：** <t:${autoDeleteAt}:R>`,
-          "",
-          "**请使用下方按钮提交所需材料：**",
-          "📄 **提交文字** — 填写加入原因",
-          "🖼️ **提交文件** — 上传年龄性别认证（图片/文件）",
-          "",
-          "若需取消申请，点击「删除工单」按钮。",
-        ].join("\n")
-      )
-      .setColor(0xffa500)
-      .setThumbnail(interaction.user.displayAvatarURL());
-
-    const deleteBtn = new ButtonBuilder()
-      .setCustomId(`${REVIEW_DELETE_PREFIX}${thread.id}`)
-      .setLabel("删除工单")
-      .setStyle(ButtonStyle.Danger)
-      .setEmoji("🗑️");
-
-    const submitTextBtn = new ButtonBuilder()
-      .setCustomId(`${REVIEW_SUBMIT_TEXT_PREFIX}${thread.id}`)
-      .setLabel("提交文字")
-      .setStyle(ButtonStyle.Primary)
-      .setEmoji("📄");
-
-    const submitFileBtn = new ButtonBuilder()
-      .setCustomId(`${REVIEW_SUBMIT_FILE_PREFIX}${thread.id}`)
-      .setLabel("提交文件")
-      .setStyle(ButtonStyle.Secondary)
-      .setEmoji("🖼️");
-
-    const userRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      deleteBtn,
-      submitTextBtn,
-      submitFileBtn
-    );
-
     const approveBtn = new ButtonBuilder()
-      .setCustomId(`${REVIEW_APPROVE_PREFIX}${interaction.user.id}`)
+      .setCustomId(`${REVIEW_APPROVE_PREFIX}${record.userId}`)
       .setLabel("通过审核")
       .setStyle(ButtonStyle.Success)
       .setEmoji("✅");
 
     const rejectBtn = new ButtonBuilder()
-      .setCustomId(`${REVIEW_REJECT_PREFIX}${interaction.user.id}`)
+      .setCustomId(`${REVIEW_REJECT_PREFIX}${record.userId}`)
       .setLabel("拒绝申请")
       .setStyle(ButtonStyle.Danger)
       .setEmoji("❌");
@@ -191,96 +275,20 @@ export async function handleReviewPanelButton(
 
     const adminEmbed = new EmbedBuilder()
       .setTitle("管理员审核面板")
-      .setDescription("审核材料提交完毕后，请点击下方按钮进行审核。")
+      .setDescription(
+        [
+          `申请人 <@${record.userId}> 已提交全部材料，请查阅上方内容后进行审核。`,
+        ].join("\n")
+      )
       .setColor(0x57f287);
 
-    const panelMsg = await thread.send({
-      embeds: [instructionEmbed],
-      components: [userRow],
-    });
+    await thread.send({ embeds: [adminEmbed], components: [adminRow] });
 
-    await thread.send({
-      embeds: [adminEmbed],
-      components: [adminRow],
-    });
-
-    await panelMsg.pin().catch(() => {});
-
-    await db.insert(reviewThreadsTable).values({
-      threadId: thread.id,
-      userId: interaction.user.id,
-      guildId: guild.id,
-      status: "pending",
-      locked: false,
-    });
-
-    await interaction.editReply(
-      `已为你创建专属审核子区 <#${thread.id}>，请前往提交所需材料。`
-    );
+    await interaction.editReply("材料已提交完毕，管理员已收到通知，请耐心等待审核结果。");
   } catch (err) {
-    logger.error({ err }, "Failed to create review thread");
-    await interaction.editReply("创建审核子区时出错，请联系管理员。");
+    logger.error({ err }, "Failed to handle done button");
+    await interaction.editReply("操作失败，请稍后再试。");
   }
-}
-
-export async function handleReviewSubmitTextBtn(
-  interaction: ButtonInteraction,
-  threadId: string
-) {
-  const modal = new ModalBuilder()
-    .setCustomId(`${REVIEW_TEXT_MODAL_PREFIX}${threadId}`)
-    .setTitle("提交加入原因");
-
-  const textInput = new TextInputBuilder()
-    .setCustomId(REVIEW_TEXT_INPUT)
-    .setLabel("请填写你的加入原因")
-    .setStyle(TextInputStyle.Paragraph)
-    .setPlaceholder("请如实说明你的加入原因……")
-    .setRequired(true)
-    .setMaxLength(1000);
-
-  modal.addComponents(
-    new ActionRowBuilder<TextInputBuilder>().addComponents(textInput)
-  );
-
-  await interaction.showModal(modal);
-}
-
-export async function handleReviewTextModalSubmit(
-  interaction: ModalSubmitInteraction,
-  threadId: string
-) {
-  const textContent = interaction.fields.getTextInputValue(REVIEW_TEXT_INPUT);
-  await interaction.deferReply({ flags: 64 });
-
-  const thread = interaction.channel;
-  if (!thread || !thread.isThread()) {
-    await interaction.editReply("无效的操作环境。");
-    return;
-  }
-
-  await thread.send({
-    embeds: [
-      new EmbedBuilder()
-        .setTitle("📄 加入原因")
-        .setDescription(textContent)
-        .setColor(0x5865f2)
-        .setFooter({ text: `提交者：${interaction.user.tag}` })
-        .setTimestamp(),
-    ],
-  });
-
-  await interaction.editReply("文字内容已提交！");
-}
-
-export async function handleReviewSubmitFileBtn(
-  interaction: ButtonInteraction
-) {
-  await interaction.reply({
-    content:
-      "请直接在此子区中发送你的年龄性别认证文件（图片/文件）作为消息附件即可，管理员将能看到你上传的内容。",
-    flags: 64,
-  });
 }
 
 export async function handleReviewDeleteTicket(

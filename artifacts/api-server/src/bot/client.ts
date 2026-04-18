@@ -11,9 +11,8 @@ import { registerCommands } from "./registerCommands.js";
 import {
   buildReviewPanel,
   handleReviewPanelButton,
-  handleReviewSubmitTextBtn,
-  handleReviewTextModalSubmit,
-  handleReviewSubmitFileBtn,
+  handleReviewSubmitModal,
+  handleReviewDoneButton,
   handleReviewDeleteTicket,
   handleReviewApprove,
   handleReviewReject,
@@ -36,10 +35,9 @@ import {
   REVIEW_PANEL_CUSTOM_ID,
   REVIEW_APPROVE_PREFIX,
   REVIEW_REJECT_PREFIX,
-  REVIEW_SUBMIT_TEXT_PREFIX,
-  REVIEW_SUBMIT_FILE_PREFIX,
   REVIEW_DELETE_PREFIX,
-  REVIEW_TEXT_MODAL_PREFIX,
+  REVIEW_SUBMIT_MODAL_ID,
+  REVIEW_DONE_PREFIX,
   ARTWORK_UPLOAD_CMD,
   ARTWORK_GET_CUSTOM_ID,
   ARTWORK_GET_MODAL_PREFIX,
@@ -124,12 +122,9 @@ export async function startBot(token: string) {
         if (customId === REVIEW_PANEL_CUSTOM_ID) {
           await handleReviewPanelButton(interaction, client);
 
-        } else if (customId.startsWith(REVIEW_SUBMIT_TEXT_PREFIX)) {
-          const threadId = customId.slice(REVIEW_SUBMIT_TEXT_PREFIX.length);
-          await handleReviewSubmitTextBtn(interaction, threadId);
-
-        } else if (customId.startsWith(REVIEW_SUBMIT_FILE_PREFIX)) {
-          await handleReviewSubmitFileBtn(interaction);
+        } else if (customId.startsWith(REVIEW_DONE_PREFIX)) {
+          const threadId = customId.slice(REVIEW_DONE_PREFIX.length);
+          await handleReviewDoneButton(interaction, threadId, client);
 
         } else if (customId.startsWith(REVIEW_DELETE_PREFIX)) {
           const threadId = customId.slice(REVIEW_DELETE_PREFIX.length);
@@ -151,9 +146,8 @@ export async function startBot(token: string) {
       } else if (interaction.isModalSubmit()) {
         const { customId } = interaction;
 
-        if (customId.startsWith(REVIEW_TEXT_MODAL_PREFIX)) {
-          const threadId = customId.slice(REVIEW_TEXT_MODAL_PREFIX.length);
-          await handleReviewTextModalSubmit(interaction, threadId);
+        if (customId === REVIEW_SUBMIT_MODAL_ID) {
+          await handleReviewSubmitModal(interaction, client);
 
         } else if (customId.startsWith(ARTWORK_GET_MODAL_PREFIX)) {
           const messageId = customId.slice(ARTWORK_GET_MODAL_PREFIX.length);

@@ -6,6 +6,8 @@ export const REVIEW_SUBMIT_FILE_PREFIX = "review_submit_file_";
 export const REVIEW_DELETE_PREFIX = "review_delete_";
 export const REVIEW_TEXT_MODAL_PREFIX = "review_text_modal_";
 export const REVIEW_TEXT_INPUT = "review_text_input";
+export const REVIEW_SUBMIT_MODAL_ID = "review_submit_modal";
+export const REVIEW_DONE_PREFIX = "review_done_";
 
 export const ARTWORK_UPLOAD_CMD = "发布作品";
 export const ARTWORK_GET_CUSTOM_ID = "artwork_get_";
