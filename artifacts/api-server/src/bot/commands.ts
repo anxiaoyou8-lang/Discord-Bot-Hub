@@ -10,6 +10,7 @@ import {
   SET_LOG_CHANNEL_CMD,
   SET_ADMIN_ROLE_CMD,
   SET_APPROVE_ROLE_CMD,
+  DECODE_FILENAME_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -67,6 +68,17 @@ export const commands = [
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addRoleOption((opt) =>
       opt.setName("role").setDescription("审核通过身分组").setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(DECODE_FILENAME_CMD)
+    .setDescription("解码作品文件名，还原获取时间与获取者信息")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addStringOption((opt) =>
+      opt
+        .setName("code")
+        .setDescription("文件名中的编码部分（去掉扩展名的部分）")
+        .setRequired(true)
     ),
 
   uploadArtworkCmd,

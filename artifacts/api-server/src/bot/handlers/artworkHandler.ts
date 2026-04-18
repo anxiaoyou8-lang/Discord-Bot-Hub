@@ -23,6 +23,7 @@ import {
   ARTWORK_GET_CUSTOM_ID,
 } from "../constants.js";
 import { getConfig, CONFIG_KEY_LOG_CHANNEL } from "../config.js";
+import { encodeFileInfo, buildRenamedFilename } from "../filenameCodec.js";
 
 export function buildArtworkPanel() {
   const embed = new EmbedBuilder()
@@ -262,15 +263,27 @@ export async function handleArtworkGetModal(
       return;
     }
 
-    const files = artwork.fileUrls.map((url, i) => ({
-      attachment: url,
-      name: artwork.fileNames[i] ?? `file_${i + 1}`,
-    }));
-
-    await interaction.editReply({
-      content: `这是作品《${artwork.title}》的原文件（共 ${files.length} 个），仅你可见：`,
-      files,
+    const encoded = encodeFileInfo(interaction.user.id);
+    const files = artwork.fileUrls.map((url, i) => {
+      const originalName = artwork.fileNames[i] ?? `file_${i + 1}`;
+      return {
+        attachment: url,
+        name: buildRenamedFilename(originalName, encoded),
+      };
     });
+
+    try {
+      await interaction.user.send({
+        content: `这是作品《${artwork.title}》的原文件（共 ${files.length} 个）：`,
+        files,
+      });
+      await interaction.editReply("✅ 文件已通过私信发送，请查收！");
+    } catch {
+      await interaction.editReply(
+        "❌ 无法向你发送私信，请先开启「允许服务器成员向你发送私信」的设置后重试。"
+      );
+      return;
+    }
 
     await db.insert(artworkAccessLogsTable).values({
       artworkId: artwork.messageId,

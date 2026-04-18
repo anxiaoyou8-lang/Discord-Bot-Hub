@@ -46,7 +46,9 @@ import {
   SET_LOG_CHANNEL_CMD,
   SET_ADMIN_ROLE_CMD,
   SET_APPROVE_ROLE_CMD,
+  DECODE_FILENAME_CMD,
 } from "./constants.js";
+import { decodeFileInfo } from "./filenameCodec.js";
 
 export async function startBot(token: string) {
   const client = new Client({
@@ -112,6 +114,27 @@ export async function startBot(token: string) {
           await setConfig(interaction.guildId, CONFIG_KEY_APPROVE_ROLE, role.id);
           await interaction.reply({
             content: `审核通过后将自动赋予身分组 <@&${role.id}>`,
+            flags: 64,
+          });
+
+        } else if (commandName === DECODE_FILENAME_CMD) {
+          const code = interaction.options.getString("code", true).trim();
+          const info = decodeFileInfo(code);
+          if (!info) {
+            await interaction.reply({
+              content: "❌ 无法解码，请确认输入的是文件名中去掉扩展名后的完整编码部分。",
+              flags: 64,
+            });
+            return;
+          }
+          const unixSec = Math.floor(info.timestamp / 1000);
+          await interaction.reply({
+            content: [
+              "**📂 文件名解码结果**",
+              `**获取时间：** <t:${unixSec}:F>（<t:${unixSec}:R>）`,
+              `**获取者 Discord ID：** \`${info.userId}\``,
+              `**获取者：** <@${info.userId}>`,
+            ].join("\n"),
             flags: 64,
           });
         }
