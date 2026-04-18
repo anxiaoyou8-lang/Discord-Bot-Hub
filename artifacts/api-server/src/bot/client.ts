@@ -47,8 +47,11 @@ import {
   SET_ADMIN_ROLE_CMD,
   SET_APPROVE_ROLE_CMD,
   DECODE_FILENAME_CMD,
+  LOOKUP_TRACE_CMD,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
+import { db, artworkWatermarksTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 
 export async function startBot(token: string) {
   const client = new Client({
@@ -137,6 +140,32 @@ export async function startBot(token: string) {
             ].join("\n"),
             flags: 64,
           });
+
+        } else if (commandName === LOOKUP_TRACE_CMD) {
+          const traceId = interaction.options.getString("trace_id", true).trim().toLowerCase();
+          await interaction.deferReply({ flags: 64 });
+          const rows = await db
+            .select()
+            .from(artworkWatermarksTable)
+            .where(eq(artworkWatermarksTable.traceId, traceId))
+            .limit(1);
+          if (rows.length === 0) {
+            await interaction.editReply("❌ 找不到该溯源ID的记录，请确认ID是否正确。");
+            return;
+          }
+          const row = rows[0]!;
+          const unixSec = Math.floor(row.accessedAt.getTime() / 1000);
+          await interaction.editReply(
+            [
+              "**🔍 溯源查询结果**",
+              `**溯源ID：** \`${row.traceId}\``,
+              `**作品：** ${row.artworkTitle}`,
+              `**获取者：** <@${row.accessorId}> (${row.accessorTag})`,
+              `**获取时间：** <t:${unixSec}:F>（<t:${unixSec}:R>）`,
+              `**文件名：** \`${row.filename}\``,
+              `**水印方式：** ${row.watermarkMethod}`,
+            ].join("\n")
+          );
         }
 
       } else if (interaction.isButton()) {

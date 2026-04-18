@@ -1,5 +1,6 @@
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
@@ -14,7 +15,7 @@ import {
   type TextChannel,
 } from "discord.js";
 import { db } from "@workspace/db";
-import { artworksTable, artworkAccessLogsTable } from "@workspace/db";
+import { artworksTable, artworkAccessLogsTable, artworkWatermarksTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { logger } from "../../lib/logger.js";
 import {
@@ -24,6 +25,7 @@ import {
 } from "../constants.js";
 import { getConfig, CONFIG_KEY_LOG_CHANNEL } from "../config.js";
 import { encodeFileInfo, buildRenamedFilename } from "../filenameCodec.js";
+import { generateTraceId, applyWatermark } from "../watermark.js";
 
 export function buildArtworkPanel() {
   const embed = new EmbedBuilder()
@@ -264,18 +266,45 @@ export async function handleArtworkGetModal(
     }
 
     const encoded = encodeFileInfo(interaction.user.id);
-    const files = artwork.fileUrls.map((url, i) => {
+
+    const preparedFiles: AttachmentBuilder[] = [];
+    const watermarkRecords: Array<{
+      traceId: string;
+      filename: string;
+      method: string;
+    }> = [];
+
+    for (let i = 0; i < artwork.fileUrls.length; i++) {
+      const originalUrl = artwork.fileUrls[i]!;
       const originalName = artwork.fileNames[i] ?? `file_${i + 1}`;
-      return {
-        attachment: url,
-        name: buildRenamedFilename(originalName, encoded),
-      };
-    });
+      const renamedFilename = buildRenamedFilename(originalName, encoded);
+      const traceId = generateTraceId();
+
+      try {
+        const result = await applyWatermark(originalUrl, originalName, traceId);
+        preparedFiles.push(new AttachmentBuilder(result.buffer, { name: renamedFilename }));
+        watermarkRecords.push({
+          traceId,
+          filename: renamedFilename,
+          method: result.method,
+        });
+        if (!result.ok) {
+          logger.info(
+            { originalName, reason: result.reason },
+            "Watermark skipped for file"
+          );
+        }
+      } catch (err) {
+        logger.error({ err, originalName }, "Failed to process file for watermarking");
+        preparedFiles.push(new AttachmentBuilder(originalUrl, { name: renamedFilename }));
+        watermarkRecords.push({ traceId, filename: renamedFilename, method: "error" });
+      }
+    }
 
     try {
       await interaction.user.send({
-        content: `这是作品《${artwork.title}》的原文件（共 ${files.length} 个）：`,
-        files,
+        content: `这是作品《${artwork.title}》的原文件（共 ${preparedFiles.length} 个）：`,
+        files: preparedFiles,
       });
       await interaction.editReply("✅ 文件已通过私信发送，请查收！");
     } catch {
@@ -291,6 +320,18 @@ export async function handleArtworkGetModal(
       accessorId: interaction.user.id,
       accessorTag: interaction.user.tag,
     });
+
+    for (const rec of watermarkRecords) {
+      await db.insert(artworkWatermarksTable).values({
+        traceId: rec.traceId,
+        artworkId: artwork.messageId,
+        artworkTitle: artwork.title,
+        accessorId: interaction.user.id,
+        accessorTag: interaction.user.tag,
+        filename: rec.filename,
+        watermarkMethod: rec.method,
+      }).onConflictDoNothing();
+    }
 
     const logChannelId = getConfig(guild.id, CONFIG_KEY_LOG_CHANNEL);
     if (logChannelId) {

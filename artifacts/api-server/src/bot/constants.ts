@@ -20,3 +20,4 @@ export const SET_LOG_CHANNEL_CMD = "set_log_channel";
 export const SET_ADMIN_ROLE_CMD = "set_admin_role";
 export const SET_APPROVE_ROLE_CMD = "set_approve_role";
 export const DECODE_FILENAME_CMD = "decode_filename";
+export const LOOKUP_TRACE_CMD = "lookup_trace";

@@ -11,6 +11,7 @@ import {
   SET_ADMIN_ROLE_CMD,
   SET_APPROVE_ROLE_CMD,
   DECODE_FILENAME_CMD,
+  LOOKUP_TRACE_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -78,6 +79,17 @@ export const commands = [
       opt
         .setName("code")
         .setDescription("文件名中的编码部分（去掉扩展名的部分）")
+        .setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(LOOKUP_TRACE_CMD)
+    .setDescription("通过文件溯源ID查找获取者信息")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addStringOption((opt) =>
+      opt
+        .setName("trace_id")
+        .setDescription("文件中嵌入的12位十六进制溯源ID")
         .setRequired(true)
     ),
 
