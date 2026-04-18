@@ -69,8 +69,15 @@ export async function startBot(token: string) {
   client.once(Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
     await loadAllConfigs();
-    await registerCommands(token, c.user.id);
+    const guildIds = c.guilds.cache.map((g) => g.id);
+    await registerCommands(token, c.user.id, guildIds);
     await runAutoDeleteScheduler(client);
+  });
+
+  client.on(Events.GuildCreate, async (guild) => {
+    const guildIds = [guild.id];
+    await registerCommands(token, client.user!.id, guildIds);
+    logger.info({ guildId: guild.id }, "Registered commands for new guild");
   });
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
