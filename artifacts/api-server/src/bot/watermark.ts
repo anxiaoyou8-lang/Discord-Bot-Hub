@@ -83,8 +83,7 @@ function encodeZeroWidth(traceId: string): string {
 
 export function injectTextWatermark(content: string, traceId: string): string {
   const hidden = encodeZeroWidth(traceId);
-  if (content.length === 0) return hidden;
-  return content[0] + hidden + content.slice(1);
+  return content + hidden;
 }
 
 export function extractTextWatermark(content: string): string | null {
@@ -130,10 +129,9 @@ export function extractJsonWatermark(content: string): string | null {
 }
 
 // ── Dispatcher ─────────────────────────────────────────────────────────────
-const TEXT_EXTS = new Set([
-  ".txt", ".md", ".csv", ".html", ".htm", ".xml",
-  ".js", ".ts", ".py", ".java", ".c", ".cpp", ".css",
-]);
+// Only pure text/data formats — never source code or markup
+// Code files (.js .py .html etc.) cannot safely accept mid/end zero-width injection
+const TEXT_EXTS = new Set([".txt", ".md", ".csv"]);
 
 export type WatermarkResult =
   | { ok: true; buffer: Buffer; method: string }

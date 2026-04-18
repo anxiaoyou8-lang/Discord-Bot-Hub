@@ -168,10 +168,7 @@ export async function startBot(token: string) {
           }
           const buf = Buffer.from(await res.arrayBuffer());
 
-          const TEXT_EXTS = new Set([
-            ".txt", ".md", ".csv", ".html", ".htm", ".xml",
-            ".js", ".ts", ".py", ".java", ".c", ".cpp", ".css",
-          ]);
+          const TEXT_EXTS = new Set([".txt", ".md", ".csv"]);
 
           let traceId: string | null = null;
           let methodUsed = "";
