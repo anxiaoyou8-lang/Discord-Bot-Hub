@@ -319,18 +319,10 @@ export async function handleArtworkGetModal(
       }
     }
 
-    try {
-      await interaction.user.send({
-        content: `这是作品《${artwork.title}》的原文件（共 ${preparedFiles.length} 个）：`,
-        files: preparedFiles,
-      });
-      await interaction.editReply("✅ 文件已通过私信发送，请查收！");
-    } catch {
-      await interaction.editReply(
-        "❌ 无法向你发送私信，请先开启「允许服务器成员向你发送私信」的设置后重试。"
-      );
-      return;
-    }
+    await interaction.editReply({
+      content: `✅ 这是作品《${artwork.title}》的原文件（共 ${preparedFiles.length} 个），仅你可见：`,
+      files: preparedFiles,
+    });
 
     await db.insert(artworkAccessLogsTable).values({
       artworkId: artwork.messageId,
