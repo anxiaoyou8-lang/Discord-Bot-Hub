@@ -66,6 +66,7 @@ export const complaintTicketsTable = pgTable("complaint_tickets", {
   id: serial("id").primaryKey(),
   guildId: text("guild_id").notNull(),
   content: text("content").notNull(),
+  attachmentUrls: text("attachment_urls"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

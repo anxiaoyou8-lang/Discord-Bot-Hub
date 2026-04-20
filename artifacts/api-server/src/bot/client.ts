@@ -33,7 +33,8 @@ import {
 import {
   buildComplaintPanel,
   handleComplaintButton,
-  handleComplaintSubmitModal,
+  handleComplaintThreadSubmit,
+  handleComplaintThreadCancel,
 } from "./handlers/complaintHandler.js";
 import {
   setConfig,
@@ -65,7 +66,8 @@ import {
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
   COMPLAINT_PANEL_CUSTOM_ID,
-  COMPLAINT_SUBMIT_MODAL_ID,
+  COMPLAINT_THREAD_SUBMIT_ID,
+  COMPLAINT_THREAD_CANCEL_ID,
   DELETE_THREAD_CONFIRM_ID,
   DELETE_THREAD_CANCEL_ID,
 } from "./constants.js";
@@ -294,6 +296,12 @@ export async function startBot(token: string) {
         } else if (customId === COMPLAINT_PANEL_CUSTOM_ID) {
           await handleComplaintButton(interaction);
 
+        } else if (customId === COMPLAINT_THREAD_SUBMIT_ID) {
+          await handleComplaintThreadSubmit(interaction, client);
+
+        } else if (customId === COMPLAINT_THREAD_CANCEL_ID) {
+          await handleComplaintThreadCancel(interaction);
+
         } else if (customId === DELETE_THREAD_CONFIRM_ID) {
           await handleDeleteThreadConfirm(interaction);
 
@@ -311,8 +319,6 @@ export async function startBot(token: string) {
           const messageId = customId.slice(ARTWORK_GET_MODAL_PREFIX.length);
           await handleArtworkGetModal(interaction, messageId, client);
 
-        } else if (customId === COMPLAINT_SUBMIT_MODAL_ID) {
-          await handleComplaintSubmitModal(interaction, client);
         }
       }
     } catch (err) {

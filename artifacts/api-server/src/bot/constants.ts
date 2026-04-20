@@ -33,3 +33,5 @@ export const DELETE_THREAD_CANCEL_ID = "delete_thread_cancel";
 export const COMPLAINT_PANEL_CUSTOM_ID = "complaint_panel_submit";
 export const COMPLAINT_SUBMIT_MODAL_ID = "complaint_submit_modal";
 export const COMPLAINT_TEXT_INPUT = "complaint_text_input";
+export const COMPLAINT_THREAD_SUBMIT_ID = "complaint_thread_submit";
+export const COMPLAINT_THREAD_CANCEL_ID = "complaint_thread_cancel";
