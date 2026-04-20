@@ -354,6 +354,52 @@ export async function handleReviewApprove(
       return;
     }
 
+    const targetMember = await guild.members.fetch(targetUserId).catch(() => null);
+
+    const approveRoleId = getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE);
+    let roleAssigned = false;
+    let roleError = "";
+
+    if (targetMember && approveRoleId) {
+      try {
+        await targetMember.roles.add(approveRoleId, "审核通过自动赋予");
+        roleAssigned = true;
+        logger.info({ targetUserId, approveRoleId }, "Assigned approve role to member");
+      } catch (err) {
+        roleError = (err as Error).message ?? String(err);
+        logger.error({ err, targetUserId, approveRoleId }, "Failed to assign approve role");
+      }
+    }
+
+    // Notify in thread BEFORE archiving so the user can see the message
+    const notifyLines = [
+      `<@${targetUserId}> 恭喜！你的审核申请已 **通过** ✅`,
+      roleAssigned ? "已自动获得对应身分组，欢迎正式加入！" : "",
+      !approveRoleId ? "（未配置通过身分组，请管理员手动赋予）" : "",
+      roleError ? `⚠️ 身分组赋予失败：${roleError}` : "",
+    ].filter(Boolean).join("\n");
+
+    await thread.send({ content: notifyLines });
+
+    // Also attempt DM as a secondary notification
+    if (targetMember) {
+      try {
+        await targetMember.send({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("审核结果通知")
+              .setDescription(
+                `恭喜！你在 **${guild.name}** 的审核申请已 **通过**！\n\n${roleAssigned ? "你已自动获得对应身分组，欢迎正式加入！" : "欢迎正式加入！"}`
+              )
+              .setColor(0x57f287)
+              .setTimestamp(),
+          ],
+        });
+      } catch {
+        logger.warn({ targetUserId }, "Could not DM user about approval (thread notification already sent)");
+      }
+    }
+
     await db
       .update(reviewThreadsTable)
       .set({
@@ -367,39 +413,13 @@ export async function handleReviewApprove(
     await thread.setLocked(true);
     await thread.setArchived(true);
 
-    const targetMember = await guild.members.fetch(targetUserId).catch(() => null);
+    const replyMsg = roleAssigned
+      ? `已通过 <@${targetUserId}> 的审核，并已自动赋予身分组，子区已锁定并归档。`
+      : roleError
+      ? `已通过 <@${targetUserId}> 的审核，但身分组赋予失败（${roleError}），请手动处理。子区已锁定并归档。`
+      : `已通过 <@${targetUserId}> 的审核（未配置通过身分组），子区已锁定并归档。`;
 
-    if (targetMember) {
-      const approveRoleId = getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE);
-      if (approveRoleId) {
-        try {
-          await targetMember.roles.add(approveRoleId, "审核通过自动赋予");
-          logger.info({ targetUserId, approveRoleId }, "Assigned approve role to member");
-        } catch (err) {
-          logger.error({ err, targetUserId, approveRoleId }, "Failed to assign approve role");
-        }
-      }
-
-      try {
-        await targetMember.send({
-          embeds: [
-            new EmbedBuilder()
-              .setTitle("审核结果通知")
-              .setDescription(
-                `恭喜！你在 **${guild.name}** 的审核申请已 **通过**！\n\n你已自动获得对应身分组，欢迎正式加入！`
-              )
-              .setColor(0x57f287)
-              .setTimestamp(),
-          ],
-        });
-      } catch {
-        logger.warn({ targetUserId }, "Could not DM user about approval");
-      }
-    }
-
-    await interaction.editReply(
-      `已通过 <@${targetUserId}> 的审核${getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE) ? "，并已自动赋予身分组" : ""}，子区已锁定并归档。`
-    );
+    await interaction.editReply(replyMsg);
   } catch (err) {
     logger.error({ err }, "Failed to approve review");
     await interaction.editReply("操作失败，请稍后再试。");
@@ -428,20 +448,14 @@ export async function handleReviewReject(
       return;
     }
 
-    await db
-      .update(reviewThreadsTable)
-      .set({
-        status: "rejected",
-        locked: true,
-        reviewedAt: new Date(),
-        reviewedBy: interaction.user.id,
-      })
-      .where(eq(reviewThreadsTable.threadId, thread.id));
-
-    await thread.setLocked(true);
-    await thread.setArchived(true);
-
     const targetMember = await guild.members.fetch(targetUserId).catch(() => null);
+
+    // Notify in thread BEFORE archiving so the user can see the message
+    await thread.send({
+      content: `<@${targetUserId}> 很遗憾，你的审核申请未能 **通过** ❌\n如有疑问，请联系管理员。`,
+    });
+
+    // Also attempt DM as a secondary notification
     if (targetMember) {
       try {
         await targetMember.send({
@@ -456,9 +470,22 @@ export async function handleReviewReject(
           ],
         });
       } catch {
-        logger.warn({ targetUserId }, "Could not DM user about rejection");
+        logger.warn({ targetUserId }, "Could not DM user about rejection (thread notification already sent)");
       }
     }
+
+    await db
+      .update(reviewThreadsTable)
+      .set({
+        status: "rejected",
+        locked: true,
+        reviewedAt: new Date(),
+        reviewedBy: interaction.user.id,
+      })
+      .where(eq(reviewThreadsTable.threadId, thread.id));
+
+    await thread.setLocked(true);
+    await thread.setArchived(true);
 
     await interaction.editReply(
       `已拒绝 <@${targetUserId}> 的审核申请，子区已锁定并归档。`
