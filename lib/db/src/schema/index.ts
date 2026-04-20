@@ -62,6 +62,13 @@ export const artworkWatermarksTable = pgTable("artwork_watermarks", {
   accessedAt: timestamp("accessed_at").defaultNow().notNull(),
 });
 
+export const complaintTicketsTable = pgTable("complaint_tickets", {
+  id: serial("id").primaryKey(),
+  guildId: text("guild_id").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertArtworkSchema = createInsertSchema(artworksTable).omit({ id: true, createdAt: true });
 export type InsertArtwork = z.infer<typeof insertArtworkSchema>;
 export type Artwork = typeof artworksTable.$inferSelect;

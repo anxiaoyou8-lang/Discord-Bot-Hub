@@ -24,12 +24,19 @@ import {
   handleArtworkGetButton,
   handleArtworkGetModal,
 } from "./handlers/artworkHandler.js";
+import { handleGoTop, handleClearMessages } from "./handlers/threadHandler.js";
+import {
+  buildComplaintPanel,
+  handleComplaintButton,
+  handleComplaintSubmitModal,
+} from "./handlers/complaintHandler.js";
 import {
   setConfig,
   loadAllConfigs,
   CONFIG_KEY_LOG_CHANNEL,
   CONFIG_KEY_ADMIN_ROLE,
   CONFIG_KEY_APPROVE_ROLE,
+  CONFIG_KEY_COMPLAINT_CHANNEL,
 } from "./config.js";
 import {
   REVIEW_PANEL_CUSTOM_ID,
@@ -48,6 +55,12 @@ import {
   SET_APPROVE_ROLE_CMD,
   DECODE_FILENAME_CMD,
   LOOKUP_TRACE_CMD,
+  GO_TOP_CMD,
+  CLEAR_MESSAGES_CMD,
+  COMPLAINT_PANEL_CMD,
+  SET_COMPLAINT_CHANNEL_CMD,
+  COMPLAINT_PANEL_CUSTOM_ID,
+  COMPLAINT_SUBMIT_MODAL_ID,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -153,6 +166,27 @@ export async function startBot(token: string) {
             flags: 64,
           });
 
+        } else if (commandName === GO_TOP_CMD) {
+          await handleGoTop(interaction);
+
+        } else if (commandName === CLEAR_MESSAGES_CMD) {
+          await handleClearMessages(interaction);
+
+        } else if (commandName === COMPLAINT_PANEL_CMD) {
+          const panel = buildComplaintPanel();
+          const guildChannel = interaction.channel as GuildTextBasedChannel | null;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "投诉面板已发送！", flags: 64 });
+
+        } else if (commandName === SET_COMPLAINT_CHANNEL_CMD) {
+          const channel = interaction.options.getChannel("channel", true);
+          if (!interaction.guildId) return;
+          await setConfig(interaction.guildId, CONFIG_KEY_COMPLAINT_CHANNEL, channel.id);
+          await interaction.reply({
+            content: `已将投诉工单接收频道设置为 <#${channel.id}>`,
+            flags: 64,
+          });
+
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
 
@@ -249,6 +283,9 @@ export async function startBot(token: string) {
         } else if (customId.startsWith(ARTWORK_GET_CUSTOM_ID)) {
           const messageId = customId.slice(ARTWORK_GET_CUSTOM_ID.length);
           await handleArtworkGetButton(interaction, messageId);
+
+        } else if (customId === COMPLAINT_PANEL_CUSTOM_ID) {
+          await handleComplaintButton(interaction);
         }
 
       } else if (interaction.isModalSubmit()) {
@@ -260,6 +297,9 @@ export async function startBot(token: string) {
         } else if (customId.startsWith(ARTWORK_GET_MODAL_PREFIX)) {
           const messageId = customId.slice(ARTWORK_GET_MODAL_PREFIX.length);
           await handleArtworkGetModal(interaction, messageId, client);
+
+        } else if (customId === COMPLAINT_SUBMIT_MODAL_ID) {
+          await handleComplaintSubmitModal(interaction, client);
         }
       }
     } catch (err) {

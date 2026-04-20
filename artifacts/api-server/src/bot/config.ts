@@ -6,6 +6,7 @@ import { logger } from "../lib/logger.js";
 export const CONFIG_KEY_LOG_CHANNEL = "log_channel";
 export const CONFIG_KEY_ADMIN_ROLE = "admin_role";
 export const CONFIG_KEY_APPROVE_ROLE = "approve_role";
+export const CONFIG_KEY_COMPLAINT_CHANNEL = "complaint_channel";
 
 const configCache = new Map<string, string>();
 

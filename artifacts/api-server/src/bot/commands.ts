@@ -12,6 +12,10 @@ import {
   SET_APPROVE_ROLE_CMD,
   DECODE_FILENAME_CMD,
   LOOKUP_TRACE_CMD,
+  GO_TOP_CMD,
+  CLEAR_MESSAGES_CMD,
+  COMPLAINT_PANEL_CMD,
+  SET_COMPLAINT_CHANNEL_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -91,6 +95,28 @@ export const commands = [
         .setName("file")
         .setDescription("上传疑似泄露的原始文件（支持 PNG / JSON / 文本类文件）")
         .setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(GO_TOP_CMD)
+    .setDescription("发送跳转到本帖首楼的链接"),
+
+  new SlashCommandBuilder()
+    .setName(CLEAR_MESSAGES_CMD)
+    .setDescription("删除当前频道/子区内的所有消息")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
+  new SlashCommandBuilder()
+    .setName(COMPLAINT_PANEL_CMD)
+    .setDescription("在当前频道发送匿名投诉交互面板")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+
+  new SlashCommandBuilder()
+    .setName(SET_COMPLAINT_CHANNEL_CMD)
+    .setDescription("设置接收投诉工单的频道")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addChannelOption((opt) =>
+      opt.setName("channel").setDescription("投诉工单接收频道").setRequired(true)
     ),
 
   uploadArtworkCmd,
