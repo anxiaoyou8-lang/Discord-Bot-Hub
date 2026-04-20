@@ -22,10 +22,13 @@ export const SET_APPROVE_ROLE_CMD = "set_approve_role";
 export const DECODE_FILENAME_CMD = "decode_filename";
 export const LOOKUP_TRACE_CMD = "lookup_trace";
 
-export const GO_TOP_CMD = "go_top";
-export const CLEAR_MESSAGES_CMD = "clear_messages";
+export const GO_TOP_CMD = "回顶";
+export const DELETE_THREAD_CMD = "删除帖子";
 export const COMPLAINT_PANEL_CMD = "setup_complaint_panel";
 export const SET_COMPLAINT_CHANNEL_CMD = "set_complaint_channel";
+
+export const DELETE_THREAD_CONFIRM_ID = "delete_thread_confirm";
+export const DELETE_THREAD_CANCEL_ID = "delete_thread_cancel";
 
 export const COMPLAINT_PANEL_CUSTOM_ID = "complaint_panel_submit";
 export const COMPLAINT_SUBMIT_MODAL_ID = "complaint_submit_modal";

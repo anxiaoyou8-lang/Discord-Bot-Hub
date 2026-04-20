@@ -24,7 +24,12 @@ import {
   handleArtworkGetButton,
   handleArtworkGetModal,
 } from "./handlers/artworkHandler.js";
-import { handleGoTop, handleClearMessages } from "./handlers/threadHandler.js";
+import {
+  handleGoTop,
+  handleDeleteThread,
+  handleDeleteThreadConfirm,
+  handleDeleteThreadCancel,
+} from "./handlers/threadHandler.js";
 import {
   buildComplaintPanel,
   handleComplaintButton,
@@ -56,11 +61,13 @@ import {
   DECODE_FILENAME_CMD,
   LOOKUP_TRACE_CMD,
   GO_TOP_CMD,
-  CLEAR_MESSAGES_CMD,
+  DELETE_THREAD_CMD,
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
   COMPLAINT_PANEL_CUSTOM_ID,
   COMPLAINT_SUBMIT_MODAL_ID,
+  DELETE_THREAD_CONFIRM_ID,
+  DELETE_THREAD_CANCEL_ID,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -169,8 +176,8 @@ export async function startBot(token: string) {
         } else if (commandName === GO_TOP_CMD) {
           await handleGoTop(interaction);
 
-        } else if (commandName === CLEAR_MESSAGES_CMD) {
-          await handleClearMessages(interaction);
+        } else if (commandName === DELETE_THREAD_CMD) {
+          await handleDeleteThread(interaction);
 
         } else if (commandName === COMPLAINT_PANEL_CMD) {
           const panel = buildComplaintPanel();
@@ -286,6 +293,12 @@ export async function startBot(token: string) {
 
         } else if (customId === COMPLAINT_PANEL_CUSTOM_ID) {
           await handleComplaintButton(interaction);
+
+        } else if (customId === DELETE_THREAD_CONFIRM_ID) {
+          await handleDeleteThreadConfirm(interaction);
+
+        } else if (customId === DELETE_THREAD_CANCEL_ID) {
+          await handleDeleteThreadCancel(interaction);
         }
 
       } else if (interaction.isModalSubmit()) {

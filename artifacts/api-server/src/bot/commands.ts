@@ -13,7 +13,7 @@ import {
   DECODE_FILENAME_CMD,
   LOOKUP_TRACE_CMD,
   GO_TOP_CMD,
-  CLEAR_MESSAGES_CMD,
+  DELETE_THREAD_CMD,
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
 } from "./constants.js";
@@ -102,9 +102,9 @@ export const commands = [
     .setDescription("发送跳转到本帖首楼的链接"),
 
   new SlashCommandBuilder()
-    .setName(CLEAR_MESSAGES_CMD)
-    .setDescription("删除当前频道/子区内的所有消息")
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+    .setName(DELETE_THREAD_CMD)
+    .setDescription("删除当前帖子（此操作不可逆）")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageThreads),
 
   new SlashCommandBuilder()
     .setName(COMPLAINT_PANEL_CMD)
