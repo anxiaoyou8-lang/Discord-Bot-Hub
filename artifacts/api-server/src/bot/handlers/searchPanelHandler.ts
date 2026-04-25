@@ -69,9 +69,22 @@ export async function handleSearchChannelSelect(interaction: ChannelSelectMenuIn
     await interaction.reply({ content: "未选择有效频道。", flags: 64 });
     return;
   }
+
+  // 服务端验证：只接受论坛频道
+  const channel = interaction.guild?.channels.cache.get(channelId)
+    ?? await interaction.guild?.channels.fetch(channelId).catch(() => null);
+
+  if (!channel || channel.type !== ChannelType.GuildForum) {
+    await interaction.reply({
+      content: "❌ 请选择**论坛频道**，不支持普通文字频道或其他类型频道。",
+      flags: 64,
+    });
+    return;
+  }
+
   userChannelMap.set(interaction.user.id, channelId);
   await interaction.reply({
-    content: `✅ 关键词搜索将在 <#${channelId}> 中进行，点击「关键词搜索」按钮开始搜索。`,
+    content: `✅ 关键词搜索将在论坛 <#${channelId}> 中进行，点击「关键词搜索」按钮开始搜索。`,
     flags: 64,
   });
 }

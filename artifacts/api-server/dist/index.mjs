@@ -131910,9 +131910,17 @@ async function handleSearchChannelSelect(interaction) {
     await interaction.reply({ content: "\u672A\u9009\u62E9\u6709\u6548\u9891\u9053\u3002", flags: 64 });
     return;
   }
+  const channel = interaction.guild?.channels.cache.get(channelId) ?? await interaction.guild?.channels.fetch(channelId).catch(() => null);
+  if (!channel || channel.type !== import_discord6.ChannelType.GuildForum) {
+    await interaction.reply({
+      content: "\u274C \u8BF7\u9009\u62E9**\u8BBA\u575B\u9891\u9053**\uFF0C\u4E0D\u652F\u6301\u666E\u901A\u6587\u5B57\u9891\u9053\u6216\u5176\u4ED6\u7C7B\u578B\u9891\u9053\u3002",
+      flags: 64
+    });
+    return;
+  }
   userChannelMap.set(interaction.user.id, channelId);
   await interaction.reply({
-    content: `\u2705 \u5173\u952E\u8BCD\u641C\u7D22\u5C06\u5728 <#${channelId}> \u4E2D\u8FDB\u884C\uFF0C\u70B9\u51FB\u300C\u5173\u952E\u8BCD\u641C\u7D22\u300D\u6309\u94AE\u5F00\u59CB\u641C\u7D22\u3002`,
+    content: `\u2705 \u5173\u952E\u8BCD\u641C\u7D22\u5C06\u5728\u8BBA\u575B <#${channelId}> \u4E2D\u8FDB\u884C\uFF0C\u70B9\u51FB\u300C\u5173\u952E\u8BCD\u641C\u7D22\u300D\u6309\u94AE\u5F00\u59CB\u641C\u7D22\u3002`,
     flags: 64
   });
 }
