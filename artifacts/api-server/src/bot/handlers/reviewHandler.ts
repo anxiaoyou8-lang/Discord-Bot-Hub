@@ -71,28 +71,7 @@ export async function handleReviewPanelButton(
   interaction: ButtonInteraction,
   _client: Client
 ) {
-  const guild = interaction.guild;
-  if (!guild) return;
-
-  const existing = await db
-    .select()
-    .from(reviewThreadsTable)
-    .where(
-      and(
-        eq(reviewThreadsTable.userId, interaction.user.id),
-        eq(reviewThreadsTable.status, "pending")
-      )
-    )
-    .limit(1);
-
-  if (existing.length > 0) {
-    await interaction.reply({
-      content: `你已经有一个正在处理中的审核申请 <#${existing[0]!.threadId}>，请等待管理员审核完毕。`,
-      flags: 64,
-    });
-    return;
-  }
-
+  // 直接弹窗，不做任何异步操作，确保在 Discord 3 秒限制内响应
   const modal = new ModalBuilder()
     .setCustomId(REVIEW_SUBMIT_MODAL_ID)
     .setTitle("提交审核材料");
@@ -123,6 +102,25 @@ export async function handleReviewSubmitModal(
 
   if (!guild) {
     await interaction.editReply("此操作只能在服务器中使用。");
+    return;
+  }
+
+  // 检查是否已有待处理中的申请（移到这里，避免按钮响应超时）
+  const existing = await db
+    .select()
+    .from(reviewThreadsTable)
+    .where(
+      and(
+        eq(reviewThreadsTable.userId, interaction.user.id),
+        eq(reviewThreadsTable.status, "pending")
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    await interaction.editReply(
+      `你已经有一个正在处理中的审核申请 <#${existing[0]!.threadId}>，请等待管理员审核完毕。`
+    );
     return;
   }
 

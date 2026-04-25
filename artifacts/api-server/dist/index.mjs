@@ -131022,21 +131022,6 @@ function isAdminMember(interaction, adminRoleId) {
   return isAdmin || hasAdminRole;
 }
 async function handleReviewPanelButton(interaction, _client) {
-  const guild = interaction.guild;
-  if (!guild) return;
-  const existing = await db.select().from(reviewThreadsTable).where(
-    and(
-      eq(reviewThreadsTable.userId, interaction.user.id),
-      eq(reviewThreadsTable.status, "pending")
-    )
-  ).limit(1);
-  if (existing.length > 0) {
-    await interaction.reply({
-      content: `\u4F60\u5DF2\u7ECF\u6709\u4E00\u4E2A\u6B63\u5728\u5904\u7406\u4E2D\u7684\u5BA1\u6838\u7533\u8BF7 <#${existing[0].threadId}>\uFF0C\u8BF7\u7B49\u5F85\u7BA1\u7406\u5458\u5BA1\u6838\u5B8C\u6BD5\u3002`,
-      flags: 64
-    });
-    return;
-  }
   const modal = new import_discord3.ModalBuilder().setCustomId(REVIEW_SUBMIT_MODAL_ID).setTitle("\u63D0\u4EA4\u5BA1\u6838\u6750\u6599");
   const reasonInput = new import_discord3.TextInputBuilder().setCustomId(REVIEW_TEXT_INPUT).setLabel("\u52A0\u5165\u539F\u56E0").setStyle(import_discord3.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u5982\u5B9E\u8BF4\u660E\u4F60\u7684\u52A0\u5165\u539F\u56E0\u2026\u2026").setRequired(true).setMaxLength(1e3);
   modal.addComponents(
@@ -131050,6 +131035,18 @@ async function handleReviewSubmitModal(interaction, client) {
   const guild = interaction.guild;
   if (!guild) {
     await interaction.editReply("\u6B64\u64CD\u4F5C\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
+    return;
+  }
+  const existing = await db.select().from(reviewThreadsTable).where(
+    and(
+      eq(reviewThreadsTable.userId, interaction.user.id),
+      eq(reviewThreadsTable.status, "pending")
+    )
+  ).limit(1);
+  if (existing.length > 0) {
+    await interaction.editReply(
+      `\u4F60\u5DF2\u7ECF\u6709\u4E00\u4E2A\u6B63\u5728\u5904\u7406\u4E2D\u7684\u5BA1\u6838\u7533\u8BF7 <#${existing[0].threadId}>\uFF0C\u8BF7\u7B49\u5F85\u7BA1\u7406\u5458\u5BA1\u6838\u5B8C\u6BD5\u3002`
+    );
     return;
   }
   const channel = interaction.channel;
