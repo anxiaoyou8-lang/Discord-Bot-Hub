@@ -32,6 +32,14 @@ import {
 } from "./handlers/threadHandler.js";
 import { handleSearchUser, handleSearchMessages } from "./handlers/searchHandler.js";
 import {
+  buildSearchPanel,
+  handleSearchChannelSelect,
+  handleSearchKeywordBtn,
+  handleSearchNicknameBtn,
+  handleSearchKeywordModal,
+  handleSearchNicknameModal,
+} from "./handlers/searchPanelHandler.js";
+import {
   buildComplaintPanel,
   handleComplaintButton,
   handleComplaintThreadSubmit,
@@ -65,6 +73,12 @@ import {
   GO_TOP_CMD,
   DELETE_THREAD_CMD,
   SEARCH_CMD,
+  SEARCH_PANEL_CMD,
+  SEARCH_CHANNEL_SELECT_ID,
+  SEARCH_KEYWORD_BTN_ID,
+  SEARCH_NICKNAME_BTN_ID,
+  SEARCH_KEYWORD_MODAL_ID,
+  SEARCH_NICKNAME_MODAL_ID,
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
   COMPLAINT_PANEL_CUSTOM_ID,
@@ -206,6 +220,12 @@ export async function startBot(token: string) {
             flags: 64,
           });
 
+        } else if (commandName === SEARCH_PANEL_CMD) {
+          const panel = buildSearchPanel();
+          const guildChannel = interaction.channel as GuildTextBasedChannel | null;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "搜索面板已发送！", flags: 64 });
+
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
 
@@ -317,6 +337,19 @@ export async function startBot(token: string) {
 
         } else if (customId === DELETE_THREAD_CANCEL_ID) {
           await handleDeleteThreadCancel(interaction);
+
+        } else if (customId === SEARCH_KEYWORD_BTN_ID) {
+          await handleSearchKeywordBtn(interaction);
+
+        } else if (customId === SEARCH_NICKNAME_BTN_ID) {
+          await handleSearchNicknameBtn(interaction);
+        }
+
+      } else if (interaction.isChannelSelectMenu()) {
+        const { customId } = interaction;
+
+        if (customId === SEARCH_CHANNEL_SELECT_ID) {
+          await handleSearchChannelSelect(interaction);
         }
 
       } else if (interaction.isModalSubmit()) {
@@ -329,6 +362,11 @@ export async function startBot(token: string) {
           const messageId = customId.slice(ARTWORK_GET_MODAL_PREFIX.length);
           await handleArtworkGetModal(interaction, messageId, client);
 
+        } else if (customId === SEARCH_KEYWORD_MODAL_ID) {
+          await handleSearchKeywordModal(interaction);
+
+        } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
+          await handleSearchNicknameModal(interaction);
         }
       }
     } catch (err) {

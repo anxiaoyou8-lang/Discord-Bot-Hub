@@ -15,6 +15,7 @@ import {
   GO_TOP_CMD,
   DELETE_THREAD_CMD,
   SEARCH_CMD,
+  SEARCH_PANEL_CMD,
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
 } from "./constants.js";
@@ -146,6 +147,11 @@ export const commands = [
     .addChannelOption((opt) =>
       opt.setName("channel").setDescription("投诉工单接收频道").setRequired(true)
     ),
+
+  new SlashCommandBuilder()
+    .setName(SEARCH_PANEL_CMD)
+    .setDescription("在当前频道发送搜索交互面板")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   uploadArtworkCmd,
 ].map((cmd) => cmd.toJSON());

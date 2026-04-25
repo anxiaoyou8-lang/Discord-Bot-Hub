@@ -25,6 +25,15 @@ export const LOOKUP_TRACE_CMD = "lookup_trace";
 export const GO_TOP_CMD = "回顶";
 export const DELETE_THREAD_CMD = "删除帖子";
 export const SEARCH_CMD = "搜索";
+export const SEARCH_PANEL_CMD = "setup_search_panel";
+
+export const SEARCH_CHANNEL_SELECT_ID = "search_channel_select";
+export const SEARCH_KEYWORD_BTN_ID = "search_keyword_btn";
+export const SEARCH_NICKNAME_BTN_ID = "search_nickname_btn";
+export const SEARCH_KEYWORD_MODAL_ID = "search_keyword_modal";
+export const SEARCH_NICKNAME_MODAL_ID = "search_nickname_modal";
+export const SEARCH_KEYWORD_INPUT = "search_keyword_input";
+export const SEARCH_NICKNAME_INPUT = "search_nickname_input";
 export const COMPLAINT_PANEL_CMD = "setup_complaint_panel";
 export const SET_COMPLAINT_CHANNEL_CMD = "set_complaint_channel";
 
