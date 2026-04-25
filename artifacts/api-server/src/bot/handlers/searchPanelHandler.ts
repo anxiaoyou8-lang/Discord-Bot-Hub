@@ -34,15 +34,15 @@ export function buildSearchPanel() {
     .setTitle("🔍 搜索面板")
     .setDescription(
       "**使用方法：**\n" +
-      "1. 在下方选择要搜索的频道\n" +
-      "2. 点击「关键词搜索」在所选频道按关键词查找消息\n" +
-      "3. 点击「作者搜索」按作者昵称查找其发布的所有作品"
+      "• **关键词搜索**：在消息记录中查找含特定关键词的消息\n" +
+      "  - 可先在下方选择频道来指定搜索范围，否则将搜索当前频道\n" +
+      "• **作者搜索**：按用户名查找其在数据库中发布的所有作品"
     )
     .setColor(0x5865f2);
 
   const channelSelect = new ChannelSelectMenuBuilder()
     .setCustomId(SEARCH_CHANNEL_SELECT_ID)
-    .setPlaceholder("请选择要搜索的频道")
+    .setPlaceholder("（可选）选择关键词搜索的目标频道")
     .setChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread);
 
   const keywordBtn = new ButtonBuilder()
@@ -71,21 +71,12 @@ export async function handleSearchChannelSelect(interaction: ChannelSelectMenuIn
   }
   userChannelMap.set(interaction.user.id, channelId);
   await interaction.reply({
-    content: `✅ 已选择频道 <#${channelId}>，现在可以点击下方按钮进行搜索。`,
+    content: `✅ 关键词搜索将在 <#${channelId}> 中进行，点击「关键词搜索」按钮开始搜索。`,
     flags: 64,
   });
 }
 
 export async function handleSearchKeywordBtn(interaction: ButtonInteraction) {
-  const channelId = userChannelMap.get(interaction.user.id);
-  if (!channelId) {
-    await interaction.reply({
-      content: "❌ 请先在面板中选择一个频道，再点击搜索按钮。",
-      flags: 64,
-    });
-    return;
-  }
-
   const modal = new ModalBuilder()
     .setCustomId(SEARCH_KEYWORD_MODAL_ID)
     .setTitle("关键词搜索消息");
@@ -103,15 +94,6 @@ export async function handleSearchKeywordBtn(interaction: ButtonInteraction) {
 }
 
 export async function handleSearchNicknameBtn(interaction: ButtonInteraction) {
-  const channelId = userChannelMap.get(interaction.user.id);
-  if (!channelId) {
-    await interaction.reply({
-      content: "❌ 请先在面板中选择一个频道，再点击搜索按钮。",
-      flags: 64,
-    });
-    return;
-  }
-
   const modal = new ModalBuilder()
     .setCustomId(SEARCH_NICKNAME_MODAL_ID)
     .setTitle("按作者搜索作品");
@@ -130,13 +112,13 @@ export async function handleSearchNicknameBtn(interaction: ButtonInteraction) {
 
 export async function handleSearchKeywordModal(interaction: ModalSubmitInteraction) {
   const keyword = interaction.fields.getTextInputValue(SEARCH_KEYWORD_INPUT).trim();
-  const channelId = userChannelMap.get(interaction.user.id);
+
+  const storedChannelId = userChannelMap.get(interaction.user.id);
+  const fallbackChannelId = interaction.channelId;
+  const channelId = storedChannelId ?? fallbackChannelId;
 
   if (!channelId) {
-    await interaction.reply({
-      content: "❌ 频道信息已过期，请重新在面板选择频道后再搜索。",
-      flags: 64,
-    });
+    await interaction.reply({ content: "❌ 无法确定搜索频道，请重试。", flags: 64 });
     return;
   }
 
@@ -151,7 +133,7 @@ export async function handleSearchKeywordModal(interaction: ModalSubmitInteracti
 
     const channel = (await guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
     if (!channel || !channel.isTextBased()) {
-      await interaction.editReply("❌ 无法访问所选频道，请重新选择。");
+      await interaction.editReply("❌ 无法访问目标频道，请重新选择并再试。");
       return;
     }
 
@@ -238,7 +220,7 @@ export async function handleSearchNicknameModal(interaction: ModalSubmitInteract
 
     if (rows.length === 0) {
       await interaction.editReply(
-        `未找到作者名或标签包含「${query}」的作品记录。`
+        `未找到用户名或标签包含「${query}」的作品记录。`
       );
       return;
     }

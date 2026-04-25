@@ -131995,9 +131995,9 @@ var import_discord7 = __toESM(require_src2(), 1);
 var userChannelMap = /* @__PURE__ */ new Map();
 function buildSearchPanel() {
   const embed = new import_discord7.EmbedBuilder().setTitle("\u{1F50D} \u641C\u7D22\u9762\u677F").setDescription(
-    "**\u4F7F\u7528\u65B9\u6CD5\uFF1A**\n1. \u5728\u4E0B\u65B9\u9009\u62E9\u8981\u641C\u7D22\u7684\u9891\u9053\n2. \u70B9\u51FB\u300C\u5173\u952E\u8BCD\u641C\u7D22\u300D\u5728\u6240\u9009\u9891\u9053\u6309\u5173\u952E\u8BCD\u67E5\u627E\u6D88\u606F\n3. \u70B9\u51FB\u300C\u4F5C\u8005\u641C\u7D22\u300D\u6309\u4F5C\u8005\u6635\u79F0\u67E5\u627E\u5176\u53D1\u5E03\u7684\u6240\u6709\u4F5C\u54C1"
+    "**\u4F7F\u7528\u65B9\u6CD5\uFF1A**\n\u2022 **\u5173\u952E\u8BCD\u641C\u7D22**\uFF1A\u5728\u6D88\u606F\u8BB0\u5F55\u4E2D\u67E5\u627E\u542B\u7279\u5B9A\u5173\u952E\u8BCD\u7684\u6D88\u606F\n  - \u53EF\u5148\u5728\u4E0B\u65B9\u9009\u62E9\u9891\u9053\u6765\u6307\u5B9A\u641C\u7D22\u8303\u56F4\uFF0C\u5426\u5219\u5C06\u641C\u7D22\u5F53\u524D\u9891\u9053\n\u2022 **\u4F5C\u8005\u641C\u7D22**\uFF1A\u6309\u7528\u6237\u540D\u67E5\u627E\u5176\u5728\u6570\u636E\u5E93\u4E2D\u53D1\u5E03\u7684\u6240\u6709\u4F5C\u54C1"
   ).setColor(5793266);
-  const channelSelect = new import_discord7.ChannelSelectMenuBuilder().setCustomId(SEARCH_CHANNEL_SELECT_ID).setPlaceholder("\u8BF7\u9009\u62E9\u8981\u641C\u7D22\u7684\u9891\u9053").setChannelTypes(import_discord7.ChannelType.GuildText, import_discord7.ChannelType.PublicThread, import_discord7.ChannelType.PrivateThread);
+  const channelSelect = new import_discord7.ChannelSelectMenuBuilder().setCustomId(SEARCH_CHANNEL_SELECT_ID).setPlaceholder("\uFF08\u53EF\u9009\uFF09\u9009\u62E9\u5173\u952E\u8BCD\u641C\u7D22\u7684\u76EE\u6807\u9891\u9053").setChannelTypes(import_discord7.ChannelType.GuildText, import_discord7.ChannelType.PublicThread, import_discord7.ChannelType.PrivateThread);
   const keywordBtn = new import_discord7.ButtonBuilder().setCustomId(SEARCH_KEYWORD_BTN_ID).setLabel("\u5173\u952E\u8BCD\u641C\u7D22").setEmoji("\u{1F4AC}").setStyle(import_discord7.ButtonStyle.Primary);
   const nicknameBtn = new import_discord7.ButtonBuilder().setCustomId(SEARCH_NICKNAME_BTN_ID).setLabel("\u4F5C\u8005\u641C\u7D22").setEmoji("\u{1F3A8}").setStyle(import_discord7.ButtonStyle.Secondary);
   const selectRow = new import_discord7.ActionRowBuilder().addComponents(channelSelect);
@@ -132012,33 +132012,17 @@ async function handleSearchChannelSelect(interaction) {
   }
   userChannelMap.set(interaction.user.id, channelId);
   await interaction.reply({
-    content: `\u2705 \u5DF2\u9009\u62E9\u9891\u9053 <#${channelId}>\uFF0C\u73B0\u5728\u53EF\u4EE5\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\u8FDB\u884C\u641C\u7D22\u3002`,
+    content: `\u2705 \u5173\u952E\u8BCD\u641C\u7D22\u5C06\u5728 <#${channelId}> \u4E2D\u8FDB\u884C\uFF0C\u70B9\u51FB\u300C\u5173\u952E\u8BCD\u641C\u7D22\u300D\u6309\u94AE\u5F00\u59CB\u641C\u7D22\u3002`,
     flags: 64
   });
 }
 async function handleSearchKeywordBtn(interaction) {
-  const channelId = userChannelMap.get(interaction.user.id);
-  if (!channelId) {
-    await interaction.reply({
-      content: "\u274C \u8BF7\u5148\u5728\u9762\u677F\u4E2D\u9009\u62E9\u4E00\u4E2A\u9891\u9053\uFF0C\u518D\u70B9\u51FB\u641C\u7D22\u6309\u94AE\u3002",
-      flags: 64
-    });
-    return;
-  }
   const modal = new import_discord7.ModalBuilder().setCustomId(SEARCH_KEYWORD_MODAL_ID).setTitle("\u5173\u952E\u8BCD\u641C\u7D22\u6D88\u606F");
   const input = new import_discord7.TextInputBuilder().setCustomId(SEARCH_KEYWORD_INPUT).setLabel("\u5173\u952E\u8BCD").setPlaceholder("\u8BF7\u8F93\u5165\u8981\u641C\u7D22\u7684\u5173\u952E\u8BCD").setStyle(import_discord7.TextInputStyle.Short).setRequired(true).setMaxLength(100);
   modal.addComponents(new import_discord7.ActionRowBuilder().addComponents(input));
   await interaction.showModal(modal);
 }
 async function handleSearchNicknameBtn(interaction) {
-  const channelId = userChannelMap.get(interaction.user.id);
-  if (!channelId) {
-    await interaction.reply({
-      content: "\u274C \u8BF7\u5148\u5728\u9762\u677F\u4E2D\u9009\u62E9\u4E00\u4E2A\u9891\u9053\uFF0C\u518D\u70B9\u51FB\u641C\u7D22\u6309\u94AE\u3002",
-      flags: 64
-    });
-    return;
-  }
   const modal = new import_discord7.ModalBuilder().setCustomId(SEARCH_NICKNAME_MODAL_ID).setTitle("\u6309\u4F5C\u8005\u641C\u7D22\u4F5C\u54C1");
   const input = new import_discord7.TextInputBuilder().setCustomId(SEARCH_NICKNAME_INPUT).setLabel("\u4F5C\u8005\u7528\u6237\u540D / \u6635\u79F0").setPlaceholder("\u8BF7\u8F93\u5165\u4F5C\u8005\u7684\u7528\u6237\u540D\u6216 Discord \u6807\u7B7E").setStyle(import_discord7.TextInputStyle.Short).setRequired(true).setMaxLength(100);
   modal.addComponents(new import_discord7.ActionRowBuilder().addComponents(input));
@@ -132046,12 +132030,11 @@ async function handleSearchNicknameBtn(interaction) {
 }
 async function handleSearchKeywordModal(interaction) {
   const keyword = interaction.fields.getTextInputValue(SEARCH_KEYWORD_INPUT).trim();
-  const channelId = userChannelMap.get(interaction.user.id);
+  const storedChannelId = userChannelMap.get(interaction.user.id);
+  const fallbackChannelId = interaction.channelId;
+  const channelId = storedChannelId ?? fallbackChannelId;
   if (!channelId) {
-    await interaction.reply({
-      content: "\u274C \u9891\u9053\u4FE1\u606F\u5DF2\u8FC7\u671F\uFF0C\u8BF7\u91CD\u65B0\u5728\u9762\u677F\u9009\u62E9\u9891\u9053\u540E\u518D\u641C\u7D22\u3002",
-      flags: 64
-    });
+    await interaction.reply({ content: "\u274C \u65E0\u6CD5\u786E\u5B9A\u641C\u7D22\u9891\u9053\uFF0C\u8BF7\u91CD\u8BD5\u3002", flags: 64 });
     return;
   }
   await interaction.deferReply({ flags: 64 });
@@ -132063,7 +132046,7 @@ async function handleSearchKeywordModal(interaction) {
     }
     const channel = await guild.channels.fetch(channelId);
     if (!channel || !channel.isTextBased()) {
-      await interaction.editReply("\u274C \u65E0\u6CD5\u8BBF\u95EE\u6240\u9009\u9891\u9053\uFF0C\u8BF7\u91CD\u65B0\u9009\u62E9\u3002");
+      await interaction.editReply("\u274C \u65E0\u6CD5\u8BBF\u95EE\u76EE\u6807\u9891\u9053\uFF0C\u8BF7\u91CD\u65B0\u9009\u62E9\u5E76\u518D\u8BD5\u3002");
       return;
     }
     const results = [];
@@ -132128,7 +132111,7 @@ async function handleSearchNicknameModal(interaction) {
     ).limit(20);
     if (rows.length === 0) {
       await interaction.editReply(
-        `\u672A\u627E\u5230\u4F5C\u8005\u540D\u6216\u6807\u7B7E\u5305\u542B\u300C${query}\u300D\u7684\u4F5C\u54C1\u8BB0\u5F55\u3002`
+        `\u672A\u627E\u5230\u7528\u6237\u540D\u6216\u6807\u7B7E\u5305\u542B\u300C${query}\u300D\u7684\u4F5C\u54C1\u8BB0\u5F55\u3002`
       );
       return;
     }
