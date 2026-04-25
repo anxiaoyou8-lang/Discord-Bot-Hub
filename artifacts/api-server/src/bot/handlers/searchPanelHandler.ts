@@ -34,16 +34,16 @@ export function buildSearchPanel() {
     .setTitle("🔍 搜索面板")
     .setDescription(
       "**使用方法：**\n" +
-      "• **关键词搜索**：在消息记录中查找含特定关键词的消息\n" +
-      "  - 可先在下方选择频道来指定搜索范围，否则将搜索当前频道\n" +
-      "• **作者搜索**：按用户名查找其在数据库中发布的所有作品"
+      "• **关键词搜索**：在帖子消息记录中查找含特定关键词的消息\n" +
+      "  - 可先在下方选择论坛来指定搜索范围，否则将搜索当前频道\n" +
+      "• **作者搜索**：按用户名或服务器昵称查找其在数据库中发布的所有作品"
     )
     .setColor(0x5865f2);
 
   const channelSelect = new ChannelSelectMenuBuilder()
     .setCustomId(SEARCH_CHANNEL_SELECT_ID)
-    .setPlaceholder("（可选）选择关键词搜索的目标频道")
-    .setChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread);
+    .setPlaceholder("（可选）选择关键词搜索的目标论坛")
+    .setChannelTypes(ChannelType.GuildForum);
 
   const keywordBtn = new ButtonBuilder()
     .setCustomId(SEARCH_KEYWORD_BTN_ID)
@@ -199,15 +199,16 @@ export async function handleSearchNicknameModal(interaction: ModalSubmitInteract
   await interaction.deferReply({ flags: 64 });
 
   try {
-    const guildId = interaction.guildId;
-    if (!guildId) {
+    const guild = interaction.guild;
+    if (!guild) {
       await interaction.editReply("此功能只能在服务器中使用。");
       return;
     }
 
     const queryPattern = `%${query}%`;
 
-    const rows = await db
+    // 第一步：通过用户名 / tag 直接匹配数据库
+    const directRows = await db
       .select()
       .from(artworksTable)
       .where(
@@ -218,15 +219,36 @@ export async function handleSearchNicknameModal(interaction: ModalSubmitInteract
       )
       .limit(20);
 
-    if (rows.length === 0) {
+    // 第二步：用 guild.members.search 搜索服务器成员（含昵称），找到 ID 后查作品库
+    const matchedMembers = await guild.members.search({ query, limit: 10 });
+    const nicknameIds = matchedMembers
+      .filter((m) => !directRows.some((r) => r.authorId === m.id))
+      .map((m) => m.id);
+
+    const nicknameRows =
+      nicknameIds.length > 0
+        ? await Promise.all(
+            nicknameIds.map((id) =>
+              db
+                .select()
+                .from(artworksTable)
+                .where(eq(artworksTable.authorId, id))
+                .limit(10)
+            )
+          ).then((results) => results.flat())
+        : [];
+
+    const allRows = [...directRows, ...nicknameRows];
+
+    if (allRows.length === 0) {
       await interaction.editReply(
-        `未找到用户名或标签包含「${query}」的作品记录。`
+        `未找到用户名、昵称或标签包含「${query}」的作品记录。`
       );
       return;
     }
 
-    const byAuthor = new Map<string, typeof rows>();
-    for (const row of rows) {
+    const byAuthor = new Map<string, typeof allRows>();
+    for (const row of allRows) {
       const key = `${row.authorId}|${row.authorTag}`;
       const arr = byAuthor.get(key) ?? [];
       arr.push(row);
@@ -236,12 +258,17 @@ export async function handleSearchNicknameModal(interaction: ModalSubmitInteract
     const embed = new EmbedBuilder()
       .setTitle(`🎨 作者搜索：「${query}」`)
       .setColor(0x5865f2)
-      .setFooter({ text: `共找到 ${rows.length} 件作品` });
+      .setFooter({ text: `共找到 ${allRows.length} 件作品` });
 
     const sections: string[] = [];
     for (const [key, artworks] of byAuthor) {
       const [authorId, authorTag] = key.split("|");
-      const header = `**<@${authorId}> (${authorTag})**`;
+      // 显示成员昵称（如果有）
+      const member = matchedMembers.get(authorId ?? "");
+      const displayName = member?.nickname
+        ? `${member.nickname}（${authorTag}）`
+        : authorTag;
+      const header = `**<@${authorId}> ${displayName}**`;
       const items = artworks.map((aw) => {
         const link = `https://discord.com/channels/${aw.guildId}/${aw.channelId}/${aw.messageId}`;
         const time = `<t:${Math.floor(aw.createdAt.getTime() / 1000)}:d>`;

@@ -30,7 +30,6 @@ import {
   handleDeleteThreadConfirm,
   handleDeleteThreadCancel,
 } from "./handlers/threadHandler.js";
-import { handleSearchUser, handleSearchMessages } from "./handlers/searchHandler.js";
 import {
   buildSearchPanel,
   handleSearchChannelSelect,
@@ -72,7 +71,6 @@ import {
   LOOKUP_TRACE_CMD,
   GO_TOP_CMD,
   DELETE_THREAD_CMD,
-  SEARCH_CMD,
   SEARCH_PANEL_CMD,
   SEARCH_CHANNEL_SELECT_ID,
   SEARCH_KEYWORD_BTN_ID,
@@ -190,14 +188,6 @@ export async function startBot(token: string) {
             ].join("\n"),
             flags: 64,
           });
-
-        } else if (commandName === SEARCH_CMD) {
-          const sub = interaction.options.getSubcommand();
-          if (sub === "用户") {
-            await handleSearchUser(interaction);
-          } else if (sub === "消息") {
-            await handleSearchMessages(interaction);
-          }
 
         } else if (commandName === GO_TOP_CMD) {
           await handleGoTop(interaction);
