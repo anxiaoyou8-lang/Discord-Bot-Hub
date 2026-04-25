@@ -8,8 +8,10 @@ import {
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle,
+  type AnyThreadChannel,
   type ButtonInteraction,
   type ChannelSelectMenuInteraction,
+  type ForumChannel,
   type GuildTextBasedChannel,
   type Message,
   type ModalSubmitInteraction,
@@ -144,58 +146,109 @@ export async function handleSearchKeywordModal(interaction: ModalSubmitInteracti
       return;
     }
 
-    const channel = (await guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
-    if (!channel || !channel.isTextBased()) {
-      await interaction.editReply("❌ 无法访问目标频道，请重新选择并再试。");
+    const rawChannel = await guild.channels.fetch(channelId).catch(() => null);
+    if (!rawChannel) {
+      await interaction.editReply("❌ 无法访问目标频道，请检查机器人权限后重试。");
       return;
     }
 
-    const results: Message[] = [];
-    let lastId: string | undefined;
-    let scanned = 0;
     const keywordLower = keyword.toLowerCase();
-    const maxScan = 500;
 
-    while (scanned < maxScan) {
-      const batch = await channel.messages.fetch({
-        limit: 100,
-        ...(lastId ? { before: lastId } : {}),
-      });
+    // 辅助函数：在单个文字频道/帖子中搜索消息
+    async function searchInTextChannel(
+      ch: GuildTextBasedChannel,
+      maxScan: number
+    ): Promise<{ results: Message[]; scanned: number }> {
+      const results: Message[] = [];
+      let lastId: string | undefined;
+      let scanned = 0;
 
-      if (batch.size === 0) break;
-
-      for (const [, msg] of batch) {
-        if (msg.content.toLowerCase().includes(keywordLower)) {
-          results.push(msg);
+      while (scanned < maxScan && results.length < 10) {
+        const batch = await ch.messages.fetch({
+          limit: 100,
+          ...(lastId ? { before: lastId } : {}),
+        });
+        if (batch.size === 0) break;
+        for (const [, msg] of batch) {
+          if (msg.content.toLowerCase().includes(keywordLower)) {
+            results.push(msg);
+          }
+          lastId = msg.id;
         }
-        lastId = msg.id;
+        scanned += batch.size;
+        if (batch.size < 100) break;
       }
-
-      scanned += batch.size;
-      if (results.length >= 10 || batch.size < 100) break;
+      return { results, scanned };
     }
 
-    if (results.length === 0) {
+    interface SearchResult {
+      msg: Message;
+      threadId: string;
+      threadName: string;
+    }
+
+    let allResults: SearchResult[] = [];
+    let totalScanned = 0;
+    let targetName = rawChannel.name;
+
+    if (rawChannel.type === ChannelType.GuildForum) {
+      // 论坛频道：遍历活跃帖子搜索
+      const forum = rawChannel as ForumChannel;
+      const { threads: activeThreads } = await forum.threads.fetchActive();
+      const { threads: archivedThreads } = await forum.threads.fetchArchived({ limit: 25 });
+
+      const allThreads = [...activeThreads.values(), ...archivedThreads.values()];
+
+      for (const thread of allThreads) {
+        if (allResults.length >= 10) break;
+        const { results, scanned } = await searchInTextChannel(
+          thread as AnyThreadChannel & GuildTextBasedChannel,
+          200
+        );
+        totalScanned += scanned;
+        for (const msg of results) {
+          allResults.push({ msg, threadId: thread.id, threadName: thread.name });
+          if (allResults.length >= 10) break;
+        }
+      }
+    } else if (rawChannel.isTextBased()) {
+      // 普通文字频道或帖子
+      const { results, scanned } = await searchInTextChannel(
+        rawChannel as GuildTextBasedChannel,
+        500
+      );
+      totalScanned = scanned;
+      allResults = results.map((msg) => ({
+        msg,
+        threadId: channelId,
+        threadName: rawChannel.name,
+      }));
+    } else {
+      await interaction.editReply("❌ 所选频道不支持消息搜索。");
+      return;
+    }
+
+    if (allResults.length === 0) {
       await interaction.editReply(
-        `在 <#${channelId}> 最近 ${scanned} 条消息中，未找到包含「${keyword}」的内容。`
+        `在 <#${channelId}> 已扫描的 ${totalScanned} 条消息中，未找到包含「${keyword}」的内容。`
       );
       return;
     }
 
-    const shown = results.slice(0, 10);
     const embed = new EmbedBuilder()
       .setTitle(`🔍 关键词搜索：「${keyword}」`)
       .setColor(0x5865f2)
       .setFooter({
-        text: `频道 #${channel.name} · 已扫描 ${scanned} 条消息，显示前 ${shown.length} 条`,
+        text: `#${targetName} · 已扫描 ${totalScanned} 条消息，显示前 ${allResults.length} 条`,
       });
 
-    const lines = shown.map((msg) => {
+    const lines = allResults.map(({ msg, threadId, threadName }) => {
       const time = `<t:${Math.floor(msg.createdTimestamp / 1000)}:R>`;
       const preview =
-        msg.content.length > 100 ? msg.content.slice(0, 100) + "…" : msg.content;
-      const link = `https://discord.com/channels/${interaction.guildId}/${channelId}/${msg.id}`;
-      return `${time} **${msg.author.username}**\n[${preview || "（无文字，含附件）"}](${link})`;
+        msg.content.length > 80 ? msg.content.slice(0, 80) + "…" : msg.content;
+      const link = `https://discord.com/channels/${interaction.guildId}/${threadId}/${msg.id}`;
+      const threadLabel = threadId !== channelId ? ` ｜ 📌${threadName}` : "";
+      return `${time} **${msg.author.username}**${threadLabel}\n[${preview || "（无文字，含附件）"}](${link})`;
     });
 
     embed.setDescription(lines.join("\n\n"));

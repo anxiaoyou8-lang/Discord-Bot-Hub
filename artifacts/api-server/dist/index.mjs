@@ -131187,7 +131187,11 @@ async function handleReviewDeleteTicket(interaction, threadId) {
 async function handleReviewApprove(interaction, targetUserId) {
   const guild = interaction.guild;
   if (!guild) return;
-  await interaction.deferReply({ flags: 64 });
+  try {
+    await interaction.deferReply({ flags: 64 });
+  } catch {
+    return;
+  }
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   if (!isAdminMember(interaction, adminRoleId)) {
     await interaction.editReply("\u4F60\u6CA1\u6709\u6743\u9650\u6267\u884C\u6B64\u64CD\u4F5C\u3002");
@@ -131253,7 +131257,11 @@ ${roleAssigned ? "\u4F60\u5DF2\u81EA\u52A8\u83B7\u5F97\u5BF9\u5E94\u8EAB\u5206\u
 async function handleReviewReject(interaction, targetUserId) {
   const guild = interaction.guild;
   if (!guild) return;
-  await interaction.deferReply({ flags: 64 });
+  try {
+    await interaction.deferReply({ flags: 64 });
+  } catch {
+    return;
+  }
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   if (!isAdminMember(interaction, adminRoleId)) {
     await interaction.editReply("\u4F60\u6CA1\u6709\u6743\u9650\u6267\u884C\u6B64\u64CD\u4F5C\u3002");
@@ -131952,46 +131960,83 @@ async function handleSearchKeywordModal(interaction) {
       await interaction.editReply("\u6B64\u529F\u80FD\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
       return;
     }
-    const channel = await guild.channels.fetch(channelId);
-    if (!channel || !channel.isTextBased()) {
-      await interaction.editReply("\u274C \u65E0\u6CD5\u8BBF\u95EE\u76EE\u6807\u9891\u9053\uFF0C\u8BF7\u91CD\u65B0\u9009\u62E9\u5E76\u518D\u8BD5\u3002");
+    const rawChannel = await guild.channels.fetch(channelId).catch(() => null);
+    if (!rawChannel) {
+      await interaction.editReply("\u274C \u65E0\u6CD5\u8BBF\u95EE\u76EE\u6807\u9891\u9053\uFF0C\u8BF7\u68C0\u67E5\u673A\u5668\u4EBA\u6743\u9650\u540E\u91CD\u8BD5\u3002");
       return;
     }
-    const results = [];
-    let lastId;
-    let scanned = 0;
     const keywordLower = keyword.toLowerCase();
-    const maxScan = 500;
-    while (scanned < maxScan) {
-      const batch = await channel.messages.fetch({
-        limit: 100,
-        ...lastId ? { before: lastId } : {}
-      });
-      if (batch.size === 0) break;
-      for (const [, msg] of batch) {
-        if (msg.content.toLowerCase().includes(keywordLower)) {
-          results.push(msg);
+    async function searchInTextChannel(ch, maxScan) {
+      const results = [];
+      let lastId;
+      let scanned = 0;
+      while (scanned < maxScan && results.length < 10) {
+        const batch = await ch.messages.fetch({
+          limit: 100,
+          ...lastId ? { before: lastId } : {}
+        });
+        if (batch.size === 0) break;
+        for (const [, msg] of batch) {
+          if (msg.content.toLowerCase().includes(keywordLower)) {
+            results.push(msg);
+          }
+          lastId = msg.id;
         }
-        lastId = msg.id;
+        scanned += batch.size;
+        if (batch.size < 100) break;
       }
-      scanned += batch.size;
-      if (results.length >= 10 || batch.size < 100) break;
+      return { results, scanned };
     }
-    if (results.length === 0) {
+    let allResults = [];
+    let totalScanned = 0;
+    let targetName = rawChannel.name;
+    if (rawChannel.type === import_discord6.ChannelType.GuildForum) {
+      const forum = rawChannel;
+      const { threads: activeThreads } = await forum.threads.fetchActive();
+      const { threads: archivedThreads } = await forum.threads.fetchArchived({ limit: 25 });
+      const allThreads = [...activeThreads.values(), ...archivedThreads.values()];
+      for (const thread of allThreads) {
+        if (allResults.length >= 10) break;
+        const { results, scanned } = await searchInTextChannel(
+          thread,
+          200
+        );
+        totalScanned += scanned;
+        for (const msg of results) {
+          allResults.push({ msg, threadId: thread.id, threadName: thread.name });
+          if (allResults.length >= 10) break;
+        }
+      }
+    } else if (rawChannel.isTextBased()) {
+      const { results, scanned } = await searchInTextChannel(
+        rawChannel,
+        500
+      );
+      totalScanned = scanned;
+      allResults = results.map((msg) => ({
+        msg,
+        threadId: channelId,
+        threadName: rawChannel.name
+      }));
+    } else {
+      await interaction.editReply("\u274C \u6240\u9009\u9891\u9053\u4E0D\u652F\u6301\u6D88\u606F\u641C\u7D22\u3002");
+      return;
+    }
+    if (allResults.length === 0) {
       await interaction.editReply(
-        `\u5728 <#${channelId}> \u6700\u8FD1 ${scanned} \u6761\u6D88\u606F\u4E2D\uFF0C\u672A\u627E\u5230\u5305\u542B\u300C${keyword}\u300D\u7684\u5185\u5BB9\u3002`
+        `\u5728 <#${channelId}> \u5DF2\u626B\u63CF\u7684 ${totalScanned} \u6761\u6D88\u606F\u4E2D\uFF0C\u672A\u627E\u5230\u5305\u542B\u300C${keyword}\u300D\u7684\u5185\u5BB9\u3002`
       );
       return;
     }
-    const shown = results.slice(0, 10);
     const embed = new import_discord6.EmbedBuilder().setTitle(`\u{1F50D} \u5173\u952E\u8BCD\u641C\u7D22\uFF1A\u300C${keyword}\u300D`).setColor(5793266).setFooter({
-      text: `\u9891\u9053 #${channel.name} \xB7 \u5DF2\u626B\u63CF ${scanned} \u6761\u6D88\u606F\uFF0C\u663E\u793A\u524D ${shown.length} \u6761`
+      text: `#${targetName} \xB7 \u5DF2\u626B\u63CF ${totalScanned} \u6761\u6D88\u606F\uFF0C\u663E\u793A\u524D ${allResults.length} \u6761`
     });
-    const lines = shown.map((msg) => {
+    const lines = allResults.map(({ msg, threadId, threadName }) => {
       const time4 = `<t:${Math.floor(msg.createdTimestamp / 1e3)}:R>`;
-      const preview = msg.content.length > 100 ? msg.content.slice(0, 100) + "\u2026" : msg.content;
-      const link = `https://discord.com/channels/${interaction.guildId}/${channelId}/${msg.id}`;
-      return `${time4} **${msg.author.username}**
+      const preview = msg.content.length > 80 ? msg.content.slice(0, 80) + "\u2026" : msg.content;
+      const link = `https://discord.com/channels/${interaction.guildId}/${threadId}/${msg.id}`;
+      const threadLabel = threadId !== channelId ? ` \uFF5C \u{1F4CC}${threadName}` : "";
+      return `${time4} **${msg.author.username}**${threadLabel}
 [${preview || "\uFF08\u65E0\u6587\u5B57\uFF0C\u542B\u9644\u4EF6\uFF09"}](${link})`;
     });
     embed.setDescription(lines.join("\n\n"));

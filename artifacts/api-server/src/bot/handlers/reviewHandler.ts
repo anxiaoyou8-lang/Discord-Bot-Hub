@@ -337,7 +337,11 @@ export async function handleReviewApprove(
   const guild = interaction.guild;
   if (!guild) return;
 
-  await interaction.deferReply({ flags: 64 });
+  try {
+    await interaction.deferReply({ flags: 64 });
+  } catch {
+    return; // 交互已过期，无法响应
+  }
 
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   if (!isAdminMember(interaction, adminRoleId)) {
@@ -431,7 +435,11 @@ export async function handleReviewReject(
   const guild = interaction.guild;
   if (!guild) return;
 
-  await interaction.deferReply({ flags: 64 });
+  try {
+    await interaction.deferReply({ flags: 64 });
+  } catch {
+    return; // 交互已过期，无法响应
+  }
 
   const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   if (!isAdminMember(interaction, adminRoleId)) {
