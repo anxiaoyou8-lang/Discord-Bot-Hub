@@ -14,6 +14,7 @@ import {
   LOOKUP_TRACE_CMD,
   GO_TOP_CMD,
   DELETE_THREAD_CMD,
+  SEARCH_CMD,
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
 } from "./constants.js";
@@ -95,6 +96,33 @@ export const commands = [
         .setName("file")
         .setDescription("上传疑似泄露的原始文件（支持 PNG / JSON / 文本类文件）")
         .setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(SEARCH_CMD)
+    .setDescription("在服务器内搜索用户或消息")
+    .addSubcommand((sub) =>
+      sub
+        .setName("用户")
+        .setDescription("按用户名搜索服务器成员")
+        .addStringOption((opt) =>
+          opt.setName("名称").setDescription("要搜索的用户名或昵称").setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("消息")
+        .setDescription("在当前频道按关键词搜索消息")
+        .addStringOption((opt) =>
+          opt.setName("关键词").setDescription("要搜索的关键词").setRequired(true)
+        )
+        .addIntegerOption((opt) =>
+          opt
+            .setName("范围")
+            .setDescription("最多扫描多少条消息（默认500，最多1000）")
+            .setMinValue(100)
+            .setMaxValue(1000)
+        )
     ),
 
   new SlashCommandBuilder()

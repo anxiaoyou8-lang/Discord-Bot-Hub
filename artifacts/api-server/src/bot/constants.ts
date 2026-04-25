@@ -24,6 +24,7 @@ export const LOOKUP_TRACE_CMD = "lookup_trace";
 
 export const GO_TOP_CMD = "回顶";
 export const DELETE_THREAD_CMD = "删除帖子";
+export const SEARCH_CMD = "搜索";
 export const COMPLAINT_PANEL_CMD = "setup_complaint_panel";
 export const SET_COMPLAINT_CHANNEL_CMD = "set_complaint_channel";
 

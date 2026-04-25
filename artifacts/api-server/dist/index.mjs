@@ -70981,7 +70981,7 @@ var require_dist9 = __commonJS({
       ContextMenuCommandAssertions: () => Assertions_exports11,
       ContextMenuCommandBuilder: () => ContextMenuCommandBuilder,
       EmbedAssertions: () => Assertions_exports,
-      EmbedBuilder: () => EmbedBuilder4,
+      EmbedBuilder: () => EmbedBuilder5,
       FileBuilder: () => FileBuilder,
       FileUploadAssertions: () => Assertions_exports4,
       FileUploadBuilder: () => FileUploadBuilder,
@@ -71110,7 +71110,7 @@ var require_dist9 = __commonJS({
       return arr;
     }
     __name(normalizeArray, "normalizeArray");
-    var EmbedBuilder4 = class {
+    var EmbedBuilder5 = class {
       static {
         __name(this, "EmbedBuilder");
       }
@@ -102824,7 +102824,7 @@ var require_EmbedBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolveColor } = require_Util();
-    var EmbedBuilder4 = class extends BuildersEmbed {
+    var EmbedBuilder5 = class extends BuildersEmbed {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -102853,7 +102853,7 @@ var require_EmbedBuilder = __commonJS({
         return embedLength(this.data);
       }
     };
-    module2.exports = EmbedBuilder4;
+    module2.exports = EmbedBuilder5;
   }
 });
 
@@ -112404,7 +112404,7 @@ app.use("/api", routes_default);
 var app_default = app;
 
 // src/bot/client.ts
-var import_discord7 = __toESM(require_src2(), 1);
+var import_discord8 = __toESM(require_src2(), 1);
 
 // src/bot/registerCommands.ts
 var import_discord2 = __toESM(require_src2(), 1);
@@ -112433,6 +112433,7 @@ var DECODE_FILENAME_CMD = "decode_filename";
 var LOOKUP_TRACE_CMD = "lookup_trace";
 var GO_TOP_CMD = "\u56DE\u9876";
 var DELETE_THREAD_CMD = "\u5220\u9664\u5E16\u5B50";
+var SEARCH_CMD = "\u641C\u7D22";
 var COMPLAINT_PANEL_CMD = "setup_complaint_panel";
 var SET_COMPLAINT_CHANNEL_CMD = "set_complaint_channel";
 var DELETE_THREAD_CONFIRM_ID = "delete_thread_confirm";
@@ -112473,6 +112474,17 @@ var commands = [
   ),
   new import_discord.SlashCommandBuilder().setName(LOOKUP_TRACE_CMD).setDescription("\u4E0A\u4F20\u6CC4\u9732\u7684\u4F5C\u54C1\u6587\u4EF6\uFF0C\u81EA\u52A8\u63D0\u53D6\u6EAF\u6E90ID\u5E76\u67E5\u627E\u83B7\u53D6\u8005").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addAttachmentOption(
     (opt) => opt.setName("file").setDescription("\u4E0A\u4F20\u7591\u4F3C\u6CC4\u9732\u7684\u539F\u59CB\u6587\u4EF6\uFF08\u652F\u6301 PNG / JSON / \u6587\u672C\u7C7B\u6587\u4EF6\uFF09").setRequired(true)
+  ),
+  new import_discord.SlashCommandBuilder().setName(SEARCH_CMD).setDescription("\u5728\u670D\u52A1\u5668\u5185\u641C\u7D22\u7528\u6237\u6216\u6D88\u606F").addSubcommand(
+    (sub) => sub.setName("\u7528\u6237").setDescription("\u6309\u7528\u6237\u540D\u641C\u7D22\u670D\u52A1\u5668\u6210\u5458").addStringOption(
+      (opt) => opt.setName("\u540D\u79F0").setDescription("\u8981\u641C\u7D22\u7684\u7528\u6237\u540D\u6216\u6635\u79F0").setRequired(true)
+    )
+  ).addSubcommand(
+    (sub) => sub.setName("\u6D88\u606F").setDescription("\u5728\u5F53\u524D\u9891\u9053\u6309\u5173\u952E\u8BCD\u641C\u7D22\u6D88\u606F").addStringOption(
+      (opt) => opt.setName("\u5173\u952E\u8BCD").setDescription("\u8981\u641C\u7D22\u7684\u5173\u952E\u8BCD").setRequired(true)
+    ).addIntegerOption(
+      (opt) => opt.setName("\u8303\u56F4").setDescription("\u6700\u591A\u626B\u63CF\u591A\u5C11\u6761\u6D88\u606F\uFF08\u9ED8\u8BA4500\uFF0C\u6700\u591A1000\uFF09").setMinValue(100).setMaxValue(1e3)
+    )
   ),
   new import_discord.SlashCommandBuilder().setName(GO_TOP_CMD).setDescription("\u53D1\u9001\u8DF3\u8F6C\u5230\u672C\u5E16\u9996\u697C\u7684\u94FE\u63A5"),
   new import_discord.SlashCommandBuilder().setName(DELETE_THREAD_CMD).setDescription("\u5220\u9664\u5F53\u524D\u5E16\u5B50\uFF08\u6B64\u64CD\u4F5C\u4E0D\u53EF\u9006\uFF09").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.ManageThreads),
@@ -131884,10 +131896,95 @@ async function handleDeleteThreadCancel(interaction) {
   await interaction.update({ content: "\u2705 \u5DF2\u53D6\u6D88\uFF0C\u5E16\u5B50\u4E0D\u4F1A\u88AB\u5220\u9664\u3002", components: [] });
 }
 
-// src/bot/handlers/complaintHandler.ts
+// src/bot/handlers/searchHandler.ts
 var import_discord6 = __toESM(require_src2(), 1);
+async function handleSearchUser(interaction) {
+  const query = interaction.options.getString("\u540D\u79F0", true).trim();
+  const guild = interaction.guild;
+  if (!guild) {
+    await interaction.reply({ content: "\u6B64\u6307\u4EE4\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002", flags: 64 });
+    return;
+  }
+  await interaction.deferReply({ flags: 64 });
+  try {
+    const members = await guild.members.search({ query, limit: 15 });
+    if (members.size === 0) {
+      await interaction.editReply(`\u672A\u627E\u5230\u7528\u6237\u540D\u6216\u6635\u79F0\u5305\u542B\u300C${query}\u300D\u7684\u6210\u5458\u3002`);
+      return;
+    }
+    const embed = new import_discord6.EmbedBuilder().setTitle(`\u{1F50D} \u7528\u6237\u641C\u7D22\uFF1A\u300C${query}\u300D`).setColor(5793266).setFooter({ text: `\u5171\u627E\u5230 ${members.size} \u4E2A\u5339\u914D\u6210\u5458` });
+    const lines = [...members.values()].map((member) => {
+      const joinedAt = member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1e3)}:R>\u52A0\u5165` : "";
+      const topRoles = member.roles.cache.filter((r) => r.id !== guild.id).sort((a, b) => b.position - a.position).first(3).map((r) => `<@&${r.id}>`).join(" ");
+      const nick = member.nickname ? `\uFF08${member.nickname}\uFF09` : "";
+      return `<@${member.id}> **${member.user.username}**${nick}
+${joinedAt} ${topRoles}`.trim();
+    });
+    embed.setDescription(lines.join("\n\n"));
+    await interaction.editReply({ embeds: [embed] });
+  } catch (err) {
+    logger.error({ err }, "Search user failed");
+    await interaction.editReply("\u641C\u7D22\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function handleSearchMessages(interaction) {
+  const keyword = interaction.options.getString("\u5173\u952E\u8BCD", true).trim();
+  const maxScan = interaction.options.getInteger("\u8303\u56F4") ?? 500;
+  const channel = interaction.channel;
+  if (!channel || !channel.isTextBased()) {
+    await interaction.reply({ content: "\u65E0\u6CD5\u5728\u6B64\u5904\u4F7F\u7528\u8BE5\u6307\u4EE4\u3002", flags: 64 });
+    return;
+  }
+  await interaction.deferReply({ flags: 64 });
+  try {
+    const results = [];
+    let lastId;
+    let scanned = 0;
+    const keywordLower = keyword.toLowerCase();
+    while (scanned < maxScan) {
+      const batch = await channel.messages.fetch({
+        limit: 100,
+        ...lastId ? { before: lastId } : {}
+      });
+      if (batch.size === 0) break;
+      for (const [, msg] of batch) {
+        if (msg.content.toLowerCase().includes(keywordLower)) {
+          results.push(msg);
+        }
+        lastId = msg.id;
+      }
+      scanned += batch.size;
+      if (results.length >= 10 || batch.size < 100) break;
+    }
+    if (results.length === 0) {
+      await interaction.editReply(
+        `\u5728\u5F53\u524D\u9891\u9053\u6700\u8FD1 ${scanned} \u6761\u6D88\u606F\u4E2D\uFF0C\u672A\u627E\u5230\u5305\u542B\u300C${keyword}\u300D\u7684\u5185\u5BB9\u3002`
+      );
+      return;
+    }
+    const shown = results.slice(0, 10);
+    const embed = new import_discord6.EmbedBuilder().setTitle(`\u{1F50D} \u6D88\u606F\u641C\u7D22\uFF1A\u300C${keyword}\u300D`).setColor(5793266).setFooter({
+      text: `\u5DF2\u626B\u63CF\u6700\u8FD1 ${scanned} \u6761\u6D88\u606F\uFF0C\u663E\u793A\u524D ${shown.length} \u6761\u5339\u914D\u7ED3\u679C`
+    });
+    const lines = shown.map((msg) => {
+      const time4 = `<t:${Math.floor(msg.createdTimestamp / 1e3)}:R>`;
+      const preview = msg.content.length > 100 ? msg.content.slice(0, 100) + "\u2026" : msg.content;
+      const link = `https://discord.com/channels/${interaction.guildId}/${channel.id}/${msg.id}`;
+      return `${time4} **${msg.author.username}**
+[${preview || "\uFF08\u65E0\u6587\u5B57\uFF0C\u542B\u9644\u4EF6\uFF09"}](${link})`;
+    });
+    embed.setDescription(lines.join("\n\n"));
+    await interaction.editReply({ embeds: [embed] });
+  } catch (err) {
+    logger.error({ err }, "Search messages failed");
+    await interaction.editReply("\u641C\u7D22\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+
+// src/bot/handlers/complaintHandler.ts
+var import_discord7 = __toESM(require_src2(), 1);
 function buildComplaintPanel() {
-  const embed = new import_discord6.EmbedBuilder().setTitle("\u{1F4E2} \u533F\u540D\u6295\u8BC9").setDescription(
+  const embed = new import_discord7.EmbedBuilder().setTitle("\u{1F4E2} \u533F\u540D\u6295\u8BC9").setDescription(
     [
       "\u5982\u679C\u4F60\u6709\u4EFB\u4F55\u60F3\u8981\u53CD\u6620\u7684\u95EE\u9898\uFF0C\u53EF\u4EE5\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\u8FDB\u884C**\u533F\u540D\u6295\u8BC9**\u3002",
       "",
@@ -131897,8 +131994,8 @@ function buildComplaintPanel() {
       "\u2022 \u8BF7\u5982\u5B9E\u63CF\u8FF0\u95EE\u9898\uFF0C\u5207\u52FF\u6EE5\u7528"
     ].join("\n")
   ).setColor(16753920).setFooter({ text: "\u6295\u8BC9\u5B8C\u5168\u533F\u540D\uFF0C\u7BA1\u7406\u5458\u65E0\u6CD5\u5F97\u77E5\u6295\u8BC9\u8005\u8EAB\u4EFD" });
-  const button = new import_discord6.ButtonBuilder().setCustomId(COMPLAINT_PANEL_CUSTOM_ID).setLabel("\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord6.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
-  const row = new import_discord6.ActionRowBuilder().addComponents(button);
+  const button = new import_discord7.ButtonBuilder().setCustomId(COMPLAINT_PANEL_CUSTOM_ID).setLabel("\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord7.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
+  const row = new import_discord7.ActionRowBuilder().addComponents(button);
   return { embeds: [embed], components: [row] };
 }
 async function handleComplaintButton(interaction) {
@@ -131911,13 +132008,13 @@ async function handleComplaintButton(interaction) {
   try {
     const thread = await channel.threads.create({
       name: `\u6295\u8BC9\u5B50\u533A-${Date.now().toString(36)}`,
-      type: import_discord6.ChannelType.PrivateThread,
+      type: import_discord7.ChannelType.PrivateThread,
       invitable: false
     });
     await thread.members.add(interaction.user.id);
-    const submitBtn = new import_discord6.ButtonBuilder().setCustomId(COMPLAINT_THREAD_SUBMIT_ID).setLabel("\u786E\u8BA4\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord6.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
-    const cancelBtn = new import_discord6.ButtonBuilder().setCustomId(COMPLAINT_THREAD_CANCEL_ID).setLabel("\u53D6\u6D88").setStyle(import_discord6.ButtonStyle.Secondary);
-    const row = new import_discord6.ActionRowBuilder().addComponents(submitBtn, cancelBtn);
+    const submitBtn = new import_discord7.ButtonBuilder().setCustomId(COMPLAINT_THREAD_SUBMIT_ID).setLabel("\u786E\u8BA4\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord7.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
+    const cancelBtn = new import_discord7.ButtonBuilder().setCustomId(COMPLAINT_THREAD_CANCEL_ID).setLabel("\u53D6\u6D88").setStyle(import_discord7.ButtonStyle.Secondary);
+    const row = new import_discord7.ActionRowBuilder().addComponents(submitBtn, cancelBtn);
     await thread.send({
       content: [
         `\u4F60\u597D <@${interaction.user.id}>\uFF01\u8FD9\u662F\u4F60\u7684**\u533F\u540D\u6295\u8BC9\u4E13\u5C5E\u5B50\u533A**\uFF0C\u53EA\u6709\u4F60\u548C Bot \u53EF\u89C1\u3002`,
@@ -131968,7 +132065,7 @@ async function handleComplaintThreadSubmit(interaction, client) {
     if (complaintChannelId) {
       const complaintChannel = await client.channels.fetch(complaintChannelId).catch(() => null);
       if (complaintChannel && complaintChannel.isTextBased()) {
-        const embed = new import_discord6.EmbedBuilder().setTitle(`\u{1F4E2} \u533F\u540D\u6295\u8BC9\u5DE5\u5355 #${ticketId}`).setColor(16753920).setFooter({ text: "\u6B64\u6295\u8BC9\u5B8C\u5168\u533F\u540D\uFF0C\u7CFB\u7EDF\u672A\u8BB0\u5F55\u6295\u8BC9\u8005\u8EAB\u4EFD" }).setTimestamp();
+        const embed = new import_discord7.EmbedBuilder().setTitle(`\u{1F4E2} \u533F\u540D\u6295\u8BC9\u5DE5\u5355 #${ticketId}`).setColor(16753920).setFooter({ text: "\u6B64\u6295\u8BC9\u5B8C\u5168\u533F\u540D\uFF0C\u7CFB\u7EDF\u672A\u8BB0\u5F55\u6295\u8BC9\u8005\u8EAB\u4EFD" }).setTimestamp();
         if (textContent) {
           embed.setDescription(textContent);
         }
@@ -132012,30 +132109,30 @@ async function handleComplaintThreadCancel(interaction) {
 
 // src/bot/client.ts
 async function startBot(token) {
-  const client = new import_discord7.Client({
+  const client = new import_discord8.Client({
     intents: [
-      import_discord7.GatewayIntentBits.Guilds,
-      import_discord7.GatewayIntentBits.GuildMessages,
-      import_discord7.GatewayIntentBits.GuildMembers,
-      import_discord7.GatewayIntentBits.MessageContent,
-      import_discord7.GatewayIntentBits.GuildMessageReactions,
-      import_discord7.GatewayIntentBits.DirectMessages
+      import_discord8.GatewayIntentBits.Guilds,
+      import_discord8.GatewayIntentBits.GuildMessages,
+      import_discord8.GatewayIntentBits.GuildMembers,
+      import_discord8.GatewayIntentBits.MessageContent,
+      import_discord8.GatewayIntentBits.GuildMessageReactions,
+      import_discord8.GatewayIntentBits.DirectMessages
     ],
-    partials: [import_discord7.Partials.Message, import_discord7.Partials.Channel, import_discord7.Partials.Reaction]
+    partials: [import_discord8.Partials.Message, import_discord8.Partials.Channel, import_discord8.Partials.Reaction]
   });
-  client.once(import_discord7.Events.ClientReady, async (c) => {
+  client.once(import_discord8.Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
     await loadAllConfigs();
     const guildIds = c.guilds.cache.map((g) => g.id);
     await registerCommands(token, c.user.id, guildIds);
     await runAutoDeleteScheduler(client);
   });
-  client.on(import_discord7.Events.GuildCreate, async (guild) => {
+  client.on(import_discord8.Events.GuildCreate, async (guild) => {
     const guildIds = [guild.id];
     await registerCommands(token, client.user.id, guildIds);
     logger.info({ guildId: guild.id }, "Registered commands for new guild");
   });
-  client.on(import_discord7.Events.InteractionCreate, async (interaction) => {
+  client.on(import_discord8.Events.InteractionCreate, async (interaction) => {
     try {
       if (interaction.isChatInputCommand()) {
         const { commandName } = interaction;
@@ -132095,6 +132192,13 @@ async function startBot(token) {
             ].join("\n"),
             flags: 64
           });
+        } else if (commandName === SEARCH_CMD) {
+          const sub = interaction.options.getSubcommand();
+          if (sub === "\u7528\u6237") {
+            await handleSearchUser(interaction);
+          } else if (sub === "\u6D88\u606F") {
+            await handleSearchMessages(interaction);
+          }
         } else if (commandName === GO_TOP_CMD) {
           await handleGoTop(interaction);
         } else if (commandName === DELETE_THREAD_CMD) {
@@ -132210,7 +132314,7 @@ async function startBot(token) {
       logger.error({ err }, "Unhandled interaction error");
     }
   });
-  client.on(import_discord7.Events.Error, (err) => {
+  client.on(import_discord8.Events.Error, (err) => {
     logger.error({ err }, "Discord client error");
   });
   try {
