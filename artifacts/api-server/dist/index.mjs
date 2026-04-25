@@ -132102,10 +132102,10 @@ async function handleSearchNicknameModal(interaction) {
       await interaction.editReply("\u6B64\u529F\u80FD\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
       return;
     }
-    const queryLower = `%${query.toLowerCase()}%`;
+    const queryPattern = `%${query}%`;
     const rows = await db.select().from(artworksTable).where(
       or(
-        like(artworksTable.authorTag, queryLower),
+        ilike(artworksTable.authorTag, queryPattern),
         eq(artworksTable.authorId, query)
       )
     ).limit(20);
@@ -132382,8 +132382,15 @@ async function startBot(token) {
           });
         } else if (commandName === SEARCH_PANEL_CMD) {
           const panel = buildSearchPanel();
-          const guildChannel = interaction.channel;
-          if (guildChannel) await guildChannel.send(panel);
+          let guildChannel = interaction.channel;
+          if (!guildChannel && interaction.channelId) {
+            guildChannel = await client.channels.fetch(interaction.channelId);
+          }
+          if (!guildChannel) {
+            await interaction.reply({ content: "\u274C \u65E0\u6CD5\u83B7\u53D6\u5F53\u524D\u9891\u9053\uFF0C\u8BF7\u786E\u8BA4\u673A\u5668\u4EBA\u6709\u6743\u9650\u8BBF\u95EE\u6B64\u9891\u9053\u3002", flags: 64 });
+            return;
+          }
+          await guildChannel.send(panel);
           await interaction.reply({ content: "\u641C\u7D22\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });

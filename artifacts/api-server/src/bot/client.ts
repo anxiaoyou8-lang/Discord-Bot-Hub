@@ -222,8 +222,15 @@ export async function startBot(token: string) {
 
         } else if (commandName === SEARCH_PANEL_CMD) {
           const panel = buildSearchPanel();
-          const guildChannel = interaction.channel as GuildTextBasedChannel | null;
-          if (guildChannel) await guildChannel.send(panel);
+          let guildChannel = interaction.channel as GuildTextBasedChannel | null;
+          if (!guildChannel && interaction.channelId) {
+            guildChannel = (await client.channels.fetch(interaction.channelId)) as GuildTextBasedChannel | null;
+          }
+          if (!guildChannel) {
+            await interaction.reply({ content: "❌ 无法获取当前频道，请确认机器人有权限访问此频道。", flags: 64 });
+            return;
+          }
+          await guildChannel.send(panel);
           await interaction.reply({ content: "搜索面板已发送！", flags: 64 });
 
         } else if (commandName === LOOKUP_TRACE_CMD) {

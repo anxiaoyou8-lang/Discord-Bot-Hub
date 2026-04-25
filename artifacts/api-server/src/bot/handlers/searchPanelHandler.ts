@@ -15,7 +15,7 @@ import {
   type ModalSubmitInteraction,
 } from "discord.js";
 import { db, artworksTable } from "@workspace/db";
-import { like, or, eq } from "drizzle-orm";
+import { ilike, or, eq } from "drizzle-orm";
 import { logger } from "../../lib/logger.js";
 import {
   SEARCH_CHANNEL_SELECT_ID,
@@ -205,14 +205,14 @@ export async function handleSearchNicknameModal(interaction: ModalSubmitInteract
       return;
     }
 
-    const queryLower = `%${query.toLowerCase()}%`;
+    const queryPattern = `%${query}%`;
 
     const rows = await db
       .select()
       .from(artworksTable)
       .where(
         or(
-          like(artworksTable.authorTag, queryLower),
+          ilike(artworksTable.authorTag, queryPattern),
           eq(artworksTable.authorId, query)
         )
       )
