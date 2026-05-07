@@ -92,9 +92,44 @@ export async function handleSetupStats(
 
   const categoryOption = interaction.options.getChannel("category", false);
 
-  try {
-    const everyone = guild.roles.everyone;
+  // 检查是否已有统计频道（移动模式）
+  const existingTotalId = getConfig(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
+  const existingRoleId = getConfig(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
+  const existingNoRoleId = getConfig(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
+  const hasExisting = existingTotalId && existingRoleId && existingNoRoleId;
 
+  try {
+    if (hasExisting && categoryOption) {
+      // 移动现有频道到新分类
+      const fetchCh = async (id: string) =>
+        (guild.channels.cache.get(id) ??
+          await guild.channels.fetch(id).catch(() => null)) as VoiceChannel | null;
+
+      const [totalCh, roleCh, noRoleCh] = await Promise.all([
+        fetchCh(existingTotalId),
+        fetchCh(existingRoleId),
+        fetchCh(existingNoRoleId),
+      ]);
+
+      await Promise.all([
+        totalCh?.setParent(categoryOption.id, { lockPermissions: false }),
+        roleCh?.setParent(categoryOption.id, { lockPermissions: false }),
+        noRoleCh?.setParent(categoryOption.id, { lockPermissions: false }),
+      ]);
+
+      await interaction.editReply(
+        [
+          "✅ **统计频道已移动！**",
+          `• <#${existingTotalId}> — 所有成员总数（梦旅者）`,
+          `• <#${existingRoleId}> — 已通过验证的成员（梦中身）`,
+          `• <#${existingNoRoleId}> — 尚未通过验证的成员（失眠者）`,
+        ].join("\n")
+      );
+      return;
+    }
+
+    // 创建新频道
+    const everyone = guild.roles.everyone;
     const channelOptions = {
       type: ChannelType.GuildVoice as const,
       ...(categoryOption ? { parent: categoryOption.id } : {}),
@@ -133,6 +168,6 @@ export async function handleSetupStats(
     );
   } catch (err) {
     logger.error({ err }, "Failed to setup stats channels");
-    await interaction.editReply("❌ 创建统计频道失败，请检查机器人是否有「管理频道」权限。");
+    await interaction.editReply("❌ 操作失败，请检查机器人是否有「管理频道」权限。");
   }
 }

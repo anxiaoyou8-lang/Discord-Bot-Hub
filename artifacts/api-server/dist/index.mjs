@@ -132301,7 +132301,33 @@ async function handleSetupStats(interaction, client) {
     return;
   }
   const categoryOption = interaction.options.getChannel("category", false);
+  const existingTotalId = getConfig(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
+  const existingRoleId = getConfig(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
+  const existingNoRoleId = getConfig(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
+  const hasExisting = existingTotalId && existingRoleId && existingNoRoleId;
   try {
+    if (hasExisting && categoryOption) {
+      const fetchCh = async (id) => guild.channels.cache.get(id) ?? await guild.channels.fetch(id).catch(() => null);
+      const [totalCh2, roleCh2, noRoleCh2] = await Promise.all([
+        fetchCh(existingTotalId),
+        fetchCh(existingRoleId),
+        fetchCh(existingNoRoleId)
+      ]);
+      await Promise.all([
+        totalCh2?.setParent(categoryOption.id, { lockPermissions: false }),
+        roleCh2?.setParent(categoryOption.id, { lockPermissions: false }),
+        noRoleCh2?.setParent(categoryOption.id, { lockPermissions: false })
+      ]);
+      await interaction.editReply(
+        [
+          "\u2705 **\u7EDF\u8BA1\u9891\u9053\u5DF2\u79FB\u52A8\uFF01**",
+          `\u2022 <#${existingTotalId}> \u2014 \u6240\u6709\u6210\u5458\u603B\u6570\uFF08\u68A6\u65C5\u8005\uFF09`,
+          `\u2022 <#${existingRoleId}> \u2014 \u5DF2\u901A\u8FC7\u9A8C\u8BC1\u7684\u6210\u5458\uFF08\u68A6\u4E2D\u8EAB\uFF09`,
+          `\u2022 <#${existingNoRoleId}> \u2014 \u5C1A\u672A\u901A\u8FC7\u9A8C\u8BC1\u7684\u6210\u5458\uFF08\u5931\u7720\u8005\uFF09`
+        ].join("\n")
+      );
+      return;
+    }
     const everyone = guild.roles.everyone;
     const channelOptions = {
       type: import_discord8.ChannelType.GuildVoice,
@@ -132337,7 +132363,7 @@ async function handleSetupStats(interaction, client) {
     );
   } catch (err) {
     logger.error({ err }, "Failed to setup stats channels");
-    await interaction.editReply("\u274C \u521B\u5EFA\u7EDF\u8BA1\u9891\u9053\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u673A\u5668\u4EBA\u662F\u5426\u6709\u300C\u7BA1\u7406\u9891\u9053\u300D\u6743\u9650\u3002");
+    await interaction.editReply("\u274C \u64CD\u4F5C\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u673A\u5668\u4EBA\u662F\u5426\u6709\u300C\u7BA1\u7406\u9891\u9053\u300D\u6743\u9650\u3002");
   }
 }
 
