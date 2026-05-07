@@ -1,6 +1,7 @@
 import {
   SlashCommandBuilder,
   PermissionFlagsBits,
+  ChannelType,
 } from "discord.js";
 
 import {
@@ -135,6 +136,7 @@ export const commands = [
         .setName("category")
         .setDescription("将统计频道放在哪个分类下（可选）")
         .setRequired(false)
+        .addChannelTypes(ChannelType.GuildCategory)
     ),
 
   uploadArtworkCmd,

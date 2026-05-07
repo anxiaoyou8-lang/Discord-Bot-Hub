@@ -232,6 +232,7 @@ export async function startBot(token: string) {
           await interaction.reply({ content: "搜索面板已发送！", flags: 64 });
 
         } else if (commandName === SETUP_STATS_CMD) {
+          logger.info({ guildId: interaction.guildId }, "setup_stats interaction received");
           await handleSetupStats(interaction, client);
 
         } else if (commandName === LOOKUP_TRACE_CMD) {
