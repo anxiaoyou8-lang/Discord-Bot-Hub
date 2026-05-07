@@ -376,9 +376,9 @@ export async function handleReviewApprove(
     // Notify in thread BEFORE archiving so the user can see the message
     const notifyLines = [
       `<@${targetUserId}> 恭喜！你的审核申请已 **通过** ✅`,
-      roleAssigned ? "已自动获得对应身分组，欢迎正式加入！" : "",
-      !approveRoleId ? "（未配置通过身分组，请管理员手动赋予）" : "",
-      roleError ? `⚠️ 身分组赋予失败：${roleError}` : "",
+      roleAssigned ? "已自动获得对应身份组，欢迎正式加入！" : "",
+      !approveRoleId ? "（未配置通过身份组，请管理员手动赋予）" : "",
+      roleError ? `⚠️ 身份组赋予失败：${roleError}` : "",
     ].filter(Boolean).join("\n");
 
     await thread.send({ content: notifyLines });
@@ -391,7 +391,7 @@ export async function handleReviewApprove(
             new EmbedBuilder()
               .setTitle("审核结果通知")
               .setDescription(
-                `恭喜！你在 **${guild.name}** 的审核申请已 **通过**！\n\n${roleAssigned ? "你已自动获得对应身分组，欢迎正式加入！" : "欢迎正式加入！"}`
+                `恭喜！你在 **${guild.name}** 的审核申请已 **通过**！\n\n${roleAssigned ? "你已自动获得对应身份组，欢迎正式加入！" : "欢迎正式加入！"}`
               )
               .setColor(0x57f287)
               .setTimestamp(),
@@ -416,10 +416,10 @@ export async function handleReviewApprove(
     await thread.setArchived(true);
 
     const replyMsg = roleAssigned
-      ? `已通过 <@${targetUserId}> 的审核，并已自动赋予身分组，子区已锁定并归档。`
+      ? `已通过 <@${targetUserId}> 的审核，并已自动赋予身份组，子区已锁定并归档。`
       : roleError
-      ? `已通过 <@${targetUserId}> 的审核，但身分组赋予失败（${roleError}），请手动处理。子区已锁定并归档。`
-      : `已通过 <@${targetUserId}> 的审核（未配置通过身分组），子区已锁定并归档。`;
+      ? `已通过 <@${targetUserId}> 的审核，但身份组赋予失败（${roleError}），请手动处理。子区已锁定并归档。`
+      : `已通过 <@${targetUserId}> 的审核（未配置通过身份组），子区已锁定并归档。`;
 
     await interaction.editReply(replyMsg);
   } catch (err) {

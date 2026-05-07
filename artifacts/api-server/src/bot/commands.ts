@@ -17,6 +17,7 @@ import {
   SEARCH_PANEL_CMD,
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
+  SETUP_STATS_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -62,18 +63,18 @@ export const commands = [
 
   new SlashCommandBuilder()
     .setName(SET_ADMIN_ROLE_CMD)
-    .setDescription("设置拥有审核权限的管理员身分组")
+    .setDescription("设置拥有审核权限的管理员身份组")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addRoleOption((opt) =>
-      opt.setName("role").setDescription("管理员身分组").setRequired(true)
+      opt.setName("role").setDescription("管理员身份组").setRequired(true)
     ),
 
   new SlashCommandBuilder()
     .setName(SET_APPROVE_ROLE_CMD)
-    .setDescription("设置审核通过后自动赋予的身分组")
+    .setDescription("设置审核通过后自动赋予的身份组")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addRoleOption((opt) =>
-      opt.setName("role").setDescription("审核通过身分组").setRequired(true)
+      opt.setName("role").setDescription("审核通过身份组").setRequired(true)
     ),
 
   new SlashCommandBuilder()
@@ -124,6 +125,17 @@ export const commands = [
     .setName(SEARCH_PANEL_CMD)
     .setDescription("在当前频道发送搜索交互面板")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+
+  new SlashCommandBuilder()
+    .setName(SETUP_STATS_CMD)
+    .setDescription("创建三个统计语音频道，实时显示梦旅者/梦中身/失眠者人数")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addChannelOption((opt) =>
+      opt
+        .setName("category")
+        .setDescription("将统计频道放在哪个分类下（可选）")
+        .setRequired(false)
+    ),
 
   uploadArtworkCmd,
 ].map((cmd) => cmd.toJSON());

@@ -48113,26 +48113,26 @@ var require_channel = __commonJS({
       ForumLayoutType2[ForumLayoutType2["ListView"] = 1] = "ListView";
       ForumLayoutType2[ForumLayoutType2["GalleryView"] = 2] = "GalleryView";
     })(ForumLayoutType || (exports2.ForumLayoutType = ForumLayoutType = {}));
-    var ChannelType4;
-    (function(ChannelType5) {
-      ChannelType5[ChannelType5["GuildText"] = 0] = "GuildText";
-      ChannelType5[ChannelType5["DM"] = 1] = "DM";
-      ChannelType5[ChannelType5["GuildVoice"] = 2] = "GuildVoice";
-      ChannelType5[ChannelType5["GroupDM"] = 3] = "GroupDM";
-      ChannelType5[ChannelType5["GuildCategory"] = 4] = "GuildCategory";
-      ChannelType5[ChannelType5["GuildAnnouncement"] = 5] = "GuildAnnouncement";
-      ChannelType5[ChannelType5["AnnouncementThread"] = 10] = "AnnouncementThread";
-      ChannelType5[ChannelType5["PublicThread"] = 11] = "PublicThread";
-      ChannelType5[ChannelType5["PrivateThread"] = 12] = "PrivateThread";
-      ChannelType5[ChannelType5["GuildStageVoice"] = 13] = "GuildStageVoice";
-      ChannelType5[ChannelType5["GuildDirectory"] = 14] = "GuildDirectory";
-      ChannelType5[ChannelType5["GuildForum"] = 15] = "GuildForum";
-      ChannelType5[ChannelType5["GuildMedia"] = 16] = "GuildMedia";
-      ChannelType5[ChannelType5["GuildNews"] = 5] = "GuildNews";
-      ChannelType5[ChannelType5["GuildNewsThread"] = 10] = "GuildNewsThread";
-      ChannelType5[ChannelType5["GuildPublicThread"] = 11] = "GuildPublicThread";
-      ChannelType5[ChannelType5["GuildPrivateThread"] = 12] = "GuildPrivateThread";
-    })(ChannelType4 || (exports2.ChannelType = ChannelType4 = {}));
+    var ChannelType5;
+    (function(ChannelType6) {
+      ChannelType6[ChannelType6["GuildText"] = 0] = "GuildText";
+      ChannelType6[ChannelType6["DM"] = 1] = "DM";
+      ChannelType6[ChannelType6["GuildVoice"] = 2] = "GuildVoice";
+      ChannelType6[ChannelType6["GroupDM"] = 3] = "GroupDM";
+      ChannelType6[ChannelType6["GuildCategory"] = 4] = "GuildCategory";
+      ChannelType6[ChannelType6["GuildAnnouncement"] = 5] = "GuildAnnouncement";
+      ChannelType6[ChannelType6["AnnouncementThread"] = 10] = "AnnouncementThread";
+      ChannelType6[ChannelType6["PublicThread"] = 11] = "PublicThread";
+      ChannelType6[ChannelType6["PrivateThread"] = 12] = "PrivateThread";
+      ChannelType6[ChannelType6["GuildStageVoice"] = 13] = "GuildStageVoice";
+      ChannelType6[ChannelType6["GuildDirectory"] = 14] = "GuildDirectory";
+      ChannelType6[ChannelType6["GuildForum"] = 15] = "GuildForum";
+      ChannelType6[ChannelType6["GuildMedia"] = 16] = "GuildMedia";
+      ChannelType6[ChannelType6["GuildNews"] = 5] = "GuildNews";
+      ChannelType6[ChannelType6["GuildNewsThread"] = 10] = "GuildNewsThread";
+      ChannelType6[ChannelType6["GuildPublicThread"] = 11] = "GuildPublicThread";
+      ChannelType6[ChannelType6["GuildPrivateThread"] = 12] = "GuildPrivateThread";
+    })(ChannelType5 || (exports2.ChannelType = ChannelType5 = {}));
     var VideoQualityMode;
     (function(VideoQualityMode2) {
       VideoQualityMode2[VideoQualityMode2["Auto"] = 1] = "Auto";
@@ -59757,7 +59757,7 @@ var require_ChannelFlagsBitField = __commonJS({
 var require_Constants = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/util/Constants.js"(exports2) {
     "use strict";
-    var { ChannelType: ChannelType4, MessageType, ComponentType, ImageFormat, StickerFormatType } = require_v106();
+    var { ChannelType: ChannelType5, MessageType, ComponentType, ImageFormat, StickerFormatType } = require_v106();
     exports2.MaxBulkDeletableMessageAge = 12096e5;
     exports2.SweeperKeys = [
       "autoModerationRules",
@@ -59784,18 +59784,18 @@ var require_Constants = __commonJS({
       MessageType.ContextMenuCommand
     ];
     exports2.GuildTextBasedChannelTypes = [
-      ChannelType4.GuildText,
-      ChannelType4.GuildAnnouncement,
-      ChannelType4.AnnouncementThread,
-      ChannelType4.PublicThread,
-      ChannelType4.PrivateThread,
-      ChannelType4.GuildVoice,
-      ChannelType4.GuildStageVoice
+      ChannelType5.GuildText,
+      ChannelType5.GuildAnnouncement,
+      ChannelType5.AnnouncementThread,
+      ChannelType5.PublicThread,
+      ChannelType5.PrivateThread,
+      ChannelType5.GuildVoice,
+      ChannelType5.GuildStageVoice
     ];
-    exports2.TextBasedChannelTypes = [...exports2.GuildTextBasedChannelTypes, ChannelType4.DM, ChannelType4.GroupDM];
-    exports2.SendableChannels = [...exports2.GuildTextBasedChannelTypes, ChannelType4.DM];
-    exports2.ThreadChannelTypes = [ChannelType4.AnnouncementThread, ChannelType4.PublicThread, ChannelType4.PrivateThread];
-    exports2.VoiceBasedChannelTypes = [ChannelType4.GuildVoice, ChannelType4.GuildStageVoice];
+    exports2.TextBasedChannelTypes = [...exports2.GuildTextBasedChannelTypes, ChannelType5.DM, ChannelType5.GroupDM];
+    exports2.SendableChannels = [...exports2.GuildTextBasedChannelTypes, ChannelType5.DM];
+    exports2.ThreadChannelTypes = [ChannelType5.AnnouncementThread, ChannelType5.PublicThread, ChannelType5.PrivateThread];
+    exports2.VoiceBasedChannelTypes = [ChannelType5.GuildVoice, ChannelType5.GuildStageVoice];
     exports2.SelectMenuTypes = [
       ComponentType.StringSelect,
       ComponentType.UserSelect,
@@ -59854,7 +59854,7 @@ var require_BaseChannel = __commonJS({
     "use strict";
     var { channelLink, channelMention } = require_dist8();
     var { DiscordSnowflake } = require_cjs3();
-    var { ChannelType: ChannelType4, Routes: Routes3 } = require_v106();
+    var { ChannelType: ChannelType5, Routes: Routes3 } = require_v106();
     var Base = require_Base();
     var ChannelFlagsBitField = require_ChannelFlagsBitField();
     var { ThreadChannelTypes } = require_Constants();
@@ -59955,7 +59955,7 @@ var require_BaseChannel = __commonJS({
        * @returns {boolean}
        */
       isDMBased() {
-        return [ChannelType4.DM, ChannelType4.GroupDM].includes(this.type);
+        return [ChannelType5.DM, ChannelType5.GroupDM].includes(this.type);
       }
       /**
        * Indicates whether this channel is {@link BaseGuildVoiceChannel voice-based}.
@@ -60108,7 +60108,7 @@ var require_CachedManager = __commonJS({
 var require_PermissionsBitField = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/util/PermissionsBitField.js"(exports2, module2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BitField = require_BitField();
     var PermissionsBitField2 = class extends BitField {
       /**
@@ -60117,13 +60117,13 @@ var require_PermissionsBitField = __commonJS({
        * @memberof PermissionsBitField
        * @see {@link https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags}
        */
-      static Flags = PermissionFlagsBits4;
+      static Flags = PermissionFlagsBits5;
       /**
        * Bitfield representing every permission combined
        * @type {bigint}
        * @memberof PermissionsBitField
        */
-      static All = Object.values(PermissionFlagsBits4).reduce((all, p) => all | p, 0n);
+      static All = Object.values(PermissionFlagsBits5).reduce((all, p) => all | p, 0n);
       /**
        * Bitfield representing the default permissions for users
        * @type {bigint}
@@ -60135,7 +60135,7 @@ var require_PermissionsBitField = __commonJS({
        * @type {bigint}
        * @memberof PermissionsBitField
        */
-      static StageModerator = PermissionFlagsBits4.ManageChannels | PermissionFlagsBits4.MuteMembers | PermissionFlagsBits4.MoveMembers;
+      static StageModerator = PermissionFlagsBits5.ManageChannels | PermissionFlagsBits5.MuteMembers | PermissionFlagsBits5.MoveMembers;
       /**
        * @type {bigint}
        * @memberof PermissionsBitField
@@ -60162,7 +60162,7 @@ var require_PermissionsBitField = __commonJS({
        * @returns {string[]}
        */
       missing(bits, checkAdmin = true) {
-        return checkAdmin && this.has(PermissionFlagsBits4.Administrator) ? [] : super.missing(bits);
+        return checkAdmin && this.has(PermissionFlagsBits5.Administrator) ? [] : super.missing(bits);
       }
       /**
        * Checks whether the bitfield has a permission, or any of multiple permissions.
@@ -60171,7 +60171,7 @@ var require_PermissionsBitField = __commonJS({
        * @returns {boolean}
        */
       any(permission, checkAdmin = true) {
-        return checkAdmin && super.has(PermissionFlagsBits4.Administrator) || super.any(permission);
+        return checkAdmin && super.has(PermissionFlagsBits5.Administrator) || super.any(permission);
       }
       /**
        * Checks whether the bitfield has a permission, or multiple permissions.
@@ -60180,7 +60180,7 @@ var require_PermissionsBitField = __commonJS({
        * @returns {boolean}
        */
       has(permission, checkAdmin = true) {
-        return checkAdmin && super.has(PermissionFlagsBits4.Administrator) || super.has(permission);
+        return checkAdmin && super.has(PermissionFlagsBits5.Administrator) || super.has(permission);
       }
       /**
        * Gets an {@link Array} of bitfield names based on the permissions available.
@@ -60218,7 +60218,7 @@ var require_Role = __commonJS({
     "use strict";
     var { roleMention } = require_dist8();
     var { DiscordSnowflake } = require_cjs3();
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var Base = require_Base();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var PermissionsBitField2 = require_PermissionsBitField();
@@ -60330,7 +60330,7 @@ var require_Role = __commonJS({
       get editable() {
         if (this.managed) return false;
         const clientMember = this.guild.members.resolve(this.client.user);
-        if (!clientMember.permissions.has(PermissionFlagsBits4.ManageRoles)) return false;
+        if (!clientMember.permissions.has(PermissionFlagsBits5.ManageRoles)) return false;
         return clientMember.roles.highest.comparePositionTo(this) > 0;
       }
       /**
@@ -60901,7 +60901,7 @@ var require_GuildChannel = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/GuildChannel.js"(exports2, module2) {
     "use strict";
     var { Snowflake } = require_cjs3();
-    var { PermissionFlagsBits: PermissionFlagsBits4, ChannelType: ChannelType4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5, ChannelType: ChannelType5 } = require_v106();
     var { BaseChannel } = require_BaseChannel();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var PermissionOverwriteManager = require_PermissionOverwriteManager();
@@ -60978,7 +60978,7 @@ var require_GuildChannel = __commonJS({
        * @readonly
        */
       get position() {
-        const selfIsCategory = this.type === ChannelType4.GuildCategory;
+        const selfIsCategory = this.type === ChannelType5.GuildCategory;
         const types3 = getSortableGroupTypes(this.type);
         let count = 0;
         for (const channel of this.guild.channels.cache.values()) {
@@ -61041,7 +61041,7 @@ var require_GuildChannel = __commonJS({
         }
         const roles = member.roles.cache;
         const permissions = new PermissionsBitField2(roles.map((role) => role.permissions));
-        if (checkAdmin && permissions.has(PermissionFlagsBits4.Administrator)) {
+        if (checkAdmin && permissions.has(PermissionFlagsBits5.Administrator)) {
           return new PermissionsBitField2(PermissionsBitField2.All).freeze();
         }
         const overwrites = this.overwritesFor(member, true, roles);
@@ -61056,7 +61056,7 @@ var require_GuildChannel = __commonJS({
        * @private
        */
       rolePermissions(role, checkAdmin) {
-        if (checkAdmin && role.permissions.has(PermissionFlagsBits4.Administrator)) {
+        if (checkAdmin && role.permissions.has(PermissionFlagsBits5.Administrator)) {
           return new PermissionsBitField2(PermissionsBitField2.All).freeze();
         }
         const basePermissions = new PermissionsBitField2([role.permissions, role.guild.roles.everyone.permissions]);
@@ -61082,7 +61082,7 @@ var require_GuildChannel = __commonJS({
        */
       get members() {
         return this.guild.members.cache.filter(
-          (member) => this.permissionsFor(member).has(PermissionFlagsBits4.ViewChannel, false)
+          (member) => this.permissionsFor(member).has(PermissionFlagsBits5.ViewChannel, false)
         );
       }
       /**
@@ -61216,9 +61216,9 @@ var require_GuildChannel = __commonJS({
         if (this.client.user.id === this.guild.ownerId) return true;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
         if (this.guild.members.me.communicationDisabledUntilTimestamp > Date.now()) return false;
-        const bitfield = VoiceBasedChannelTypes.includes(this.type) ? PermissionFlagsBits4.ManageChannels | PermissionFlagsBits4.Connect : PermissionFlagsBits4.ViewChannel | PermissionFlagsBits4.ManageChannels;
+        const bitfield = VoiceBasedChannelTypes.includes(this.type) ? PermissionFlagsBits5.ManageChannels | PermissionFlagsBits5.Connect : PermissionFlagsBits5.ViewChannel | PermissionFlagsBits5.ManageChannels;
         return permissions.has(bitfield, false);
       }
       /**
@@ -61230,7 +61230,7 @@ var require_GuildChannel = __commonJS({
         if (this.client.user.id === this.guild.ownerId) return true;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        return permissions.has(PermissionFlagsBits4.ViewChannel, false);
+        return permissions.has(PermissionFlagsBits5.ViewChannel, false);
       }
       /**
        * Deletes this channel.
@@ -61297,7 +61297,7 @@ var require_Util = __commonJS({
     var { parse: parse3 } = __require("node:path");
     var process2 = __require("node:process");
     var { Collection: Collection2 } = require_dist7();
-    var { ChannelType: ChannelType4, RouteBases, Routes: Routes3 } = require_v106();
+    var { ChannelType: ChannelType5, RouteBases, Routes: Routes3 } = require_v106();
     var { fetch: fetch2 } = require_undici();
     var Colors = require_Colors();
     var { DiscordjsError: DiscordjsError2, DiscordjsRangeError: DiscordjsRangeError2, DiscordjsTypeError: DiscordjsTypeError2, ErrorCodes: ErrorCodes2 } = require_errors2();
@@ -61366,24 +61366,24 @@ var require_Util = __commonJS({
       };
     }
     var TextSortableGroupTypes = [
-      ChannelType4.GuildText,
-      ChannelType4.GuildAnnouncement,
-      ChannelType4.GuildForum,
-      ChannelType4.GuildMedia
+      ChannelType5.GuildText,
+      ChannelType5.GuildAnnouncement,
+      ChannelType5.GuildForum,
+      ChannelType5.GuildMedia
     ];
-    var VoiceSortableGroupTypes = [ChannelType4.GuildVoice, ChannelType4.GuildStageVoice];
-    var CategorySortableGroupTypes = [ChannelType4.GuildCategory];
+    var VoiceSortableGroupTypes = [ChannelType5.GuildVoice, ChannelType5.GuildStageVoice];
+    var CategorySortableGroupTypes = [ChannelType5.GuildCategory];
     function getSortableGroupTypes(type) {
       switch (type) {
-        case ChannelType4.GuildText:
-        case ChannelType4.GuildAnnouncement:
-        case ChannelType4.GuildForum:
-        case ChannelType4.GuildMedia:
+        case ChannelType5.GuildText:
+        case ChannelType5.GuildAnnouncement:
+        case ChannelType5.GuildForum:
+        case ChannelType5.GuildMedia:
           return TextSortableGroupTypes;
-        case ChannelType4.GuildVoice:
-        case ChannelType4.GuildStageVoice:
+        case ChannelType5.GuildVoice:
+        case ChannelType5.GuildStageVoice:
           return VoiceSortableGroupTypes;
-        case ChannelType4.GuildCategory:
+        case ChannelType5.GuildCategory:
           return CategorySortableGroupTypes;
         default:
           return [type];
@@ -61458,7 +61458,7 @@ var require_Util = __commonJS({
               return user ? `@${user.displayName}` : match;
             }
             case "@&": {
-              if (channel.type === ChannelType4.DM) return match;
+              if (channel.type === ChannelType5.DM) return match;
               const role = channel.guild.roles.cache.get(id);
               return role ? `@${role.name}` : match;
             }
@@ -63537,7 +63537,7 @@ var require_InviteGuild = __commonJS({
 var require_Invite = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/Invite.js"(exports2, module2) {
     "use strict";
-    var { RouteBases, Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { RouteBases, Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var Base = require_Base();
     var { GuildScheduledEvent } = require_GuildScheduledEvent();
     var IntegrationApplication = require_IntegrationApplication();
@@ -63671,7 +63671,7 @@ var require_Invite = __commonJS({
         if (!guild || !this.client.guilds.cache.has(guild.id)) return false;
         if (!guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
         return Boolean(
-          this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits4.ManageChannels, false) || guild.members.me.permissions.has(PermissionFlagsBits4.ManageGuild)
+          this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits5.ManageChannels, false) || guild.members.me.permissions.has(PermissionFlagsBits5.ManageGuild)
         );
       }
       /**
@@ -76386,7 +76386,7 @@ var require_GuildEmojiRoleManager = __commonJS({
 var require_GuildEmoji = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/GuildEmoji.js"(exports2, module2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BaseGuildEmoji = require_BaseGuildEmoji();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var GuildEmojiRoleManager = require_GuildEmojiRoleManager();
@@ -76419,7 +76419,7 @@ var require_GuildEmoji = __commonJS({
        */
       get deletable() {
         if (!this.guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        return !this.managed && this.guild.members.me.permissions.has(PermissionFlagsBits4.ManageGuildExpressions);
+        return !this.managed && this.guild.members.me.permissions.has(PermissionFlagsBits5.ManageGuildExpressions);
       }
       /**
        * A manager for roles this emoji is active for.
@@ -77735,10 +77735,10 @@ var require_Message = __commonJS({
     var { DiscordSnowflake } = require_cjs3();
     var {
       InteractionType,
-      ChannelType: ChannelType4,
+      ChannelType: ChannelType5,
       MessageType,
       MessageFlags,
-      PermissionFlagsBits: PermissionFlagsBits4,
+      PermissionFlagsBits: PermissionFlagsBits5,
       MessageReferenceType
     } = require_v106();
     var Attachment = require_Attachment();
@@ -78182,7 +78182,7 @@ var require_Message = __commonJS({
           if (this.channel.archived) return false;
           if (this.channel.locked) {
             const permissions = this.channel.permissionsFor(this.client.user);
-            if (!permissions?.has(PermissionFlagsBits4.ManageThreads, true)) return false;
+            if (!permissions?.has(PermissionFlagsBits5.ManageThreads, true)) return false;
           }
         }
         return precheck;
@@ -78202,8 +78202,8 @@ var require_Message = __commonJS({
         }
         const permissions = this.channel?.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.type !== MessageType.AutoModerationAction && this.author.id === this.client.user.id || permissions.has(PermissionFlagsBits4.ManageMessages, false) && !this.guild.members.me.isCommunicationDisabled();
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.type !== MessageType.AutoModerationAction && this.author.id === this.client.user.id || permissions.has(PermissionFlagsBits5.ManageMessages, false) && !this.guild.members.me.isCommunicationDisabled();
       }
       /**
        * Whether the message is bulk deletable by the client user
@@ -78214,7 +78214,7 @@ var require_Message = __commonJS({
        * channel.bulkDelete(messages.filter(message => message.bulkDeletable));
        */
       get bulkDeletable() {
-        return (this.inGuild() && Date.now() - this.createdTimestamp < MaxBulkDeletableMessageAge && this.deletable && this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits4.ManageMessages, false)) ?? false;
+        return (this.inGuild() && Date.now() - this.createdTimestamp < MaxBulkDeletableMessageAge && this.deletable && this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits5.ManageMessages, false)) ?? false;
       }
       /**
        * Whether the message is pinnable by the client user
@@ -78228,7 +78228,7 @@ var require_Message = __commonJS({
         if (!channel || channel.isVoiceBased() || !channel.viewable) return false;
         const permissions = channel?.permissionsFor(this.client.user);
         if (!permissions) return false;
-        return permissions.has(PermissionFlagsBits4.ReadMessageHistory | PermissionFlagsBits4.PinMessages);
+        return permissions.has(PermissionFlagsBits5.ReadMessageHistory | PermissionFlagsBits5.PinMessages);
       }
       /**
        * Fetches the Message this crosspost/reply/pin-add references, if available to the client
@@ -78249,10 +78249,10 @@ var require_Message = __commonJS({
        * @readonly
        */
       get crosspostable() {
-        const bitfield = PermissionFlagsBits4.SendMessages | (this.author.id === this.client.user.id ? PermissionsBitField2.DefaultBit : PermissionFlagsBits4.ManageMessages);
+        const bitfield = PermissionFlagsBits5.SendMessages | (this.author.id === this.client.user.id ? PermissionsBitField2.DefaultBit : PermissionFlagsBits5.ManageMessages);
         const { channel } = this;
         return Boolean(
-          channel?.type === ChannelType4.GuildAnnouncement && !this.flags.has(MessageFlags.Crossposted) && this.reference?.type !== MessageReferenceType.Forward && this.type === MessageType.Default && !this.poll && channel.viewable && channel.permissionsFor(this.client.user)?.has(bitfield, false)
+          channel?.type === ChannelType5.GuildAnnouncement && !this.flags.has(MessageFlags.Crossposted) && this.reference?.type !== MessageReferenceType.Forward && this.type === MessageType.Default && !this.poll && channel.viewable && channel.permissionsFor(this.client.user)?.has(bitfield, false)
         );
       }
       /**
@@ -78421,7 +78421,7 @@ var require_Message = __commonJS({
        */
       async startThread(options = {}) {
         if (!this.channel) throw new DiscordjsError2(ErrorCodes2.ChannelNotCached);
-        if (![ChannelType4.GuildText, ChannelType4.GuildAnnouncement].includes(this.channel.type)) {
+        if (![ChannelType5.GuildText, ChannelType5.GuildAnnouncement].includes(this.channel.type)) {
           throw new DiscordjsError2(ErrorCodes2.MessageThreadParent);
         }
         if (this.hasThread) throw new DiscordjsError2(ErrorCodes2.MessageExistingThread);
@@ -79009,7 +79009,7 @@ var require_WebhookClient = __commonJS({
 var require_VoiceState = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/VoiceState.js"(exports2, module2) {
     "use strict";
-    var { ChannelType: ChannelType4, Routes: Routes3 } = require_v106();
+    var { ChannelType: ChannelType5, Routes: Routes3 } = require_v106();
     var Base = require_Base();
     var { DiscordjsError: DiscordjsError2, DiscordjsTypeError: DiscordjsTypeError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var VoiceState = class extends Base {
@@ -79153,7 +79153,7 @@ var require_VoiceState = __commonJS({
        * @returns {Promise<VoiceState>}
        */
       async edit(options) {
-        if (this.channel?.type !== ChannelType4.GuildStageVoice) throw new DiscordjsError2(ErrorCodes2.VoiceNotStageChannel);
+        if (this.channel?.type !== ChannelType5.GuildStageVoice) throw new DiscordjsError2(ErrorCodes2.VoiceNotStageChannel);
         const target = this.client.user.id === this.id ? "@me" : this.id;
         if (target !== "@me" && options.requestToSpeak !== void 0) {
           throw new DiscordjsError2(ErrorCodes2.VoiceStateNotOwn);
@@ -79442,7 +79442,7 @@ var require_GuildMemberFlagsBitField = __commonJS({
 var require_GuildMember = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/GuildMember.js"(exports2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var Base = require_Base();
     var VoiceState = require_VoiceState();
     var TextBasedChannel = require_TextBasedChannel();
@@ -79688,7 +79688,7 @@ var require_GuildMember = __commonJS({
        */
       get kickable() {
         if (!this.guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits4.KickMembers);
+        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits5.KickMembers);
       }
       /**
        * Whether this member is bannable by the client user
@@ -79697,7 +79697,7 @@ var require_GuildMember = __commonJS({
        */
       get bannable() {
         if (!this.guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits4.BanMembers);
+        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits5.BanMembers);
       }
       /**
        * Whether this member is moderatable by the client user
@@ -79705,7 +79705,7 @@ var require_GuildMember = __commonJS({
        * @readonly
        */
       get moderatable() {
-        return !this.permissions.has(PermissionFlagsBits4.Administrator) && this.manageable && (this.guild.members.me?.permissions.has(PermissionFlagsBits4.ModerateMembers) ?? false);
+        return !this.permissions.has(PermissionFlagsBits5.Administrator) && this.manageable && (this.guild.members.me?.permissions.has(PermissionFlagsBits5.ModerateMembers) ?? false);
       }
       /**
        * Whether this member is currently timed out
@@ -81491,7 +81491,7 @@ var require_Partials = __commonJS({
 var require_Action = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/client/actions/Action.js"(exports2, module2) {
     "use strict";
-    var { ChannelType: ChannelType4 } = require_v106();
+    var { ChannelType: ChannelType5 } = require_v106();
     var { Poll } = require_Poll();
     var { PollAnswer } = require_PollAnswer();
     var Partials2 = require_Partials();
@@ -81513,7 +81513,7 @@ var require_Action = __commonJS({
           if (!data.recipients.some((existingRecipient) => recipient.id === existingRecipient.id)) {
             payloadData.recipients = [...data.recipients, recipient];
           }
-        } else if (data.type === ChannelType4.DM || data.type === ChannelType4.GroupDM) {
+        } else if (data.type === ChannelType5.DM || data.type === ChannelType5.GroupDM) {
           const recipient = data.author ?? data.user ?? { id: data.user_id };
           payloadData.recipients = [recipient];
         }
@@ -81939,7 +81939,7 @@ var require_DMChannel = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/DMChannel.js"(exports2, module2) {
     "use strict";
     var { userMention } = require_dist8();
-    var { ChannelType: ChannelType4 } = require_v106();
+    var { ChannelType: ChannelType5 } = require_v106();
     var { BaseChannel } = require_BaseChannel();
     var TextBasedChannel = require_TextBasedChannel();
     var DMMessageManager = require_DMMessageManager();
@@ -81947,7 +81947,7 @@ var require_DMChannel = __commonJS({
     var DMChannel = class extends BaseChannel {
       constructor(client, data) {
         super(client, data);
-        this.type = ChannelType4.DM;
+        this.type = ChannelType5.DM;
         this.messages = new DMMessageManager(this);
       }
       _patch(data) {
@@ -82568,7 +82568,7 @@ var require_ThreadChannel = __commonJS({
     "use strict";
     var { DiscordAPIError } = require_dist6();
     var { lazy: lazy2 } = require_dist2();
-    var { RESTJSONErrorCodes, ChannelFlags, ChannelType: ChannelType4, PermissionFlagsBits: PermissionFlagsBits4, Routes: Routes3 } = require_v106();
+    var { RESTJSONErrorCodes, ChannelFlags, ChannelType: ChannelType5, PermissionFlagsBits: PermissionFlagsBits5, Routes: Routes3 } = require_v106();
     var { BaseChannel } = require_BaseChannel();
     var getThreadOnlyChannel = lazy2(() => require_ThreadOnlyChannel());
     var TextBasedChannel = require_TextBasedChannel();
@@ -82602,7 +82602,7 @@ var require_ThreadChannel = __commonJS({
         }
         if ("thread_metadata" in data) {
           this.locked = data.thread_metadata.locked ?? false;
-          this.invitable = this.type === ChannelType4.PrivateThread ? data.thread_metadata.invitable ?? false : null;
+          this.invitable = this.type === ChannelType5.PrivateThread ? data.thread_metadata.invitable ?? false : null;
           this.archived = data.thread_metadata.archived;
           this.autoArchiveDuration = data.thread_metadata.auto_archive_duration;
           this.archiveTimestamp = Date.parse(data.thread_metadata.archive_timestamp);
@@ -82616,7 +82616,7 @@ var require_ThreadChannel = __commonJS({
           this.archiveTimestamp ??= null;
           this.invitable ??= null;
         }
-        this._createdTimestamp ??= this.type === ChannelType4.PrivateThread ? super.createdTimestamp : null;
+        this._createdTimestamp ??= this.type === ChannelType5.PrivateThread ? super.createdTimestamp : null;
         if ("last_message_id" in data) {
           this.lastMessageId = data.last_message_id;
         } else {
@@ -82789,7 +82789,7 @@ var require_ThreadChannel = __commonJS({
             auto_archive_duration: options.autoArchiveDuration,
             rate_limit_per_user: options.rateLimitPerUser,
             locked: options.locked,
-            invitable: this.type === ChannelType4.PrivateThread ? options.invitable : void 0,
+            invitable: this.type === ChannelType5.PrivateThread ? options.invitable : void 0,
             applied_tags: options.appliedTags,
             flags: "flags" in options ? ChannelFlagsBitField.resolve(options.flags) : void 0
           },
@@ -82836,7 +82836,7 @@ var require_ThreadChannel = __commonJS({
        * @returns {Promise<ThreadChannel>}
        */
       async setInvitable(invitable = true, reason) {
-        if (this.type !== ChannelType4.PrivateThread) {
+        if (this.type !== ChannelType5.PrivateThread) {
           throw new DiscordjsRangeError2(ErrorCodes2.ThreadInvitableType, this.type);
         }
         return this.edit({ invitable, reason });
@@ -82919,7 +82919,7 @@ var require_ThreadChannel = __commonJS({
        * @readonly
        */
       get editable() {
-        return this.ownerId === this.client.user.id && (this.type !== ChannelType4.PrivateThread || this.joined) || this.manageable;
+        return this.ownerId === this.client.user.id && (this.type !== ChannelType5.PrivateThread || this.joined) || this.manageable;
       }
       /**
        * Whether the thread is joinable by the client user
@@ -82928,7 +82928,7 @@ var require_ThreadChannel = __commonJS({
        */
       get joinable() {
         return !this.archived && !this.joined && this.permissionsFor(this.client.user)?.has(
-          this.type === ChannelType4.PrivateThread ? PermissionFlagsBits4.ManageThreads : PermissionFlagsBits4.ViewChannel,
+          this.type === ChannelType5.PrivateThread ? PermissionFlagsBits5.ManageThreads : PermissionFlagsBits5.ViewChannel,
           false
         );
       }
@@ -82940,8 +82940,8 @@ var require_ThreadChannel = __commonJS({
       get manageable() {
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits4.ManageThreads, false);
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits5.ManageThreads, false);
       }
       /**
        * Whether the thread is viewable by the client user
@@ -82952,7 +82952,7 @@ var require_ThreadChannel = __commonJS({
         if (this.client.user.id === this.guild.ownerId) return true;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        return permissions.has(PermissionFlagsBits4.ViewChannel, false);
+        return permissions.has(PermissionFlagsBits5.ViewChannel, false);
       }
       /**
        * Whether the client user can send messages in this thread
@@ -82962,8 +82962,8 @@ var require_ThreadChannel = __commonJS({
       get sendable() {
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return !(this.archived && this.locked && !this.manageable) && (this.type !== ChannelType4.PrivateThread || this.joined || this.manageable) && permissions.has(PermissionFlagsBits4.SendMessagesInThreads, false) && this.guild.members.me.communicationDisabledUntilTimestamp < Date.now();
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return !(this.archived && this.locked && !this.manageable) && (this.type !== ChannelType5.PrivateThread || this.joined || this.manageable) && permissions.has(PermissionFlagsBits5.SendMessagesInThreads, false) && this.guild.members.me.communicationDisabledUntilTimestamp < Date.now();
       }
       /**
        * Whether the thread is unarchivable by the client user
@@ -83186,7 +83186,7 @@ var require_ThreadManager = __commonJS({
 var require_GuildTextThreadManager = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/managers/GuildTextThreadManager.js"(exports2, module2) {
     "use strict";
-    var { ChannelType: ChannelType4, Routes: Routes3 } = require_v106();
+    var { ChannelType: ChannelType5, Routes: Routes3 } = require_v106();
     var ThreadManager = require_ThreadManager();
     var { DiscordjsTypeError: DiscordjsTypeError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var GuildTextThreadManager = class extends ThreadManager {
@@ -83242,12 +83242,12 @@ var require_GuildTextThreadManager = __commonJS({
         reason,
         rateLimitPerUser
       } = {}) {
-        let resolvedType = this.channel.type === ChannelType4.GuildAnnouncement ? ChannelType4.AnnouncementThread : ChannelType4.PublicThread;
+        let resolvedType = this.channel.type === ChannelType5.GuildAnnouncement ? ChannelType5.AnnouncementThread : ChannelType5.PublicThread;
         let startMessageId;
         if (startMessage) {
           startMessageId = this.channel.messages.resolveId(startMessage);
           if (!startMessageId) throw new DiscordjsTypeError2(ErrorCodes2.InvalidType, "startMessage", "MessageResolvable");
-        } else if (this.channel.type !== ChannelType4.GuildAnnouncement) {
+        } else if (this.channel.type !== ChannelType5.GuildAnnouncement) {
           resolvedType = type ?? resolvedType;
         }
         const data = await this.client.rest.post(Routes3.threads(this.channel.id, startMessageId), {
@@ -83255,7 +83255,7 @@ var require_GuildTextThreadManager = __commonJS({
             name,
             auto_archive_duration: autoArchiveDuration,
             type: resolvedType,
-            invitable: resolvedType === ChannelType4.PrivateThread ? invitable : void 0,
+            invitable: resolvedType === ChannelType5.PrivateThread ? invitable : void 0,
             rate_limit_per_user: rateLimitPerUser
           },
           reason
@@ -83457,7 +83457,7 @@ var require_BaseGuildVoiceChannel = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/BaseGuildVoiceChannel.js"(exports2, module2) {
     "use strict";
     var { Collection: Collection2 } = require_dist7();
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var GuildChannel = require_GuildChannel();
     var TextBasedChannel = require_TextBasedChannel();
     var GuildMessageManager = require_GuildMessageManager();
@@ -83528,8 +83528,8 @@ var require_BaseGuildVoiceChannel = __commonJS({
         if (!this.viewable) return false;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits4.Connect, false);
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits5.Connect, false);
       }
       /**
        * Creates an invite to this guild channel.
@@ -83713,7 +83713,7 @@ var require_TextChannel = __commonJS({
 var require_VoiceChannel = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/VoiceChannel.js"(exports2, module2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4, Routes: Routes3 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5, Routes: Routes3 } = require_v106();
     var BaseGuildVoiceChannel = require_BaseGuildVoiceChannel();
     var VoiceChannel = class extends BaseGuildVoiceChannel {
       /**
@@ -83723,7 +83723,7 @@ var require_VoiceChannel = __commonJS({
        */
       get joinable() {
         if (!super.joinable) return false;
-        if (this.full && !this.permissionsFor(this.client.user).has(PermissionFlagsBits4.MoveMembers, false)) return false;
+        if (this.full && !this.permissionsFor(this.client.user).has(PermissionFlagsBits5.MoveMembers, false)) return false;
         return true;
       }
       /**
@@ -83734,8 +83734,8 @@ var require_VoiceChannel = __commonJS({
       get speakable() {
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits4.Speak, false);
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits5.Speak, false);
       }
       /**
        * @typedef {Object} SendSoundboardSoundOptions
@@ -83919,7 +83919,7 @@ var require_Channels = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/util/Channels.js"(exports2, module2) {
     "use strict";
     var { lazy: lazy2 } = require_dist2();
-    var { ChannelType: ChannelType4 } = require_v106();
+    var { ChannelType: ChannelType5 } = require_v106();
     var getCategoryChannel = lazy2(() => require_CategoryChannel());
     var getDMChannel = lazy2(() => require_DMChannel());
     var getNewsChannel = lazy2(() => require_NewsChannel());
@@ -83934,49 +83934,49 @@ var require_Channels = __commonJS({
     function createChannel(client, data, guild, { allowUnknownGuild } = {}) {
       let channel;
       if (!data.guild_id && !guild) {
-        if (data.recipients && data.type !== ChannelType4.GroupDM || data.type === ChannelType4.DM) {
+        if (data.recipients && data.type !== ChannelType5.GroupDM || data.type === ChannelType5.DM) {
           channel = new (getDMChannel())(client, data);
-        } else if (data.type === ChannelType4.GroupDM) {
+        } else if (data.type === ChannelType5.GroupDM) {
           channel = new (getPartialGroupDMChannel())(client, data);
         }
       } else {
         guild ??= client.guilds.cache.get(data.guild_id);
         if (guild || allowUnknownGuild) {
           switch (data.type) {
-            case ChannelType4.GuildText: {
+            case ChannelType5.GuildText: {
               channel = new (getTextChannel())(guild, data, client);
               break;
             }
-            case ChannelType4.GuildVoice: {
+            case ChannelType5.GuildVoice: {
               channel = new (getVoiceChannel())(guild, data, client);
               break;
             }
-            case ChannelType4.GuildCategory: {
+            case ChannelType5.GuildCategory: {
               channel = new (getCategoryChannel())(guild, data, client);
               break;
             }
-            case ChannelType4.GuildAnnouncement: {
+            case ChannelType5.GuildAnnouncement: {
               channel = new (getNewsChannel())(guild, data, client);
               break;
             }
-            case ChannelType4.GuildStageVoice: {
+            case ChannelType5.GuildStageVoice: {
               channel = new (getStageChannel())(guild, data, client);
               break;
             }
-            case ChannelType4.AnnouncementThread:
-            case ChannelType4.PublicThread:
-            case ChannelType4.PrivateThread: {
+            case ChannelType5.AnnouncementThread:
+            case ChannelType5.PublicThread:
+            case ChannelType5.PrivateThread: {
               channel = new (getThreadChannel())(guild, data, client);
               if (!allowUnknownGuild) channel.parent?.threads.cache.set(channel.id, channel);
               break;
             }
-            case ChannelType4.GuildDirectory:
+            case ChannelType5.GuildDirectory:
               channel = new (getDirectoryChannel())(guild, data, client);
               break;
-            case ChannelType4.GuildForum:
+            case ChannelType5.GuildForum:
               channel = new (getForumChannel())(guild, data, client);
               break;
-            case ChannelType4.GuildMedia:
+            case ChannelType5.GuildMedia:
               channel = new (getMediaChannel())(guild, data, client);
               break;
           }
@@ -96279,7 +96279,7 @@ var require_GuildChannelManager = __commonJS({
     "use strict";
     var process2 = __require("node:process");
     var { Collection: Collection2 } = require_dist7();
-    var { ChannelType: ChannelType4, Routes: Routes3 } = require_v106();
+    var { ChannelType: ChannelType5, Routes: Routes3 } = require_v106();
     var CachedManager = require_CachedManager();
     var GuildTextThreadManager = require_GuildTextThreadManager();
     var { DiscordjsError: DiscordjsError2, DiscordjsTypeError: DiscordjsTypeError2, ErrorCodes: ErrorCodes2 } = require_errors2();
@@ -96542,7 +96542,7 @@ var require_GuildChannelManager = __commonJS({
         if (options.lockPermissions) {
           if (parentId) {
             const newParent = this.cache.get(parentId);
-            if (newParent?.type === ChannelType4.GuildCategory) {
+            if (newParent?.type === ChannelType5.GuildCategory) {
               permission_overwrites = newParent.permissionOverwrites.cache.map(
                 (overwrite) => PermissionOverwrites.resolve(overwrite, this.guild)
               );
@@ -96748,7 +96748,7 @@ var require_GuildEmojiManager = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/managers/GuildEmojiManager.js"(exports2, module2) {
     "use strict";
     var { Collection: Collection2 } = require_dist7();
-    var { Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BaseGuildEmojiManager2 = require_BaseGuildEmojiManager();
     var { DiscordjsError: DiscordjsError2, DiscordjsTypeError: DiscordjsTypeError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var { resolveImage } = require_DataResolver();
@@ -96887,7 +96887,7 @@ var require_GuildEmojiManager = __commonJS({
         }
         const { me } = this.guild.members;
         if (!me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        if (!me.permissions.any(PermissionFlagsBits4.CreateGuildExpressions | PermissionFlagsBits4.ManageGuildExpressions)) {
+        if (!me.permissions.any(PermissionFlagsBits5.CreateGuildExpressions | PermissionFlagsBits5.ManageGuildExpressions)) {
           throw new DiscordjsError2(ErrorCodes2.MissingManageGuildExpressionsPermission, this.guild);
         }
         const data = await this.client.rest.get(Routes3.guildEmoji(this.guild.id, emoji3.id));
@@ -99221,7 +99221,7 @@ var require_Guild = __commonJS({
     var { Collection: Collection2 } = require_dist7();
     var { makeURLSearchParams: makeURLSearchParams2 } = require_dist6();
     var { DiscordSnowflake } = require_cjs3();
-    var { ChannelType: ChannelType4, GuildPremiumTier, Routes: Routes3, GuildFeature } = require_v106();
+    var { ChannelType: ChannelType5, GuildPremiumTier, Routes: Routes3, GuildFeature } = require_v106();
     var AnonymousGuild = require_AnonymousGuild();
     var GuildAuditLogs = require_GuildAuditLogs();
     var { GuildOnboarding } = require_GuildOnboarding();
@@ -100347,7 +100347,7 @@ var require_Guild = __commonJS({
        * @private
        */
       _sortedChannels(channel) {
-        const channelIsCategory = channel.type === ChannelType4.GuildCategory;
+        const channelIsCategory = channel.type === ChannelType5.GuildCategory;
         const types3 = getSortableGroupTypes(channel.type);
         return discordSort(
           this.channels.cache.filter(
@@ -100729,7 +100729,7 @@ var require_GuildManager = __commonJS({
 var require_UserManager = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/managers/UserManager.js"(exports2, module2) {
     "use strict";
-    var { ChannelType: ChannelType4, Routes: Routes3 } = require_v106();
+    var { ChannelType: ChannelType5, Routes: Routes3 } = require_v106();
     var CachedManager = require_CachedManager();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors2();
     var { GuildMember } = require_GuildMember();
@@ -100764,7 +100764,7 @@ var require_UserManager = __commonJS({
       dmChannel(userId) {
         const expectedRecipientIds = [userId, this.client.user.id];
         return this.client.channels.cache.find(
-          (channel) => channel.type === ChannelType4.DM && channel.recipientId === userId && channel.recipientIds.every((id) => expectedRecipientIds.includes(id))
+          (channel) => channel.type === ChannelType5.DM && channel.recipientId === userId && channel.recipientIds.every((id) => expectedRecipientIds.includes(id))
         ) ?? null;
       }
       /**
@@ -112404,7 +112404,7 @@ app.use("/api", routes_default);
 var app_default = app;
 
 // src/bot/client.ts
-var import_discord8 = __toESM(require_src2(), 1);
+var import_discord9 = __toESM(require_src2(), 1);
 
 // src/bot/registerCommands.ts
 var import_discord2 = __toESM(require_src2(), 1);
@@ -112443,6 +112443,7 @@ var SEARCH_KEYWORD_INPUT = "search_keyword_input";
 var SEARCH_NICKNAME_INPUT = "search_nickname_input";
 var COMPLAINT_PANEL_CMD = "setup_complaint_panel";
 var SET_COMPLAINT_CHANNEL_CMD = "set_complaint_channel";
+var SETUP_STATS_CMD = "setup_stats";
 var DELETE_THREAD_CONFIRM_ID = "delete_thread_confirm";
 var DELETE_THREAD_CANCEL_ID = "delete_thread_cancel";
 var COMPLAINT_PANEL_CUSTOM_ID = "complaint_panel_submit";
@@ -112470,11 +112471,11 @@ var commands = [
   new import_discord.SlashCommandBuilder().setName(SET_LOG_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55\u53D1\u9001\u7684\u79C1\u5BC6\u9891\u9053").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_ROLE_CMD).setDescription("\u8BBE\u7F6E\u62E5\u6709\u5BA1\u6838\u6743\u9650\u7684\u7BA1\u7406\u5458\u8EAB\u5206\u7EC4").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addRoleOption(
-    (opt) => opt.setName("role").setDescription("\u7BA1\u7406\u5458\u8EAB\u5206\u7EC4").setRequired(true)
+  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_ROLE_CMD).setDescription("\u8BBE\u7F6E\u62E5\u6709\u5BA1\u6838\u6743\u9650\u7684\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addRoleOption(
+    (opt) => opt.setName("role").setDescription("\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SET_APPROVE_ROLE_CMD).setDescription("\u8BBE\u7F6E\u5BA1\u6838\u901A\u8FC7\u540E\u81EA\u52A8\u8D4B\u4E88\u7684\u8EAB\u5206\u7EC4").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addRoleOption(
-    (opt) => opt.setName("role").setDescription("\u5BA1\u6838\u901A\u8FC7\u8EAB\u5206\u7EC4").setRequired(true)
+  new import_discord.SlashCommandBuilder().setName(SET_APPROVE_ROLE_CMD).setDescription("\u8BBE\u7F6E\u5BA1\u6838\u901A\u8FC7\u540E\u81EA\u52A8\u8D4B\u4E88\u7684\u8EAB\u4EFD\u7EC4").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addRoleOption(
+    (opt) => opt.setName("role").setDescription("\u5BA1\u6838\u901A\u8FC7\u8EAB\u4EFD\u7EC4").setRequired(true)
   ),
   new import_discord.SlashCommandBuilder().setName(DECODE_FILENAME_CMD).setDescription("\u89E3\u7801\u4F5C\u54C1\u6587\u4EF6\u540D\uFF0C\u8FD8\u539F\u83B7\u53D6\u65F6\u95F4\u4E0E\u83B7\u53D6\u8005\u4FE1\u606F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addStringOption(
     (opt) => opt.setName("code").setDescription("\u6587\u4EF6\u540D\u4E2D\u7684\u7F16\u7801\u90E8\u5206\uFF08\u53BB\u6389\u6269\u5C55\u540D\u7684\u90E8\u5206\uFF09").setRequired(true)
@@ -112489,6 +112490,9 @@ var commands = [
     (opt) => opt.setName("channel").setDescription("\u6295\u8BC9\u5DE5\u5355\u63A5\u6536\u9891\u9053").setRequired(true)
   ),
   new import_discord.SlashCommandBuilder().setName(SEARCH_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u641C\u7D22\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator),
+  new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
+    (opt) => opt.setName("category").setDescription("\u5C06\u7EDF\u8BA1\u9891\u9053\u653E\u5728\u54EA\u4E2A\u5206\u7C7B\u4E0B\uFF08\u53EF\u9009\uFF09").setRequired(false)
+  ),
   uploadArtworkCmd
 ].map((cmd) => cmd.toJSON());
 
@@ -130968,6 +130972,9 @@ var CONFIG_KEY_LOG_CHANNEL = "log_channel";
 var CONFIG_KEY_ADMIN_ROLE = "admin_role";
 var CONFIG_KEY_APPROVE_ROLE = "approve_role";
 var CONFIG_KEY_COMPLAINT_CHANNEL = "complaint_channel";
+var CONFIG_KEY_STATS_TOTAL_CHANNEL = "stats_total_channel";
+var CONFIG_KEY_STATS_ROLE_CHANNEL = "stats_role_channel";
+var CONFIG_KEY_STATS_NO_ROLE_CHANNEL = "stats_no_role_channel";
 var configCache = /* @__PURE__ */ new Map();
 function cacheKey(guildId, key) {
   return `${guildId}:${key}`;
@@ -131219,9 +131226,9 @@ async function handleReviewApprove(interaction, targetUserId) {
     }
     const notifyLines = [
       `<@${targetUserId}> \u606D\u559C\uFF01\u4F60\u7684\u5BA1\u6838\u7533\u8BF7\u5DF2 **\u901A\u8FC7** \u2705`,
-      roleAssigned ? "\u5DF2\u81EA\u52A8\u83B7\u5F97\u5BF9\u5E94\u8EAB\u5206\u7EC4\uFF0C\u6B22\u8FCE\u6B63\u5F0F\u52A0\u5165\uFF01" : "",
-      !approveRoleId ? "\uFF08\u672A\u914D\u7F6E\u901A\u8FC7\u8EAB\u5206\u7EC4\uFF0C\u8BF7\u7BA1\u7406\u5458\u624B\u52A8\u8D4B\u4E88\uFF09" : "",
-      roleError ? `\u26A0\uFE0F \u8EAB\u5206\u7EC4\u8D4B\u4E88\u5931\u8D25\uFF1A${roleError}` : ""
+      roleAssigned ? "\u5DF2\u81EA\u52A8\u83B7\u5F97\u5BF9\u5E94\u8EAB\u4EFD\u7EC4\uFF0C\u6B22\u8FCE\u6B63\u5F0F\u52A0\u5165\uFF01" : "",
+      !approveRoleId ? "\uFF08\u672A\u914D\u7F6E\u901A\u8FC7\u8EAB\u4EFD\u7EC4\uFF0C\u8BF7\u7BA1\u7406\u5458\u624B\u52A8\u8D4B\u4E88\uFF09" : "",
+      roleError ? `\u26A0\uFE0F \u8EAB\u4EFD\u7EC4\u8D4B\u4E88\u5931\u8D25\uFF1A${roleError}` : ""
     ].filter(Boolean).join("\n");
     await thread.send({ content: notifyLines });
     if (targetMember) {
@@ -131231,7 +131238,7 @@ async function handleReviewApprove(interaction, targetUserId) {
             new import_discord3.EmbedBuilder().setTitle("\u5BA1\u6838\u7ED3\u679C\u901A\u77E5").setDescription(
               `\u606D\u559C\uFF01\u4F60\u5728 **${guild.name}** \u7684\u5BA1\u6838\u7533\u8BF7\u5DF2 **\u901A\u8FC7**\uFF01
 
-${roleAssigned ? "\u4F60\u5DF2\u81EA\u52A8\u83B7\u5F97\u5BF9\u5E94\u8EAB\u5206\u7EC4\uFF0C\u6B22\u8FCE\u6B63\u5F0F\u52A0\u5165\uFF01" : "\u6B22\u8FCE\u6B63\u5F0F\u52A0\u5165\uFF01"}`
+${roleAssigned ? "\u4F60\u5DF2\u81EA\u52A8\u83B7\u5F97\u5BF9\u5E94\u8EAB\u4EFD\u7EC4\uFF0C\u6B22\u8FCE\u6B63\u5F0F\u52A0\u5165\uFF01" : "\u6B22\u8FCE\u6B63\u5F0F\u52A0\u5165\uFF01"}`
             ).setColor(5763719).setTimestamp()
           ]
         });
@@ -131247,7 +131254,7 @@ ${roleAssigned ? "\u4F60\u5DF2\u81EA\u52A8\u83B7\u5F97\u5BF9\u5E94\u8EAB\u5206\u
     }).where(eq(reviewThreadsTable.threadId, thread.id));
     await thread.setLocked(true);
     await thread.setArchived(true);
-    const replyMsg = roleAssigned ? `\u5DF2\u901A\u8FC7 <@${targetUserId}> \u7684\u5BA1\u6838\uFF0C\u5E76\u5DF2\u81EA\u52A8\u8D4B\u4E88\u8EAB\u5206\u7EC4\uFF0C\u5B50\u533A\u5DF2\u9501\u5B9A\u5E76\u5F52\u6863\u3002` : roleError ? `\u5DF2\u901A\u8FC7 <@${targetUserId}> \u7684\u5BA1\u6838\uFF0C\u4F46\u8EAB\u5206\u7EC4\u8D4B\u4E88\u5931\u8D25\uFF08${roleError}\uFF09\uFF0C\u8BF7\u624B\u52A8\u5904\u7406\u3002\u5B50\u533A\u5DF2\u9501\u5B9A\u5E76\u5F52\u6863\u3002` : `\u5DF2\u901A\u8FC7 <@${targetUserId}> \u7684\u5BA1\u6838\uFF08\u672A\u914D\u7F6E\u901A\u8FC7\u8EAB\u5206\u7EC4\uFF09\uFF0C\u5B50\u533A\u5DF2\u9501\u5B9A\u5E76\u5F52\u6863\u3002`;
+    const replyMsg = roleAssigned ? `\u5DF2\u901A\u8FC7 <@${targetUserId}> \u7684\u5BA1\u6838\uFF0C\u5E76\u5DF2\u81EA\u52A8\u8D4B\u4E88\u8EAB\u4EFD\u7EC4\uFF0C\u5B50\u533A\u5DF2\u9501\u5B9A\u5E76\u5F52\u6863\u3002` : roleError ? `\u5DF2\u901A\u8FC7 <@${targetUserId}> \u7684\u5BA1\u6838\uFF0C\u4F46\u8EAB\u4EFD\u7EC4\u8D4B\u4E88\u5931\u8D25\uFF08${roleError}\uFF09\uFF0C\u8BF7\u624B\u52A8\u5904\u7406\u3002\u5B50\u533A\u5DF2\u9501\u5B9A\u5E76\u5F52\u6863\u3002` : `\u5DF2\u901A\u8FC7 <@${targetUserId}> \u7684\u5BA1\u6838\uFF08\u672A\u914D\u7F6E\u901A\u8FC7\u8EAB\u4EFD\u7EC4\uFF09\uFF0C\u5B50\u533A\u5DF2\u9501\u5B9A\u5E76\u5F52\u6863\u3002`;
     await interaction.editReply(replyMsg);
   } catch (err) {
     logger.error({ err }, "Failed to approve review");
@@ -132234,32 +132241,133 @@ async function handleComplaintThreadCancel(interaction) {
   }
 }
 
+// src/bot/handlers/statsHandler.ts
+var import_discord8 = __toESM(require_src2(), 1);
+var debounceTimers = /* @__PURE__ */ new Map();
+async function getStats(guild) {
+  await guild.members.fetch();
+  const approveRoleId = getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE);
+  const humans = guild.members.cache.filter((m) => !m.user.bot);
+  const total = humans.size;
+  const withRole = approveRoleId ? humans.filter((m) => m.roles.cache.has(approveRoleId)).size : 0;
+  const noRole = total - withRole;
+  return { total, withRole, noRole };
+}
+async function updateStatsChannels(guild) {
+  const totalChannelId = getConfig(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
+  const roleChannelId = getConfig(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
+  const noRoleChannelId = getConfig(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
+  if (!totalChannelId && !roleChannelId && !noRoleChannelId) return;
+  try {
+    const { total, withRole, noRole } = await getStats(guild);
+    const rename = async (channelId, name) => {
+      const ch = guild.channels.cache.get(channelId) ?? await guild.channels.fetch(channelId).catch(() => null);
+      if (ch) await ch.setName(name).catch(
+        (err) => logger.warn({ err, channelId }, "Failed to rename stats channel")
+      );
+    };
+    const tasks = [];
+    if (totalChannelId) tasks.push(rename(totalChannelId, `\u2726 \u68A6\u65C5\u8005\uFF1A${total} \u4EBA`));
+    if (roleChannelId) tasks.push(rename(roleChannelId, `\u2726 \u68A6\u4E2D\u8EAB\uFF1A${withRole} \u4EBA`));
+    if (noRoleChannelId) tasks.push(rename(noRoleChannelId, `\u2726 \u5931\u7720\u8005\uFF1A${noRole} \u4EBA`));
+    await Promise.all(tasks);
+    logger.info({ guildId: guild.id, total, withRole, noRole }, "Stats channels updated");
+  } catch (err) {
+    logger.error({ err }, "Failed to update stats channels");
+  }
+}
+function scheduleStatsUpdate(guild, delayMs = 3e3) {
+  const existing = debounceTimers.get(guild.id);
+  if (existing) clearTimeout(existing);
+  const timer = setTimeout(() => {
+    debounceTimers.delete(guild.id);
+    updateStatsChannels(guild).catch(() => {
+    });
+  }, delayMs);
+  debounceTimers.set(guild.id, timer);
+}
+function startStatsScheduler(client) {
+  setInterval(async () => {
+    for (const [, guild] of client.guilds.cache) {
+      await updateStatsChannels(guild);
+    }
+  }, 15 * 60 * 1e3);
+}
+async function handleSetupStats(interaction, client) {
+  await interaction.deferReply({ flags: 64 });
+  const guild = interaction.guild;
+  if (!guild) {
+    await interaction.editReply("\u6B64\u6307\u4EE4\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
+    return;
+  }
+  const categoryOption = interaction.options.getChannel("category", false);
+  try {
+    const everyone = guild.roles.everyone;
+    const channelOptions = {
+      type: import_discord8.ChannelType.GuildVoice,
+      ...categoryOption ? { parent: categoryOption.id } : {},
+      permissionOverwrites: [
+        {
+          id: everyone.id,
+          deny: [import_discord8.PermissionFlagsBits.Connect],
+          allow: [import_discord8.PermissionFlagsBits.ViewChannel]
+        }
+      ]
+    };
+    const [totalCh, roleCh, noRoleCh] = await Promise.all([
+      guild.channels.create({ name: "\u2726 \u68A6\u65C5\u8005\uFF1A- \u4EBA", ...channelOptions }),
+      guild.channels.create({ name: "\u2726 \u68A6\u4E2D\u8EAB\uFF1A- \u4EBA", ...channelOptions }),
+      guild.channels.create({ name: "\u2726 \u5931\u7720\u8005\uFF1A- \u4EBA", ...channelOptions })
+    ]);
+    await Promise.all([
+      setConfig(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL, totalCh.id),
+      setConfig(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL, roleCh.id),
+      setConfig(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL, noRoleCh.id)
+    ]);
+    await updateStatsChannels(guild);
+    await interaction.editReply(
+      [
+        "\u2705 **\u7EDF\u8BA1\u9891\u9053\u5DF2\u521B\u5EFA\u5E76\u5F00\u59CB\u8FD0\u884C\uFF01**",
+        `\u2022 <#${totalCh.id}> \u2014 \u6240\u6709\u6210\u5458\u603B\u6570\uFF08\u68A6\u65C5\u8005\uFF09`,
+        `\u2022 <#${roleCh.id}> \u2014 \u5DF2\u901A\u8FC7\u9A8C\u8BC1\u7684\u6210\u5458\uFF08\u68A6\u4E2D\u8EAB\uFF09`,
+        `\u2022 <#${noRoleCh.id}> \u2014 \u5C1A\u672A\u901A\u8FC7\u9A8C\u8BC1\u7684\u6210\u5458\uFF08\u5931\u7720\u8005\uFF09`,
+        "",
+        "\u6570\u636E\u6BCF 15 \u5206\u949F\u81EA\u52A8\u5237\u65B0\uFF0C\u6210\u5458\u52A0\u5165/\u79BB\u5F00/\u901A\u8FC7\u5BA1\u6838\u65F6\u4E5F\u4F1A\u5373\u65F6\u66F4\u65B0\u3002"
+      ].join("\n")
+    );
+  } catch (err) {
+    logger.error({ err }, "Failed to setup stats channels");
+    await interaction.editReply("\u274C \u521B\u5EFA\u7EDF\u8BA1\u9891\u9053\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u673A\u5668\u4EBA\u662F\u5426\u6709\u300C\u7BA1\u7406\u9891\u9053\u300D\u6743\u9650\u3002");
+  }
+}
+
 // src/bot/client.ts
 async function startBot(token) {
-  const client = new import_discord8.Client({
+  const client = new import_discord9.Client({
     intents: [
-      import_discord8.GatewayIntentBits.Guilds,
-      import_discord8.GatewayIntentBits.GuildMessages,
-      import_discord8.GatewayIntentBits.GuildMembers,
-      import_discord8.GatewayIntentBits.MessageContent,
-      import_discord8.GatewayIntentBits.GuildMessageReactions,
-      import_discord8.GatewayIntentBits.DirectMessages
+      import_discord9.GatewayIntentBits.Guilds,
+      import_discord9.GatewayIntentBits.GuildMessages,
+      import_discord9.GatewayIntentBits.GuildMembers,
+      import_discord9.GatewayIntentBits.MessageContent,
+      import_discord9.GatewayIntentBits.GuildMessageReactions,
+      import_discord9.GatewayIntentBits.DirectMessages
     ],
-    partials: [import_discord8.Partials.Message, import_discord8.Partials.Channel, import_discord8.Partials.Reaction]
+    partials: [import_discord9.Partials.Message, import_discord9.Partials.Channel, import_discord9.Partials.Reaction]
   });
-  client.once(import_discord8.Events.ClientReady, async (c) => {
+  client.once(import_discord9.Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
     await loadAllConfigs();
     const guildIds = c.guilds.cache.map((g) => g.id);
     await registerCommands(token, c.user.id, guildIds);
     await runAutoDeleteScheduler(client);
+    startStatsScheduler(client);
   });
-  client.on(import_discord8.Events.GuildCreate, async (guild) => {
+  client.on(import_discord9.Events.GuildCreate, async (guild) => {
     const guildIds = [guild.id];
     await registerCommands(token, client.user.id, guildIds);
     logger.info({ guildId: guild.id }, "Registered commands for new guild");
   });
-  client.on(import_discord8.Events.InteractionCreate, async (interaction) => {
+  client.on(import_discord9.Events.InteractionCreate, async (interaction) => {
     try {
       if (interaction.isChatInputCommand()) {
         const { commandName } = interaction;
@@ -132288,7 +132396,7 @@ async function startBot(token) {
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE, role.id);
           await interaction.reply({
-            content: `\u5DF2\u5C06\u7BA1\u7406\u5458\u8EAB\u5206\u7EC4\u8BBE\u7F6E\u4E3A <@&${role.id}>`,
+            content: `\u5DF2\u5C06\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4\u8BBE\u7F6E\u4E3A <@&${role.id}>`,
             flags: 64
           });
         } else if (commandName === SET_APPROVE_ROLE_CMD) {
@@ -132296,7 +132404,7 @@ async function startBot(token) {
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_APPROVE_ROLE, role.id);
           await interaction.reply({
-            content: `\u5BA1\u6838\u901A\u8FC7\u540E\u5C06\u81EA\u52A8\u8D4B\u4E88\u8EAB\u5206\u7EC4 <@&${role.id}>`,
+            content: `\u5BA1\u6838\u901A\u8FC7\u540E\u5C06\u81EA\u52A8\u8D4B\u4E88\u8EAB\u4EFD\u7EC4 <@&${role.id}>`,
             flags: 64
           });
         } else if (commandName === DECODE_FILENAME_CMD) {
@@ -132348,6 +132456,8 @@ async function startBot(token) {
           }
           await guildChannel.send(panel);
           await interaction.reply({ content: "\u641C\u7D22\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
+        } else if (commandName === SETUP_STATS_CMD) {
+          await handleSetupStats(interaction, client);
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
           const attachment = interaction.options.getAttachment("file", true);
@@ -132459,7 +132569,16 @@ async function startBot(token) {
       logger.error({ err }, "Unhandled interaction error");
     }
   });
-  client.on(import_discord8.Events.Error, (err) => {
+  client.on(import_discord9.Events.GuildMemberAdd, (member) => {
+    scheduleStatsUpdate(member.guild);
+  });
+  client.on(import_discord9.Events.GuildMemberRemove, (member) => {
+    if (member.guild) scheduleStatsUpdate(member.guild);
+  });
+  client.on(import_discord9.Events.GuildMemberUpdate, (_oldMember, newMember) => {
+    scheduleStatsUpdate(newMember.guild);
+  });
+  client.on(import_discord9.Events.Error, (err) => {
     logger.error({ err }, "Discord client error");
   });
   try {

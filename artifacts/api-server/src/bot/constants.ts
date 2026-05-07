@@ -36,6 +36,7 @@ export const SEARCH_KEYWORD_INPUT = "search_keyword_input";
 export const SEARCH_NICKNAME_INPUT = "search_nickname_input";
 export const COMPLAINT_PANEL_CMD = "setup_complaint_panel";
 export const SET_COMPLAINT_CHANNEL_CMD = "set_complaint_channel";
+export const SETUP_STATS_CMD = "setup_stats";
 
 export const DELETE_THREAD_CONFIRM_ID = "delete_thread_confirm";
 export const DELETE_THREAD_CANCEL_ID = "delete_thread_cancel";

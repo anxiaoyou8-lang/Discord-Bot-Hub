@@ -4,6 +4,7 @@ import {
   Partials,
   Events,
   type Interaction,
+  type GuildMember,
   type GuildTextBasedChannel,
 } from "discord.js";
 import { logger } from "../lib/logger.js";
@@ -45,6 +46,11 @@ import {
   handleComplaintThreadCancel,
 } from "./handlers/complaintHandler.js";
 import {
+  handleSetupStats,
+  startStatsScheduler,
+  scheduleStatsUpdate,
+} from "./handlers/statsHandler.js";
+import {
   setConfig,
   loadAllConfigs,
   CONFIG_KEY_LOG_CHANNEL,
@@ -84,6 +90,7 @@ import {
   COMPLAINT_THREAD_CANCEL_ID,
   DELETE_THREAD_CONFIRM_ID,
   DELETE_THREAD_CANCEL_ID,
+  SETUP_STATS_CMD,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -113,6 +120,7 @@ export async function startBot(token: string) {
     const guildIds = c.guilds.cache.map((g) => g.id);
     await registerCommands(token, c.user.id, guildIds);
     await runAutoDeleteScheduler(client);
+    startStatsScheduler(client);
   });
 
   client.on(Events.GuildCreate, async (guild) => {
@@ -155,7 +163,7 @@ export async function startBot(token: string) {
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE, role.id);
           await interaction.reply({
-            content: `已将管理员身分组设置为 <@&${role.id}>`,
+            content: `已将管理员身份组设置为 <@&${role.id}>`,
             flags: 64,
           });
 
@@ -164,7 +172,7 @@ export async function startBot(token: string) {
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_APPROVE_ROLE, role.id);
           await interaction.reply({
-            content: `审核通过后将自动赋予身分组 <@&${role.id}>`,
+            content: `审核通过后将自动赋予身份组 <@&${role.id}>`,
             flags: 64,
           });
 
@@ -222,6 +230,9 @@ export async function startBot(token: string) {
           }
           await guildChannel.send(panel);
           await interaction.reply({ content: "搜索面板已发送！", flags: 64 });
+
+        } else if (commandName === SETUP_STATS_CMD) {
+          await handleSetupStats(interaction, client);
 
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
@@ -369,6 +380,19 @@ export async function startBot(token: string) {
     } catch (err) {
       logger.error({ err }, "Unhandled interaction error");
     }
+  });
+
+  // 成员加入/离开/角色变更时即时更新统计（防抖 3 秒，避免批量操作刷爆 API）
+  client.on(Events.GuildMemberAdd, (member) => {
+    scheduleStatsUpdate(member.guild);
+  });
+
+  client.on(Events.GuildMemberRemove, (member) => {
+    if (member.guild) scheduleStatsUpdate(member.guild);
+  });
+
+  client.on(Events.GuildMemberUpdate, (_oldMember: GuildMember, newMember: GuildMember) => {
+    scheduleStatsUpdate(newMember.guild);
   });
 
   client.on(Events.Error, (err) => {
