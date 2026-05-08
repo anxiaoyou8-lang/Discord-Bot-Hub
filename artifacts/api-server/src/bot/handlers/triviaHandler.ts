@@ -70,38 +70,53 @@ export async function handleTriviaDrawButton(interaction: ButtonInteraction) {
   }
 }
 
+const TRIVIA_INPUT_COUNT = 5;
+
 export async function handleAddTrivia(interaction: ChatInputCommandInteraction) {
   const modal = new ModalBuilder()
     .setCustomId(TRIVIA_ADD_MODAL_ID)
-    .setTitle("添加闲话 / 冷知识");
+    .setTitle("批量添加闲话 / 冷知识（最多5条）");
 
-  const textInput = new TextInputBuilder()
-    .setCustomId(TRIVIA_ADD_TEXT_INPUT)
-    .setLabel("内容（支持 Enter 换行）")
-    .setStyle(TextInputStyle.Paragraph)
-    .setPlaceholder("在这里输入一则冷知识或有趣的闲话……")
-    .setMaxLength(500)
-    .setRequired(true);
+  for (let i = 0; i < TRIVIA_INPUT_COUNT; i++) {
+    const input = new TextInputBuilder()
+      .setCustomId(`${TRIVIA_ADD_TEXT_INPUT}_${i}`)
+      .setLabel(`第 ${i + 1} 条${i === 0 ? "（必填）" : "（选填）"}`)
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder("输入一则闲话或冷知识……")
+      .setMaxLength(500)
+      .setRequired(i === 0);
 
-  modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
+    modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(input));
+  }
+
   await interaction.showModal(modal);
 }
 
 export async function handleAddTriviaModal(interaction: ModalSubmitInteraction) {
   await interaction.deferReply({ flags: 64 });
 
-  const content = interaction.fields.getTextInputValue(TRIVIA_ADD_TEXT_INPUT);
   const guildId = interaction.guildId ?? "";
+  const entries: string[] = [];
+
+  for (let i = 0; i < TRIVIA_INPUT_COUNT; i++) {
+    const val = interaction.fields.getTextInputValue(`${TRIVIA_ADD_TEXT_INPUT}_${i}`).trim();
+    if (val) entries.push(val);
+  }
+
+  if (entries.length === 0) {
+    await interaction.editReply("❌ 没有填写任何内容。");
+    return;
+  }
 
   try {
     const result = await db
       .insert(triviaTable)
-      .values({ content, authorId: interaction.user.id, guildId })
-      .returning({ id: triviaTable.id });
+      .values(entries.map((content) => ({ content, authorId: interaction.user.id, guildId })))
+      .returning({ id: triviaTable.id, content: triviaTable.content });
 
-    const id = result[0]?.id;
-    await interaction.editReply(`✅ 闲话已添加（ID: \`${id}\`）：\n> ${content}`);
-    logger.info({ id, authorId: interaction.user.id, guildId }, "Trivia added");
+    const lines = result.map((r) => `> **[${r.id}]** ${r.content}`).join("\n");
+    await interaction.editReply(`✅ 已添加 ${result.length} 条闲话：\n${lines}`);
+    logger.info({ count: result.length, authorId: interaction.user.id, guildId }, "Trivia batch added");
   } catch (err) {
     logger.error({ err }, "Failed to add trivia");
     await interaction.editReply("添加失败，请稍后再试。");

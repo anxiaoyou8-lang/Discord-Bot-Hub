@@ -131438,22 +131438,33 @@ async function handleTriviaDrawButton(interaction) {
     await interaction.editReply("\u62BD\u53D6\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
   }
 }
+var TRIVIA_INPUT_COUNT = 5;
 async function handleAddTrivia(interaction) {
-  const modal = new import_discord4.ModalBuilder().setCustomId(TRIVIA_ADD_MODAL_ID).setTitle("\u6DFB\u52A0\u95F2\u8BDD / \u51B7\u77E5\u8BC6");
-  const textInput = new import_discord4.TextInputBuilder().setCustomId(TRIVIA_ADD_TEXT_INPUT).setLabel("\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord4.TextInputStyle.Paragraph).setPlaceholder("\u5728\u8FD9\u91CC\u8F93\u5165\u4E00\u5219\u51B7\u77E5\u8BC6\u6216\u6709\u8DA3\u7684\u95F2\u8BDD\u2026\u2026").setMaxLength(500).setRequired(true);
-  modal.addComponents(new import_discord4.ActionRowBuilder().addComponents(textInput));
+  const modal = new import_discord4.ModalBuilder().setCustomId(TRIVIA_ADD_MODAL_ID).setTitle("\u6279\u91CF\u6DFB\u52A0\u95F2\u8BDD / \u51B7\u77E5\u8BC6\uFF08\u6700\u591A5\u6761\uFF09");
+  for (let i = 0; i < TRIVIA_INPUT_COUNT; i++) {
+    const input = new import_discord4.TextInputBuilder().setCustomId(`${TRIVIA_ADD_TEXT_INPUT}_${i}`).setLabel(`\u7B2C ${i + 1} \u6761${i === 0 ? "\uFF08\u5FC5\u586B\uFF09" : "\uFF08\u9009\u586B\uFF09"}`).setStyle(import_discord4.TextInputStyle.Short).setPlaceholder("\u8F93\u5165\u4E00\u5219\u95F2\u8BDD\u6216\u51B7\u77E5\u8BC6\u2026\u2026").setMaxLength(500).setRequired(i === 0);
+    modal.addComponents(new import_discord4.ActionRowBuilder().addComponents(input));
+  }
   await interaction.showModal(modal);
 }
 async function handleAddTriviaModal(interaction) {
   await interaction.deferReply({ flags: 64 });
-  const content = interaction.fields.getTextInputValue(TRIVIA_ADD_TEXT_INPUT);
   const guildId = interaction.guildId ?? "";
+  const entries = [];
+  for (let i = 0; i < TRIVIA_INPUT_COUNT; i++) {
+    const val = interaction.fields.getTextInputValue(`${TRIVIA_ADD_TEXT_INPUT}_${i}`).trim();
+    if (val) entries.push(val);
+  }
+  if (entries.length === 0) {
+    await interaction.editReply("\u274C \u6CA1\u6709\u586B\u5199\u4EFB\u4F55\u5185\u5BB9\u3002");
+    return;
+  }
   try {
-    const result = await db.insert(triviaTable).values({ content, authorId: interaction.user.id, guildId }).returning({ id: triviaTable.id });
-    const id = result[0]?.id;
-    await interaction.editReply(`\u2705 \u95F2\u8BDD\u5DF2\u6DFB\u52A0\uFF08ID: \`${id}\`\uFF09\uFF1A
-> ${content}`);
-    logger.info({ id, authorId: interaction.user.id, guildId }, "Trivia added");
+    const result = await db.insert(triviaTable).values(entries.map((content) => ({ content, authorId: interaction.user.id, guildId }))).returning({ id: triviaTable.id, content: triviaTable.content });
+    const lines = result.map((r) => `> **[${r.id}]** ${r.content}`).join("\n");
+    await interaction.editReply(`\u2705 \u5DF2\u6DFB\u52A0 ${result.length} \u6761\u95F2\u8BDD\uFF1A
+${lines}`);
+    logger.info({ count: result.length, authorId: interaction.user.id, guildId }, "Trivia batch added");
   } catch (err) {
     logger.error({ err }, "Failed to add trivia");
     await interaction.editReply("\u6DFB\u52A0\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
