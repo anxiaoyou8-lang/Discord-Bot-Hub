@@ -285,28 +285,42 @@ export async function handleArtworkNotifyModal(
       return;
     }
 
+    logger.info(
+      { channelId, channelType: channel.type, isThread: channel.isThread() },
+      "Notify modal: channel info"
+    );
+
     // 收集所有需要通知的用户 ID（去重）
     const userIdSet = new Set<string>();
 
-    // 1. 我们数据库里的自定义订阅者
+    // 1. 我们数据库里的自定义订阅者（无论是否是发送者，都保留）
     const dbSubscribers = await db
       .select()
       .from(threadSubscriptionsTable)
       .where(eq(threadSubscriptionsTable.channelId, channelId));
     for (const s of dbSubscribers) userIdSet.add(s.userId);
 
-    // 2. Discord 原生帖子成员（发过言/点过关注铃铛的人）
+    logger.info({ channelId, dbSubscriberIds: dbSubscribers.map(s => s.userId) }, "Notify modal: DB subscribers");
+
+    // 2. Discord 原生帖子成员（发过言/点过关注铃铛的人），排除发送者和 bot
     if (channel.isThread()) {
-      const threadMembers = await channel.members.fetch().catch(() => null);
+      const threadMembers = await channel.members.fetch().catch((err) => {
+        logger.warn({ err }, "Failed to fetch thread members");
+        return null;
+      });
       if (threadMembers) {
-        for (const [, member] of threadMembers) {
-          userIdSet.add(member.id);
+        const ids = [...threadMembers.keys()];
+        logger.info({ channelId, threadMemberIds: ids }, "Notify modal: thread members fetched");
+        for (const id of ids) {
+          // 原生成员里排除发送者（避免重复，DB 订阅者保留）
+          if (id !== interaction.user.id) userIdSet.add(id);
         }
       }
+    } else {
+      logger.info({ channelId, channelType: channel.type }, "Notify modal: channel is not a thread, skipping native members");
     }
 
-    // 排除发送者本人和机器人自身
-    userIdSet.delete(interaction.user.id);
+    // 只排除机器人自身
     if (client.user) userIdSet.delete(client.user.id);
 
     if (userIdSet.size === 0) {

@@ -131738,18 +131738,29 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
       await interaction.editReply("\u627E\u4E0D\u5230\u9891\u9053\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u3002");
       return;
     }
+    logger.info(
+      { channelId, channelType: channel.type, isThread: channel.isThread() },
+      "Notify modal: channel info"
+    );
     const userIdSet = /* @__PURE__ */ new Set();
     const dbSubscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
     for (const s of dbSubscribers) userIdSet.add(s.userId);
+    logger.info({ channelId, dbSubscriberIds: dbSubscribers.map((s) => s.userId) }, "Notify modal: DB subscribers");
     if (channel.isThread()) {
-      const threadMembers = await channel.members.fetch().catch(() => null);
+      const threadMembers = await channel.members.fetch().catch((err) => {
+        logger.warn({ err }, "Failed to fetch thread members");
+        return null;
+      });
       if (threadMembers) {
-        for (const [, member] of threadMembers) {
-          userIdSet.add(member.id);
+        const ids = [...threadMembers.keys()];
+        logger.info({ channelId, threadMemberIds: ids }, "Notify modal: thread members fetched");
+        for (const id of ids) {
+          if (id !== interaction.user.id) userIdSet.add(id);
         }
       }
+    } else {
+      logger.info({ channelId, channelType: channel.type }, "Notify modal: channel is not a thread, skipping native members");
     }
-    userIdSet.delete(interaction.user.id);
     if (client.user) userIdSet.delete(client.user.id);
     if (userIdSet.size === 0) {
       await interaction.editReply("\u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\u3002");
