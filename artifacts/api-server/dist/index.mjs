@@ -112452,6 +112452,9 @@ var COMPLAINT_THREAD_CANCEL_ID = "complaint_thread_cancel";
 var BOT_SAY_CMD = "bot\u53D1\u9001\u6D88\u606F";
 var BOT_SAY_MODAL_PREFIX = "bot_say_modal_";
 var BOT_SAY_TEXT_INPUT = "bot_say_text_input";
+var BOT_EDIT_CMD = "bot\u7F16\u8F91\u6D88\u606F";
+var BOT_EDIT_MODAL_PREFIX = "bot_edit_modal_";
+var BOT_EDIT_TEXT_INPUT = "bot_edit_text_input";
 var ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 var ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 var ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
@@ -112502,6 +112505,17 @@ var commands = [
   ),
   new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u5728\u6307\u5B9A\u9891\u9053\u53D1\u9001\u4E00\u6761\u6587\u5B57\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053\uFF08\u4E0D\u586B\u5219\u53D1\u9001\u5230\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
+      import_discord.ChannelType.GuildText,
+      import_discord.ChannelType.GuildAnnouncement,
+      import_discord.ChannelType.PublicThread,
+      import_discord.ChannelType.PrivateThread,
+      import_discord.ChannelType.GuildForum
+    )
+  ),
+  new import_discord.SlashCommandBuilder().setName(BOT_EDIT_CMD).setDescription("\u7F16\u8F91 Bot \u53D1\u9001\u8FC7\u7684\u4E00\u6761\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addStringOption(
+    (opt) => opt.setName("message_id").setDescription("\u8981\u7F16\u8F91\u7684\u6D88\u606F ID\uFF08\u53F3\u952E\u6D88\u606F \u2192 \u590D\u5236\u6D88\u606F ID\uFF09").setRequired(true)
+  ).addChannelOption(
+    (opt) => opt.setName("channel").setDescription("\u6D88\u606F\u6240\u5728\u9891\u9053\uFF08\u4E0D\u586B\u5219\u9ED8\u8BA4\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
       import_discord.ChannelType.GuildText,
       import_discord.ChannelType.GuildAnnouncement,
       import_discord.ChannelType.PublicThread,
@@ -132640,6 +132654,36 @@ async function startBot(token) {
           const textInput = new import_discord9.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord9.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
           modal.addComponents(new import_discord9.ActionRowBuilder().addComponents(textInput));
           await interaction.showModal(modal);
+        } else if (commandName === BOT_EDIT_CMD) {
+          const adminRoleId = interaction.guildId ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
+          const member = interaction.member;
+          const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? BigInt(member.permissions) & BigInt(import_discord9.PermissionFlagsBits.Administrator) : member.permissions.has(import_discord9.PermissionFlagsBits.Administrator) : false;
+          const hasAdminRole = adminRoleId ? member?.roles instanceof Object && "cache" in member.roles ? member.roles.cache.has(adminRoleId) : false : false;
+          if (!isDiscordAdmin && !hasAdminRole) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          const messageId = interaction.options.getString("message_id", true);
+          const targetChannel = interaction.options.getChannel("channel");
+          const channelId = targetChannel?.id ?? interaction.channelId;
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u76EE\u6807\u9891\u9053\u3002", flags: 64 });
+            return;
+          }
+          const originalMsg = await ch.messages.fetch(messageId).catch(() => null);
+          if (!originalMsg) {
+            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u8BE5\u6D88\u606F\uFF0C\u8BF7\u786E\u8BA4\u6D88\u606F ID \u548C\u9891\u9053\u662F\u5426\u6B63\u786E\u3002", flags: 64 });
+            return;
+          }
+          if (originalMsg.author.id !== client.user?.id) {
+            await interaction.reply({ content: "\u274C \u8BE5\u6D88\u606F\u4E0D\u662F Bot \u53D1\u9001\u7684\uFF0C\u65E0\u6CD5\u7F16\u8F91\u3002", flags: 64 });
+            return;
+          }
+          const modal = new import_discord9.ModalBuilder().setCustomId(`${BOT_EDIT_MODAL_PREFIX}${channelId}:${messageId}`).setTitle("\u7F16\u8F91 Bot \u6D88\u606F");
+          const textInput = new import_discord9.TextInputBuilder().setCustomId(BOT_EDIT_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord9.TextInputStyle.Paragraph).setValue(originalMsg.content).setMaxLength(2e3).setRequired(true);
+          modal.addComponents(new import_discord9.ActionRowBuilder().addComponents(textInput));
+          await interaction.showModal(modal);
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
           const attachment = interaction.options.getAttachment("file", true);
@@ -132765,6 +132809,25 @@ async function startBot(token) {
           await ch.send({ content });
           await interaction.reply({ content: `\u2705 \u6D88\u606F\u5DF2\u53D1\u9001\u81F3 <#${channelId}>`, flags: 64 });
           logger.info({ adminId: interaction.user.id, channelId }, "Admin sent message via bot");
+        } else if (customId.startsWith(BOT_EDIT_MODAL_PREFIX)) {
+          const rest = customId.slice(BOT_EDIT_MODAL_PREFIX.length);
+          const colonIdx = rest.indexOf(":");
+          const channelId = rest.slice(0, colonIdx);
+          const messageId = rest.slice(colonIdx + 1);
+          const newContent = interaction.fields.getTextInputValue(BOT_EDIT_TEXT_INPUT);
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u76EE\u6807\u9891\u9053\u3002", flags: 64 });
+            return;
+          }
+          const msg = await ch.messages.fetch(messageId).catch(() => null);
+          if (!msg) {
+            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u8BE5\u6D88\u606F\u3002", flags: 64 });
+            return;
+          }
+          await msg.edit({ content: newContent });
+          await interaction.reply({ content: "\u2705 \u6D88\u606F\u5DF2\u66F4\u65B0\u3002", flags: 64 });
+          logger.info({ adminId: interaction.user.id, channelId, messageId }, "Admin edited bot message");
         }
       }
     } catch (err) {

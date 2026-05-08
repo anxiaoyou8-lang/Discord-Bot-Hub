@@ -106,6 +106,9 @@ import {
   BOT_SAY_CMD,
   BOT_SAY_MODAL_PREFIX,
   BOT_SAY_TEXT_INPUT,
+  BOT_EDIT_CMD,
+  BOT_EDIT_MODAL_PREFIX,
+  BOT_EDIT_TEXT_INPUT,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -290,6 +293,65 @@ export async function startBot(token: string) {
           modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
           await interaction.showModal(modal);
 
+        } else if (commandName === BOT_EDIT_CMD) {
+          // 权限检查（与 bot发送消息 相同）
+          const adminRoleId = interaction.guildId
+            ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE)
+            : undefined;
+          const member = interaction.member as GuildMember | null;
+          const isDiscordAdmin = member?.permissions
+            ? (typeof member.permissions === "string"
+                ? BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator)
+                : member.permissions.has(PermissionFlagsBits.Administrator))
+            : false;
+          const hasAdminRole = adminRoleId
+            ? member?.roles instanceof Object && "cache" in member.roles
+              ? member.roles.cache.has(adminRoleId)
+              : false
+            : false;
+
+          if (!isDiscordAdmin && !hasAdminRole) {
+            await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 });
+            return;
+          }
+
+          const messageId = interaction.options.getString("message_id", true);
+          const targetChannel = interaction.options.getChannel("channel");
+          const channelId = targetChannel?.id ?? interaction.channelId;
+
+          // 取出原消息内容用于预填
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "❌ 找不到目标频道。", flags: 64 });
+            return;
+          }
+          const originalMsg = await (ch as GuildTextBasedChannel).messages
+            .fetch(messageId)
+            .catch(() => null);
+          if (!originalMsg) {
+            await interaction.reply({ content: "❌ 找不到该消息，请确认消息 ID 和频道是否正确。", flags: 64 });
+            return;
+          }
+          if (originalMsg.author.id !== client.user?.id) {
+            await interaction.reply({ content: "❌ 该消息不是 Bot 发送的，无法编辑。", flags: 64 });
+            return;
+          }
+
+          const modal = new ModalBuilder()
+            .setCustomId(`${BOT_EDIT_MODAL_PREFIX}${channelId}:${messageId}`)
+            .setTitle("编辑 Bot 消息");
+
+          const textInput = new TextInputBuilder()
+            .setCustomId(BOT_EDIT_TEXT_INPUT)
+            .setLabel("消息内容（支持 Enter 换行）")
+            .setStyle(TextInputStyle.Paragraph)
+            .setValue(originalMsg.content)
+            .setMaxLength(2000)
+            .setRequired(true);
+
+          modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
+          await interaction.showModal(modal);
+
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
 
@@ -457,6 +519,31 @@ export async function startBot(token: string) {
           await (ch as GuildTextBasedChannel).send({ content });
           await interaction.reply({ content: `✅ 消息已发送至 <#${channelId}>`, flags: 64 });
           logger.info({ adminId: interaction.user.id, channelId }, "Admin sent message via bot");
+
+        } else if (customId.startsWith(BOT_EDIT_MODAL_PREFIX)) {
+          const rest = customId.slice(BOT_EDIT_MODAL_PREFIX.length);
+          const colonIdx = rest.indexOf(":");
+          const channelId = rest.slice(0, colonIdx);
+          const messageId = rest.slice(colonIdx + 1);
+          const newContent = interaction.fields.getTextInputValue(BOT_EDIT_TEXT_INPUT);
+
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "❌ 找不到目标频道。", flags: 64 });
+            return;
+          }
+
+          const msg = await (ch as GuildTextBasedChannel).messages
+            .fetch(messageId)
+            .catch(() => null);
+          if (!msg) {
+            await interaction.reply({ content: "❌ 找不到该消息。", flags: 64 });
+            return;
+          }
+
+          await msg.edit({ content: newContent });
+          await interaction.reply({ content: "✅ 消息已更新。", flags: 64 });
+          logger.info({ adminId: interaction.user.id, channelId, messageId }, "Admin edited bot message");
         }
       }
     } catch (err) {

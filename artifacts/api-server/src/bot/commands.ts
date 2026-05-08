@@ -20,6 +20,7 @@ import {
   SET_COMPLAINT_CHANNEL_CMD,
   SETUP_STATS_CMD,
   BOT_SAY_CMD,
+  BOT_EDIT_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -147,6 +148,29 @@ export const commands = [
       opt
         .setName("channel")
         .setDescription("目标频道（不填则发送到当前频道）")
+        .setRequired(false)
+        .addChannelTypes(
+          ChannelType.GuildText,
+          ChannelType.GuildAnnouncement,
+          ChannelType.PublicThread,
+          ChannelType.PrivateThread,
+          ChannelType.GuildForum
+        )
+    ),
+
+  new SlashCommandBuilder()
+    .setName(BOT_EDIT_CMD)
+    .setDescription("编辑 Bot 发送过的一条消息（仅管理员可用）")
+    .addStringOption((opt) =>
+      opt
+        .setName("message_id")
+        .setDescription("要编辑的消息 ID（右键消息 → 复制消息 ID）")
+        .setRequired(true)
+    )
+    .addChannelOption((opt) =>
+      opt
+        .setName("channel")
+        .setDescription("消息所在频道（不填则默认当前频道）")
         .setRequired(false)
         .addChannelTypes(
           ChannelType.GuildText,
