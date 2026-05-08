@@ -70,6 +70,18 @@ export const complaintTicketsTable = pgTable("complaint_tickets", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const threadSubscriptionsTable = pgTable(
+  "thread_subscriptions",
+  {
+    id: serial("id").primaryKey(),
+    channelId: text("channel_id").notNull(),
+    userId: text("user_id").notNull(),
+    guildId: text("guild_id").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [unique("uniq_channel_user").on(table.channelId, table.userId)]
+);
+
 export const insertArtworkSchema = createInsertSchema(artworksTable).omit({ id: true, createdAt: true });
 export type InsertArtwork = z.infer<typeof insertArtworkSchema>;
 export type Artwork = typeof artworksTable.$inferSelect;
@@ -77,3 +89,4 @@ export type ArtworkAccessLog = typeof artworkAccessLogsTable.$inferSelect;
 export type ReviewThread = typeof reviewThreadsTable.$inferSelect;
 export type GuildConfig = typeof guildConfigsTable.$inferSelect;
 export type ArtworkWatermark = typeof artworkWatermarksTable.$inferSelect;
+export type ThreadSubscription = typeof threadSubscriptionsTable.$inferSelect;

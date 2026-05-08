@@ -24,6 +24,9 @@ import {
   handleArtworkUpload,
   handleArtworkGetButton,
   handleArtworkGetModal,
+  handleArtworkSubscribe,
+  handleArtworkNotifyBtn,
+  handleArtworkNotifyModal,
 } from "./handlers/artworkHandler.js";
 import {
   handleGoTop,
@@ -91,6 +94,9 @@ import {
   DELETE_THREAD_CONFIRM_ID,
   DELETE_THREAD_CANCEL_ID,
   SETUP_STATS_CMD,
+  ARTWORK_SUBSCRIBE_PREFIX,
+  ARTWORK_NOTIFY_BTN_PREFIX,
+  ARTWORK_NOTIFY_MODAL_PREFIX,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -352,6 +358,14 @@ export async function startBot(token: string) {
 
         } else if (customId === SEARCH_NICKNAME_BTN_ID) {
           await handleSearchNicknameBtn(interaction);
+
+        } else if (customId.startsWith(ARTWORK_SUBSCRIBE_PREFIX)) {
+          const channelId = customId.slice(ARTWORK_SUBSCRIBE_PREFIX.length);
+          await handleArtworkSubscribe(interaction, channelId);
+
+        } else if (customId.startsWith(ARTWORK_NOTIFY_BTN_PREFIX)) {
+          const channelId = customId.slice(ARTWORK_NOTIFY_BTN_PREFIX.length);
+          await handleArtworkNotifyBtn(interaction, channelId);
         }
 
       } else if (interaction.isChannelSelectMenu()) {
@@ -376,6 +390,10 @@ export async function startBot(token: string) {
 
         } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
           await handleSearchNicknameModal(interaction);
+
+        } else if (customId.startsWith(ARTWORK_NOTIFY_MODAL_PREFIX)) {
+          const channelId = customId.slice(ARTWORK_NOTIFY_MODAL_PREFIX.length);
+          await handleArtworkNotifyModal(interaction, channelId, client);
         }
       }
     } catch (err) {

@@ -112449,6 +112449,10 @@ var DELETE_THREAD_CANCEL_ID = "delete_thread_cancel";
 var COMPLAINT_PANEL_CUSTOM_ID = "complaint_panel_submit";
 var COMPLAINT_THREAD_SUBMIT_ID = "complaint_thread_submit";
 var COMPLAINT_THREAD_CANCEL_ID = "complaint_thread_cancel";
+var ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
+var ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
+var ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
+var ARTWORK_NOTIFY_TEXT_INPUT = "artwork_notify_text_input";
 
 // src/bot/commands.ts
 var uploadArtworkCmd = new import_discord.SlashCommandBuilder().setName(ARTWORK_UPLOAD_CMD).setDescription("\u4E0A\u4F20\u4F60\u7684\u4F5C\u54C1\uFF08\u6700\u591A10\u4E2A\u6587\u4EF6\uFF09").addStringOption(
@@ -119503,7 +119507,8 @@ __export(schema_exports, {
   complaintTicketsTable: () => complaintTicketsTable,
   guildConfigsTable: () => guildConfigsTable,
   insertArtworkSchema: () => insertArtworkSchema,
-  reviewThreadsTable: () => reviewThreadsTable
+  reviewThreadsTable: () => reviewThreadsTable,
+  threadSubscriptionsTable: () => threadSubscriptionsTable
 });
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/external.js
@@ -130955,6 +130960,17 @@ var complaintTicketsTable = pgTable("complaint_tickets", {
   attachmentUrls: text("attachment_urls"),
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
+var threadSubscriptionsTable = pgTable(
+  "thread_subscriptions",
+  {
+    id: serial("id").primaryKey(),
+    channelId: text("channel_id").notNull(),
+    userId: text("user_id").notNull(),
+    guildId: text("guild_id").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull()
+  },
+  (table) => [unique("uniq_channel_user").on(table.channelId, table.userId)]
+);
 var insertArtworkSchema = createInsertSchema(artworksTable).omit({ id: true, createdAt: true });
 
 // ../../lib/db/src/index.ts
@@ -131586,6 +131602,11 @@ function buildArtworkPanel() {
   ).setColor(5793266);
   return { embeds: [embed] };
 }
+function buildArtworkRow(messageId, channelId) {
+  const getBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}${messageId}`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3A8}");
+  const subscribeBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channelId}`).setLabel("\u8BA2\u9605\u6B64\u5E16").setStyle(import_discord4.ButtonStyle.Secondary).setEmoji("\u{1F514}");
+  return new import_discord4.ActionRowBuilder().addComponents(getBtn, subscribeBtn);
+}
 async function handleArtworkUpload(interaction, _client) {
   await interaction.deferReply({ flags: 64 });
   const title = interaction.options.getString("title", true);
@@ -131633,12 +131654,12 @@ async function handleArtworkUpload(interaction, _client) {
         "\u60F3\u83B7\u53D6\u539F\u6587\u4EF6\uFF1F\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\uFF0C\u8F93\u5165\u5BC6\u7801\u5E76\u5BF9\u9891\u9053\u7B2C\u4E00\u6761\u6D88\u606F\u6DFB\u52A0\u8868\u60C5\u540E\u5373\u53EF\u83B7\u53D6\u3002"
       ].filter(Boolean).join("\n")
     ).setColor(5793266).setFooter({ text: "\u4F5C\u54C1\u7CFB\u7EDF \xB7 \u8BF7\u5411\u4F5C\u8005\u8BE2\u95EE\u5BC6\u7801" }).setTimestamp();
-    const placeholderBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}PLACEHOLDER`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3A8}");
-    const row = new import_discord4.ActionRowBuilder().addComponents(placeholderBtn);
-    const msg = await channel.send({ embeds: [embed], components: [row] });
-    const realGetBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}${msg.id}`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3A8}");
-    const realRow = new import_discord4.ActionRowBuilder().addComponents(realGetBtn);
-    await msg.edit({ components: [realRow] });
+    const placeholderRow = new import_discord4.ActionRowBuilder().addComponents(
+      new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}PLACEHOLDER`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3A8}"),
+      new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channel.id}`).setLabel("\u8BA2\u9605\u6B64\u5E16").setStyle(import_discord4.ButtonStyle.Secondary).setEmoji("\u{1F514}")
+    );
+    const msg = await channel.send({ embeds: [embed], components: [placeholderRow] });
+    await msg.edit({ components: [buildArtworkRow(msg.id, channel.id)] });
     await db.insert(artworksTable).values({
       messageId: msg.id,
       channelId: channel.id,
@@ -131654,9 +131675,94 @@ async function handleArtworkUpload(interaction, _client) {
     await interaction.editReply(
       `\u4F5C\u54C1\u300A${title}\u300B\u5DF2\u6210\u529F\u53D1\u5E03\uFF01\u5171 ${storageKeys.length} \u4E2A\u6587\u4EF6\u3002`
     );
+    const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channel.id));
+    if (subscribers.length > 0) {
+      const notifyBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_NOTIFY_BTN_PREFIX}${channel.id}`).setLabel(`\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005`).setStyle(import_discord4.ButtonStyle.Success).setEmoji("\u{1F4E2}");
+      const notifyRow = new import_discord4.ActionRowBuilder().addComponents(notifyBtn);
+      await interaction.followUp({
+        content: `\u6B64\u5E16\u6709 **${subscribers.length}** \u4F4D\u8BA2\u9605\u8005\uFF0C\u662F\u5426\u8981\u53D1\u5E03\u66F4\u65B0\u901A\u77E5\uFF1F`,
+        components: [notifyRow],
+        flags: 64
+      });
+    }
   } catch (err) {
     logger.error({ err }, "Failed to upload artwork");
     await interaction.editReply("\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function handleArtworkSubscribe(interaction, channelId) {
+  await interaction.deferReply({ flags: 64 });
+  const userId = interaction.user.id;
+  const guildId = interaction.guildId ?? "";
+  try {
+    const existing = await db.select().from(threadSubscriptionsTable).where(
+      and(
+        eq(threadSubscriptionsTable.channelId, channelId),
+        eq(threadSubscriptionsTable.userId, userId)
+      )
+    ).limit(1);
+    if (existing.length > 0) {
+      await db.delete(threadSubscriptionsTable).where(
+        and(
+          eq(threadSubscriptionsTable.channelId, channelId),
+          eq(threadSubscriptionsTable.userId, userId)
+        )
+      );
+      await interaction.editReply("\u{1F515} \u5DF2\u53D6\u6D88\u8BA2\u9605\uFF0C\u4E0D\u518D\u63A5\u6536\u6B64\u5E16\u66F4\u65B0\u901A\u77E5\u3002");
+    } else {
+      await db.insert(threadSubscriptionsTable).values({ channelId, userId, guildId });
+      await interaction.editReply("\u{1F514} \u8BA2\u9605\u6210\u529F\uFF01\u4F5C\u8005\u53D1\u5E03\u65B0\u5185\u5BB9\u5E76\u9009\u62E9\u901A\u77E5\u65F6\uFF0C\u4F60\u4F1A\u5728\u6B64\u5E16\u6536\u5230 @ \u63D0\u9192\u3002");
+    }
+  } catch (err) {
+    logger.error({ err }, "Failed to toggle subscription");
+    await interaction.editReply("\u64CD\u4F5C\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function handleArtworkNotifyBtn(interaction, channelId) {
+  const modal = new import_discord4.ModalBuilder().setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channelId}`).setTitle("\u901A\u77E5\u8BA2\u9605\u8005");
+  const textInput = new import_discord4.TextInputBuilder().setCustomId(ARTWORK_NOTIFY_TEXT_INPUT).setLabel("\u901A\u77E5\u5185\u5BB9").setStyle(import_discord4.TextInputStyle.Paragraph).setPlaceholder("\u4F8B\u5982\uFF1A\u65B0\u7684\u4F5C\u54C1\u5DF2\u4E0A\u4F20\uFF0C\u6B22\u8FCE\u83B7\u53D6\uFF01").setMaxLength(500).setRequired(true);
+  modal.addComponents(new import_discord4.ActionRowBuilder().addComponents(textInput));
+  await interaction.showModal(modal);
+}
+async function handleArtworkNotifyModal(interaction, channelId, client) {
+  await interaction.deferReply({ flags: 64 });
+  const content = interaction.fields.getTextInputValue(ARTWORK_NOTIFY_TEXT_INPUT);
+  const guild = interaction.guild;
+  if (!guild) {
+    await interaction.editReply("\u6B64\u64CD\u4F5C\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
+    return;
+  }
+  try {
+    const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
+    if (subscribers.length === 0) {
+      await interaction.editReply("\u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\u3002");
+      return;
+    }
+    const channel = await client.channels.fetch(channelId).catch(() => null);
+    if (!channel || !channel.isTextBased()) {
+      await interaction.editReply("\u627E\u4E0D\u5230\u9891\u9053\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u3002");
+      return;
+    }
+    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
+    const notifyEmbed = new import_discord4.EmbedBuilder().setTitle("\u{1F4E2} \u5E16\u5B50\u66F4\u65B0\u901A\u77E5").setDescription(
+      [
+        content,
+        "",
+        `**\u53D1\u5E03\u8005\uFF1A** <@${interaction.user.id}>`
+      ].join("\n")
+    ).setColor(16426522).setTimestamp();
+    await channel.send({
+      content: mentions,
+      embeds: [notifyEmbed]
+    });
+    await interaction.editReply(`\u2705 \u5DF2\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005\u3002`);
+    logger.info(
+      { channelId, subscriberCount: subscribers.length, authorId: interaction.user.id },
+      "Artwork update notification sent"
+    );
+  } catch (err) {
+    logger.error({ err }, "Failed to send artwork notification");
+    await interaction.editReply("\u901A\u77E5\u53D1\u9001\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
   }
 }
 async function handleArtworkGetButton(interaction, messageId) {
@@ -132573,6 +132679,12 @@ async function startBot(token) {
           await handleSearchKeywordBtn(interaction);
         } else if (customId === SEARCH_NICKNAME_BTN_ID) {
           await handleSearchNicknameBtn(interaction);
+        } else if (customId.startsWith(ARTWORK_SUBSCRIBE_PREFIX)) {
+          const channelId = customId.slice(ARTWORK_SUBSCRIBE_PREFIX.length);
+          await handleArtworkSubscribe(interaction, channelId);
+        } else if (customId.startsWith(ARTWORK_NOTIFY_BTN_PREFIX)) {
+          const channelId = customId.slice(ARTWORK_NOTIFY_BTN_PREFIX.length);
+          await handleArtworkNotifyBtn(interaction, channelId);
         }
       } else if (interaction.isChannelSelectMenu()) {
         const { customId } = interaction;
@@ -132590,6 +132702,9 @@ async function startBot(token) {
           await handleSearchKeywordModal(interaction);
         } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
           await handleSearchNicknameModal(interaction);
+        } else if (customId.startsWith(ARTWORK_NOTIFY_MODAL_PREFIX)) {
+          const channelId = customId.slice(ARTWORK_NOTIFY_MODAL_PREFIX.length);
+          await handleArtworkNotifyModal(interaction, channelId, client);
         }
       }
     } catch (err) {

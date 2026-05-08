@@ -15,13 +15,22 @@ import {
   type TextChannel,
 } from "discord.js";
 import { db } from "@workspace/db";
-import { artworksTable, artworkAccessLogsTable, artworkWatermarksTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import {
+  artworksTable,
+  artworkAccessLogsTable,
+  artworkWatermarksTable,
+  threadSubscriptionsTable,
+} from "@workspace/db";
+import { eq, and } from "drizzle-orm";
 import { logger } from "../../lib/logger.js";
 import {
   ARTWORK_GET_MODAL_PREFIX,
   ARTWORK_PASSWORD_INPUT,
   ARTWORK_GET_CUSTOM_ID,
+  ARTWORK_SUBSCRIBE_PREFIX,
+  ARTWORK_NOTIFY_BTN_PREFIX,
+  ARTWORK_NOTIFY_MODAL_PREFIX,
+  ARTWORK_NOTIFY_TEXT_INPUT,
 } from "../constants.js";
 import { getConfig, CONFIG_KEY_LOG_CHANNEL } from "../config.js";
 import { encodeFileInfo, buildRenamedFilename } from "../filenameCodec.js";
@@ -49,6 +58,22 @@ export function buildArtworkPanel() {
     .setColor(0x5865f2);
 
   return { embeds: [embed] };
+}
+
+function buildArtworkRow(messageId: string, channelId: string) {
+  const getBtn = new ButtonBuilder()
+    .setCustomId(`${ARTWORK_GET_CUSTOM_ID}${messageId}`)
+    .setLabel("获取作品")
+    .setStyle(ButtonStyle.Primary)
+    .setEmoji("🎨");
+
+  const subscribeBtn = new ButtonBuilder()
+    .setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channelId}`)
+    .setLabel("订阅此帖")
+    .setStyle(ButtonStyle.Secondary)
+    .setEmoji("🔔");
+
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(getBtn, subscribeBtn);
 }
 
 export async function handleArtworkUpload(
@@ -117,24 +142,21 @@ export async function handleArtworkUpload(
       .setFooter({ text: "作品系统 · 请向作者询问密码" })
       .setTimestamp();
 
-    const placeholderBtn = new ButtonBuilder()
-      .setCustomId(`${ARTWORK_GET_CUSTOM_ID}PLACEHOLDER`)
-      .setLabel("获取作品")
-      .setStyle(ButtonStyle.Primary)
-      .setEmoji("🎨");
+    const placeholderRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`${ARTWORK_GET_CUSTOM_ID}PLACEHOLDER`)
+        .setLabel("获取作品")
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji("🎨"),
+      new ButtonBuilder()
+        .setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channel.id}`)
+        .setLabel("订阅此帖")
+        .setStyle(ButtonStyle.Secondary)
+        .setEmoji("🔔")
+    );
 
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(placeholderBtn);
-
-    const msg = await channel.send({ embeds: [embed], components: [row] });
-
-    const realGetBtn = new ButtonBuilder()
-      .setCustomId(`${ARTWORK_GET_CUSTOM_ID}${msg.id}`)
-      .setLabel("获取作品")
-      .setStyle(ButtonStyle.Primary)
-      .setEmoji("🎨");
-
-    const realRow = new ActionRowBuilder<ButtonBuilder>().addComponents(realGetBtn);
-    await msg.edit({ components: [realRow] });
+    const msg = await channel.send({ embeds: [embed], components: [placeholderRow] });
+    await msg.edit({ components: [buildArtworkRow(msg.id, channel.id)] });
 
     await db.insert(artworksTable).values({
       messageId: msg.id,
@@ -152,9 +174,153 @@ export async function handleArtworkUpload(
     await interaction.editReply(
       `作品《${title}》已成功发布！共 ${storageKeys.length} 个文件。`
     );
+
+    // 检查此帖是否已有订阅者（说明是第二次以上上传），询问是否通知
+    const subscribers = await db
+      .select()
+      .from(threadSubscriptionsTable)
+      .where(eq(threadSubscriptionsTable.channelId, channel.id));
+
+    if (subscribers.length > 0) {
+      const notifyBtn = new ButtonBuilder()
+        .setCustomId(`${ARTWORK_NOTIFY_BTN_PREFIX}${channel.id}`)
+        .setLabel(`通知 ${subscribers.length} 位订阅者`)
+        .setStyle(ButtonStyle.Success)
+        .setEmoji("📢");
+
+      const notifyRow = new ActionRowBuilder<ButtonBuilder>().addComponents(notifyBtn);
+
+      await interaction.followUp({
+        content: `此帖有 **${subscribers.length}** 位订阅者，是否要发布更新通知？`,
+        components: [notifyRow],
+        flags: 64,
+      });
+    }
   } catch (err) {
     logger.error({ err }, "Failed to upload artwork");
     await interaction.editReply("上传失败，请稍后再试。");
+  }
+}
+
+export async function handleArtworkSubscribe(
+  interaction: ButtonInteraction,
+  channelId: string
+) {
+  await interaction.deferReply({ flags: 64 });
+
+  const userId = interaction.user.id;
+  const guildId = interaction.guildId ?? "";
+
+  try {
+    const existing = await db
+      .select()
+      .from(threadSubscriptionsTable)
+      .where(
+        and(
+          eq(threadSubscriptionsTable.channelId, channelId),
+          eq(threadSubscriptionsTable.userId, userId)
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      await db
+        .delete(threadSubscriptionsTable)
+        .where(
+          and(
+            eq(threadSubscriptionsTable.channelId, channelId),
+            eq(threadSubscriptionsTable.userId, userId)
+          )
+        );
+      await interaction.editReply("🔕 已取消订阅，不再接收此帖更新通知。");
+    } else {
+      await db.insert(threadSubscriptionsTable).values({ channelId, userId, guildId });
+      await interaction.editReply("🔔 订阅成功！作者发布新内容并选择通知时，你会在此帖收到 @ 提醒。");
+    }
+  } catch (err) {
+    logger.error({ err }, "Failed to toggle subscription");
+    await interaction.editReply("操作失败，请稍后再试。");
+  }
+}
+
+export async function handleArtworkNotifyBtn(
+  interaction: ButtonInteraction,
+  channelId: string
+) {
+  const modal = new ModalBuilder()
+    .setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channelId}`)
+    .setTitle("通知订阅者");
+
+  const textInput = new TextInputBuilder()
+    .setCustomId(ARTWORK_NOTIFY_TEXT_INPUT)
+    .setLabel("通知内容")
+    .setStyle(TextInputStyle.Paragraph)
+    .setPlaceholder("例如：新的作品已上传，欢迎获取！")
+    .setMaxLength(500)
+    .setRequired(true);
+
+  modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
+  await interaction.showModal(modal);
+}
+
+export async function handleArtworkNotifyModal(
+  interaction: ModalSubmitInteraction,
+  channelId: string,
+  client: Client
+) {
+  await interaction.deferReply({ flags: 64 });
+
+  const content = interaction.fields.getTextInputValue(ARTWORK_NOTIFY_TEXT_INPUT);
+  const guild = interaction.guild;
+
+  if (!guild) {
+    await interaction.editReply("此操作只能在服务器中使用。");
+    return;
+  }
+
+  try {
+    const subscribers = await db
+      .select()
+      .from(threadSubscriptionsTable)
+      .where(eq(threadSubscriptionsTable.channelId, channelId));
+
+    if (subscribers.length === 0) {
+      await interaction.editReply("此帖目前没有订阅者。");
+      return;
+    }
+
+    const channel = await client.channels.fetch(channelId).catch(() => null);
+    if (!channel || !channel.isTextBased()) {
+      await interaction.editReply("找不到频道，请联系管理员。");
+      return;
+    }
+
+    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
+    const notifyEmbed = new EmbedBuilder()
+      .setTitle("📢 帖子更新通知")
+      .setDescription(
+        [
+          content,
+          "",
+          `**发布者：** <@${interaction.user.id}>`,
+        ].join("\n")
+      )
+      .setColor(0xfaa61a)
+      .setTimestamp();
+
+    await (channel as GuildTextBasedChannel).send({
+      content: mentions,
+      embeds: [notifyEmbed],
+    });
+
+    await interaction.editReply(`✅ 已通知 ${subscribers.length} 位订阅者。`);
+    logger.info(
+      { channelId, subscriberCount: subscribers.length, authorId: interaction.user.id },
+      "Artwork update notification sent"
+    );
+  } catch (err) {
+    logger.error({ err }, "Failed to send artwork notification");
+    await interaction.editReply("通知发送失败，请稍后再试。");
   }
 }
 
@@ -294,7 +460,6 @@ export async function handleArtworkGetModal(
         if (isStorageKey(fileRef)) {
           buf = await loadFileFromStorage(fileRef);
         } else {
-          // Legacy: fall back to direct URL fetch for old artworks
           const res = await fetch(fileRef);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           buf = Buffer.from(await res.arrayBuffer());
