@@ -54,6 +54,7 @@ import {
   scheduleStatsUpdate,
 } from "./handlers/statsHandler.js";
 import {
+  getConfig,
   setConfig,
   loadAllConfigs,
   CONFIG_KEY_LOG_CHANNEL,

@@ -131007,7 +131007,7 @@ var configCache = /* @__PURE__ */ new Map();
 function cacheKey(guildId, key) {
   return `${guildId}:${key}`;
 }
-function getConfig2(guildId, key) {
+function getConfig(guildId, key) {
   return configCache.get(cacheKey(guildId, key));
 }
 async function setConfig(guildId, key, value) {
@@ -131162,7 +131162,7 @@ async function handleReviewDoneButton(interaction, threadId, client) {
       await interaction.editReply("\u65E0\u6548\u7684\u64CD\u4F5C\u73AF\u5883\u3002");
       return;
     }
-    const adminRoleId = getConfig2(guild.id, CONFIG_KEY_ADMIN_ROLE);
+    const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
     if (adminRoleId) {
       try {
         const allMembers = await guild.members.fetch();
@@ -131204,7 +131204,7 @@ async function handleReviewDeleteTicket(interaction, threadId) {
     await interaction.reply({ content: "\u627E\u4E0D\u5230\u5BF9\u5E94\u7684\u5DE5\u5355\u8BB0\u5F55\u3002", flags: 64 });
     return;
   }
-  const adminRoleId = getConfig2(guild.id, CONFIG_KEY_ADMIN_ROLE);
+  const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   const isOwner = interaction.user.id === record2.userId;
   const canDelete = isOwner || isAdminMember(interaction, adminRoleId);
   if (!canDelete) {
@@ -131227,7 +131227,7 @@ async function handleReviewApprove(interaction, targetUserId) {
   } catch {
     return;
   }
-  const adminRoleId = getConfig2(guild.id, CONFIG_KEY_ADMIN_ROLE);
+  const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   if (!isAdminMember(interaction, adminRoleId)) {
     await interaction.editReply("\u4F60\u6CA1\u6709\u6743\u9650\u6267\u884C\u6B64\u64CD\u4F5C\u3002");
     return;
@@ -131239,7 +131239,7 @@ async function handleReviewApprove(interaction, targetUserId) {
       return;
     }
     const targetMember = await guild.members.fetch(targetUserId).catch(() => null);
-    const approveRoleId = getConfig2(guild.id, CONFIG_KEY_APPROVE_ROLE);
+    const approveRoleId = getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE);
     let roleAssigned = false;
     let roleError = "";
     if (targetMember && approveRoleId) {
@@ -131297,7 +131297,7 @@ async function handleReviewReject(interaction, targetUserId) {
   } catch {
     return;
   }
-  const adminRoleId = getConfig2(guild.id, CONFIG_KEY_ADMIN_ROLE);
+  const adminRoleId = getConfig(guild.id, CONFIG_KEY_ADMIN_ROLE);
   if (!isAdminMember(interaction, adminRoleId)) {
     await interaction.editReply("\u4F60\u6CA1\u6709\u6743\u9650\u6267\u884C\u6B64\u64CD\u4F5C\u3002");
     return;
@@ -131931,7 +131931,7 @@ async function handleArtworkGetModal(interaction, messageId, client) {
         watermarkMethod: rec.method
       }).onConflictDoNothing();
     }
-    const logChannelId = getConfig2(guild.id, CONFIG_KEY_LOG_CHANNEL);
+    const logChannelId = getConfig(guild.id, CONFIG_KEY_LOG_CHANNEL);
     if (logChannelId) {
       try {
         const logChannel = await client.channels.fetch(logChannelId).catch(() => null);
@@ -132335,7 +132335,7 @@ async function handleComplaintThreadSubmit(interaction, client) {
       attachmentUrls: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
     }).returning({ id: complaintTicketsTable.id });
     const ticketId = result[0]?.id ?? 0;
-    const complaintChannelId = getConfig2(guildId, CONFIG_KEY_COMPLAINT_CHANNEL);
+    const complaintChannelId = getConfig(guildId, CONFIG_KEY_COMPLAINT_CHANNEL);
     if (complaintChannelId) {
       const complaintChannel = await client.channels.fetch(complaintChannelId).catch(() => null);
       if (complaintChannel && complaintChannel.isTextBased()) {
@@ -132386,7 +132386,7 @@ var import_discord8 = __toESM(require_src2(), 1);
 var debounceTimers = /* @__PURE__ */ new Map();
 async function getStats(guild) {
   await guild.members.fetch();
-  const approveRoleId = getConfig2(guild.id, CONFIG_KEY_APPROVE_ROLE);
+  const approveRoleId = getConfig(guild.id, CONFIG_KEY_APPROVE_ROLE);
   const humans = guild.members.cache.filter((m) => !m.user.bot);
   const total = humans.size;
   const withRole = approveRoleId ? humans.filter((m) => m.roles.cache.has(approveRoleId)).size : 0;
@@ -132394,9 +132394,9 @@ async function getStats(guild) {
   return { total, withRole, noRole };
 }
 async function updateStatsChannels(guild) {
-  const totalChannelId = getConfig2(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
-  const roleChannelId = getConfig2(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
-  const noRoleChannelId = getConfig2(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
+  const totalChannelId = getConfig(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
+  const roleChannelId = getConfig(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
+  const noRoleChannelId = getConfig(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
   if (!totalChannelId && !roleChannelId && !noRoleChannelId) return;
   try {
     const { total, withRole, noRole } = await getStats(guild);
@@ -132441,9 +132441,9 @@ async function handleSetupStats(interaction, client) {
     return;
   }
   const categoryOption = interaction.options.getChannel("category", false);
-  const existingTotalId = getConfig2(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
-  const existingRoleId = getConfig2(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
-  const existingNoRoleId = getConfig2(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
+  const existingTotalId = getConfig(guild.id, CONFIG_KEY_STATS_TOTAL_CHANNEL);
+  const existingRoleId = getConfig(guild.id, CONFIG_KEY_STATS_ROLE_CHANNEL);
+  const existingNoRoleId = getConfig(guild.id, CONFIG_KEY_STATS_NO_ROLE_CHANNEL);
   const hasExisting = existingTotalId && existingRoleId && existingNoRoleId;
   try {
     if (hasExisting && categoryOption) {
