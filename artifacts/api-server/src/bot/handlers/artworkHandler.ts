@@ -339,27 +339,15 @@ export async function handleArtworkNotifyModal(
       .setColor(0xfaa61a)
       .setTimestamp();
 
-    const subscribers = await db
-      .select()
-      .from(threadSubscriptionsTable)
-      .where(eq(threadSubscriptionsTable.channelId, channelId));
-
-    if (subscribers.length === 0) {
-      await interaction.editReply("📭 此帖目前没有订阅者，无需通知。");
-      return;
-    }
-
-    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
-
     await (channel as GuildTextBasedChannel).send({
-      content: mentions,
+      content: "@everyone",
       embeds: [notifyEmbed],
     });
 
-    await interaction.editReply(`✅ 已通知 ${subscribers.length} 位订阅者。`);
+    await interaction.editReply("✅ 已通知所有人。");
     logger.info(
-      { channelId, authorId: interaction.user.id, count: subscribers.length },
-      "Artwork update notification sent to subscribers"
+      { channelId, authorId: interaction.user.id },
+      "Artwork update notification sent (@everyone)"
     );
   } catch (err) {
     logger.error({ err }, "Failed to send artwork notification");

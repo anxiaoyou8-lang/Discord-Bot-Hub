@@ -131968,20 +131968,14 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
         `**\u53D1\u5E03\u8005\uFF1A** <@${interaction.user.id}>`
       ].join("\n")
     ).setColor(16426522).setTimestamp();
-    const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
-    if (subscribers.length === 0) {
-      await interaction.editReply("\u{1F4ED} \u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\uFF0C\u65E0\u9700\u901A\u77E5\u3002");
-      return;
-    }
-    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
     await channel.send({
-      content: mentions,
+      content: "@everyone",
       embeds: [notifyEmbed]
     });
-    await interaction.editReply(`\u2705 \u5DF2\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005\u3002`);
+    await interaction.editReply("\u2705 \u5DF2\u901A\u77E5\u6240\u6709\u4EBA\u3002");
     logger.info(
-      { channelId, authorId: interaction.user.id, count: subscribers.length },
-      "Artwork update notification sent to subscribers"
+      { channelId, authorId: interaction.user.id },
+      "Artwork update notification sent (@everyone)"
     );
   } catch (err) {
     logger.error({ err }, "Failed to send artwork notification");
