@@ -112465,6 +112465,8 @@ var SUGGESTION_UPVOTE_PREFIX = "suggestion_up_";
 var SUGGESTION_DOWNVOTE_PREFIX = "suggestion_down_";
 var SUGGESTION_ACCEPT_PREFIX = "suggestion_accept_";
 var SUGGESTION_REJECT_PREFIX = "suggestion_reject_";
+var SUGGESTION_UPVOTE_MODAL_PREFIX = "suggestion_up_modal_";
+var SUGGESTION_UPVOTE_REASON_INPUT = "suggestion_up_reason";
 var SUGGESTION_DOWNVOTE_MODAL_PREFIX = "suggestion_down_modal_";
 var SUGGESTION_DOWNVOTE_REASON_INPUT = "suggestion_down_reason";
 var SUGGESTION_REJECT_MODAL_PREFIX = "suggestion_reject_modal_";
@@ -132698,16 +132700,6 @@ async function handleSetupStats(interaction, client) {
 
 // src/bot/handlers/suggestionHandler.ts
 var import_discord10 = __toESM(require_src2(), 1);
-var STATUS_LABELS = {
-  pending: "\u23F3 \u7B49\u5F85\u4E2D",
-  accepted: "\u2705 \u5DF2\u91C7\u7EB3",
-  rejected: "\u274C \u4E0D\u91C7\u7EB3"
-};
-var STATUS_COLORS = {
-  pending: 16705372,
-  accepted: 5763719,
-  rejected: 15548997
-};
 function isAdmin(guildId, member) {
   const adminRoleId = getConfig(guildId, CONFIG_KEY_ADMIN_ROLE);
   const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? !!(BigInt(member.permissions) & BigInt(import_discord10.PermissionFlagsBits.Administrator)) : member.permissions.has(import_discord10.PermissionFlagsBits.Administrator) : false;
@@ -132715,37 +132707,41 @@ function isAdmin(guildId, member) {
   return isDiscordAdmin || hasAdminRole;
 }
 async function buildSuggestionEmbed(id, content, category, status, upvotes, downvotes, rejectReason) {
-  const statusLabel = STATUS_LABELS[status] ?? STATUS_LABELS.pending;
-  const color = STATUS_COLORS[status] ?? STATUS_COLORS.pending;
+  const isArchived = status === "accepted" || status === "rejected";
+  const statusTag = isArchived ? "\u{1F4C1} \u65E7\u5E16" : "\u{1F7E2} \u65B0\u5E16";
+  const color = status === "accepted" ? 5763719 : status === "rejected" ? 15548997 : 5793266;
   const total = upvotes + downvotes;
   const pct = total > 0 ? Math.round(upvotes / total * 100) : 0;
-  const embed = new import_discord10.EmbedBuilder().setTitle(`\u{1F4A1} \u610F\u89C1 #${id}${category ? ` \xB7 ${category}` : ""}`).setDescription(content).setColor(color).addFields(
-    { name: "\u72B6\u6001", value: statusLabel, inline: true },
-    { name: "\u{1F44D} \u652F\u6301", value: `${upvotes}`, inline: true },
-    { name: "\u{1F44E} \u53CD\u5BF9", value: `${downvotes}`, inline: true },
-    ...total > 0 ? [{ name: "\u652F\u6301\u7387", value: `${pct}%\uFF08\u5171 ${total} \u7968\uFF09`, inline: true }] : []
-  ).setFooter({ text: "\u6C11\u4F17\u8BAE\u4F1A \xB7 \u533F\u540D \xB7 \u516C\u5F00\u6295\u7968" }).setTimestamp();
-  if (status === "rejected" && rejectReason) {
-    embed.addFields({ name: "\u{1F4DD} \u4E0D\u91C7\u7EB3\u7406\u7531", value: rejectReason });
+  const embed = new import_discord10.EmbedBuilder().setTitle(`\u{1F4CB} \u533F\u540D\u6295\u7A3F #${id}${category ? `\u3000\xB7\u3000${category}` : ""}`).setDescription(content).setColor(color).setFooter({ text: "\u6C11\u4F17\u8BAE\u4F1A \xB7 \u533F\u540D\u6295\u7A3F \xB7 \u516C\u5F00\u6295\u7968" }).setTimestamp();
+  const voteBar = total > 0 ? `\u{1F44D} \u8D5E\u6210 **${upvotes}**\u3000\u3000\u{1F44E} \u53CD\u5BF9 **${downvotes}**\u3000\uFF08\u652F\u6301\u7387 ${pct}%\uFF0C\u5171 ${total} \u7968\uFF09` : "\u5C1A\u65E0\u6295\u7968";
+  embed.addFields({ name: "\u{1F4CA} \u5F53\u524D\u6295\u7968", value: voteBar });
+  embed.addFields({ name: "\u72B6\u6001", value: statusTag, inline: true });
+  if (status === "accepted") {
+    embed.addFields({ name: "\u7BA1\u7406\u51B3\u5B9A", value: "\u2705 \u5DF2\u91C7\u7EB3\u5F52\u6863", inline: true });
+  } else if (status === "rejected") {
+    embed.addFields({ name: "\u7BA1\u7406\u51B3\u5B9A", value: "\u274C \u4E0D\u91C7\u7EB3\u5F52\u6863", inline: true });
+    if (rejectReason) {
+      embed.addFields({ name: "\u{1F4DD} \u4E0D\u91C7\u7EB3\u7406\u7531", value: rejectReason });
+    }
   }
-  const downvoteReasons = await db.select({ reason: suggestionVotesTable.reason }).from(suggestionVotesTable).where(
-    and(
-      eq(suggestionVotesTable.suggestionId, id),
-      eq(suggestionVotesTable.voteType, "down")
-    )
-  );
-  const reasons = downvoteReasons.map((r) => r.reason).filter((r) => !!r && r.trim().length > 0);
-  if (reasons.length > 0) {
-    const reasonText = reasons.map((r, i) => `${i + 1}. ${r}`).join("\n");
-    embed.addFields({ name: `\u{1F4AC} \u53CD\u5BF9\u539F\u56E0\uFF08${reasons.length} \u6761\uFF09`, value: reasonText.slice(0, 1024) });
+  const allVotes = await db.select({ voteType: suggestionVotesTable.voteType, reason: suggestionVotesTable.reason }).from(suggestionVotesTable).where(eq(suggestionVotesTable.suggestionId, id));
+  const upReasons = allVotes.filter((v) => v.voteType === "up" && v.reason?.trim()).map((v) => v.reason);
+  const downReasons = allVotes.filter((v) => v.voteType === "down" && v.reason?.trim()).map((v) => v.reason);
+  if (upReasons.length > 0) {
+    const text2 = upReasons.map((r, i) => `${i + 1}. ${r}`).join("\n");
+    embed.addFields({ name: `\u{1F4AC} \u8D5E\u6210\u610F\u89C1\uFF08${upReasons.length} \u6761\uFF09`, value: text2.slice(0, 1024) });
+  }
+  if (downReasons.length > 0) {
+    const text2 = downReasons.map((r, i) => `${i + 1}. ${r}`).join("\n");
+    embed.addFields({ name: `\u{1F4AC} \u53CD\u5BF9/\u6539\u8FDB\u5EFA\u8BAE\uFF08${downReasons.length} \u6761\uFF09`, value: text2.slice(0, 1024) });
   }
   return embed;
 }
 function buildSuggestionComponents(suggestionId) {
-  const upvoteBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_up_${suggestionId}`).setLabel("\u652F\u6301").setEmoji("\u{1F44D}").setStyle(import_discord10.ButtonStyle.Primary);
+  const upvoteBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_up_${suggestionId}`).setLabel("\u8D5E\u6210").setEmoji("\u{1F44D}").setStyle(import_discord10.ButtonStyle.Primary);
   const downvoteBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_down_${suggestionId}`).setLabel("\u53CD\u5BF9").setEmoji("\u{1F44E}").setStyle(import_discord10.ButtonStyle.Secondary);
-  const acceptBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_accept_${suggestionId}`).setLabel("\u6807\u8BB0\u91C7\u7EB3").setEmoji("\u2705").setStyle(import_discord10.ButtonStyle.Success);
-  const rejectBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_reject_${suggestionId}`).setLabel("\u6807\u8BB0\u4E0D\u91C7\u7EB3").setEmoji("\u274C").setStyle(import_discord10.ButtonStyle.Danger);
+  const acceptBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_accept_${suggestionId}`).setLabel("\u91C7\u7EB3\uFF08\u5F52\u6863\uFF09").setEmoji("\u2705").setStyle(import_discord10.ButtonStyle.Success);
+  const rejectBtn = new import_discord10.ButtonBuilder().setCustomId(`suggestion_reject_${suggestionId}`).setLabel("\u4E0D\u91C7\u7EB3\uFF08\u5F52\u6863\uFF09").setEmoji("\u274C").setStyle(import_discord10.ButtonStyle.Danger);
   return [
     new import_discord10.ActionRowBuilder().addComponents(upvoteBtn, downvoteBtn),
     new import_discord10.ActionRowBuilder().addComponents(acceptBtn, rejectBtn)
@@ -132754,24 +132750,24 @@ function buildSuggestionComponents(suggestionId) {
 function buildSuggestionPanel() {
   const embed = new import_discord10.EmbedBuilder().setTitle("\u{1F3DB}\uFE0F \u6C11\u4F17\u8BAE\u4F1A").setDescription(
     [
-      "\u6709\u4EFB\u4F55\u5EFA\u8BAE\u3001\u60F3\u6CD5\u6216\u610F\u89C1\uFF1F\u5728\u8FD9\u91CC\u533F\u540D\u63D0\u4EA4\uFF0C\u8BA9\u5927\u5BB6\u4E00\u8D77\u770B\u5230\u5E76\u6295\u7968\uFF01",
+      "\u6709\u4EFB\u4F55\u5EFA\u8BAE\u3001\u60F3\u6CD5\u6216\u610F\u89C1\uFF1F\u70B9\u51FB\u4E0B\u65B9\u533F\u540D\u6295\u7A3F\uFF0C\u8BA9\u5927\u5BB6\u4E00\u8D77\u53C2\u4E0E\u8BA8\u8BBA\u548C\u6295\u7968\uFF01",
       "",
-      "\u2022 **\u5B8C\u5168\u533F\u540D**\uFF0C\u4EFB\u4F55\u4EBA\u65E0\u6CD5\u5F97\u77E5\u63D0\u4EA4\u8005\u8EAB\u4EFD",
-      "\u2022 \u6240\u6709\u4EBA\u53EF\u89C1\uFF0C\u652F\u6301 \u{1F44D}/\u{1F44E} \u516C\u5F00\u6295\u7968",
-      "\u2022 \u{1F44E} \u53CD\u5BF9\u65F6\u53EF\u9009\u586B\u539F\u56E0\uFF0C\u533F\u540D\u5C55\u793A",
-      "\u2022 \u7BA1\u7406\u5458\u53EF\u6807\u8BB0\u91C7\u7EB3\u72B6\u6001\uFF0C\u5E76\u7559\u4E0B\u8BF4\u660E"
+      "**\u6295\u7A3F\u89C4\u5219**",
+      "\u2022 \u5B8C\u5168**\u533F\u540D**\uFF0C\u4EFB\u4F55\u4EBA\u65E0\u6CD5\u5F97\u77E5\u6295\u7A3F\u8005\u8EAB\u4EFD",
+      "\u2022 \u6240\u6709\u4EBA\u53EF\u4EE5\u9009\u62E9**\u8D5E\u6210**\u6216**\u53CD\u5BF9**\uFF0C\u5E76\u9644\u4E0A\u7406\u7531\u6216\u6539\u8FDB\u5EFA\u8BAE",
+      "\u2022 \u7BA1\u7406\u5458\u51B3\u5B9A\u91C7\u7EB3\u6216\u4E0D\u91C7\u7EB3\u540E\uFF0C\u5E16\u5B50\u53D8\u4E3A**\u65E7\u5E16**\uFF08\u4ECD\u53EF\u67E5\u770B\uFF0C\u4E0D\u4F1A\u5220\u9664\uFF09"
     ].join("\n")
-  ).setColor(5793266).setFooter({ text: "\u6C11\u4F17\u8BAE\u4F1A \xB7 \u533F\u540D \xB7 \u516C\u5F00\u6295\u7968" });
-  const button = new import_discord10.ButtonBuilder().setCustomId(SUGGESTION_PANEL_CUSTOM_ID).setLabel("\u{1F4EE} \u63D0\u4EA4\u610F\u89C1").setStyle(import_discord10.ButtonStyle.Primary);
+  ).setColor(5793266).setFooter({ text: "\u6C11\u4F17\u8BAE\u4F1A \xB7 \u533F\u540D\u6295\u7A3F \xB7 \u516C\u5F00\u6295\u7968" });
+  const button = new import_discord10.ButtonBuilder().setCustomId(SUGGESTION_PANEL_CUSTOM_ID).setLabel("\u{1F4EE} \u533F\u540D\u6295\u7A3F").setStyle(import_discord10.ButtonStyle.Primary);
   return {
     embeds: [embed],
     components: [new import_discord10.ActionRowBuilder().addComponents(button)]
   };
 }
 async function handleSuggestionButton(interaction) {
-  const modal = new import_discord10.ModalBuilder().setCustomId(SUGGESTION_MODAL_ID).setTitle("\u63D0\u4EA4\u533F\u540D\u610F\u89C1");
+  const modal = new import_discord10.ModalBuilder().setCustomId(SUGGESTION_MODAL_ID).setTitle("\u533F\u540D\u6295\u7A3F");
   const categoryInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_CATEGORY_INPUT).setLabel("\u5206\u7C7B\uFF08\u9009\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Short).setPlaceholder("\u5EFA\u8BAE / \u95EE\u9898 / \u5410\u69FD / \u8868\u626C / \u5176\u4ED6").setMaxLength(20).setRequired(false);
-  const contentInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_TEXT_INPUT).setLabel("\u610F\u89C1\u5185\u5BB9\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u5199\u4E0B\u4F60\u7684\u60F3\u6CD5\uFF0C\u53EF\u4EE5\u662F\u5EFA\u8BAE\u3001\u53CD\u9988\u6216\u4EFB\u4F55\u610F\u89C1\u2026\u2026").setMinLength(5).setMaxLength(1e3).setRequired(true);
+  const contentInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_TEXT_INPUT).setLabel("\u6295\u7A3F\u5185\u5BB9\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u5199\u4E0B\u4F60\u7684\u60F3\u6CD5\u3001\u5EFA\u8BAE\u6216\u4EFB\u4F55\u610F\u89C1\u2026\u2026").setMinLength(5).setMaxLength(1e3).setRequired(true);
   modal.addComponents(
     new import_discord10.ActionRowBuilder().addComponents(categoryInput),
     new import_discord10.ActionRowBuilder().addComponents(contentInput)
@@ -132791,21 +132787,21 @@ async function handleSuggestionModal(interaction, client) {
     const components = buildSuggestionComponents(suggestionId);
     const suggestionChannelId = getConfig(guildId, CONFIG_KEY_SUGGESTION_CHANNEL);
     if (!suggestionChannelId) {
-      await interaction.editReply("\u2705 \u610F\u89C1\u5DF2\u8BB0\u5F55\uFF01\uFF08\u7BA1\u7406\u5458\u5C1A\u672A\u8BBE\u7F6E\u516C\u5F00\u5C55\u793A\u9891\u9053\uFF09");
+      await interaction.editReply("\u2705 \u6295\u7A3F\u5DF2\u8BB0\u5F55\uFF01\uFF08\u7BA1\u7406\u5458\u5C1A\u672A\u8BBE\u7F6E\u516C\u5F00\u5C55\u793A\u9891\u9053\uFF09");
       return;
     }
     const ch = await client.channels.fetch(suggestionChannelId).catch(() => null);
     if (!ch || !ch.isTextBased()) {
-      await interaction.editReply("\u2705 \u610F\u89C1\u5DF2\u8BB0\u5F55\uFF01\uFF08\u65E0\u6CD5\u53D1\u9001\u5230\u5C55\u793A\u9891\u9053\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\uFF09");
+      await interaction.editReply("\u2705 \u6295\u7A3F\u5DF2\u8BB0\u5F55\uFF01\uFF08\u65E0\u6CD5\u53D1\u9001\u5230\u5C55\u793A\u9891\u9053\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\uFF09");
       return;
     }
     const posted = await ch.send({ embeds: [embed], components });
     await db.update(suggestionTicketsTable).set({ messageId: posted.id, channelId: suggestionChannelId }).where(eq(suggestionTicketsTable.id, suggestionId));
-    await interaction.editReply(`\u2705 \u610F\u89C1 #${suggestionId} \u5DF2\u533F\u540D\u53D1\u5E03\uFF01\u5927\u5BB6\u53EF\u4EE5\u524D\u5F80\u9891\u9053\u6295\u7968\u3002`);
+    await interaction.editReply(`\u2705 \u6295\u7A3F #${suggestionId} \u5DF2\u533F\u540D\u53D1\u5E03\uFF01\u6B22\u8FCE\u5927\u5BB6\u524D\u5F80\u9891\u9053\u6295\u7968\u3002`);
     logger.info({ suggestionId, guildId }, "Suggestion posted publicly");
   } catch (err) {
     logger.error({ err }, "Failed to submit suggestion");
-    await interaction.editReply("\u274C \u63D0\u4EA4\u65F6\u51FA\u9519\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+    await interaction.editReply("\u274C \u6295\u7A3F\u65F6\u51FA\u9519\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
   }
 }
 async function refreshSuggestionMessage(client, suggestionId) {
@@ -132830,106 +132826,90 @@ async function refreshSuggestionMessage(client, suggestionId) {
     logger.warn({ e }, "Failed to refresh suggestion message");
   });
 }
-async function handleSuggestionVote(interaction, suggestionId, client) {
+async function processVote(interaction, suggestionId, voteType, reason, client) {
   await interaction.deferReply({ flags: 64 });
   const userId = interaction.user.id;
   try {
     const existing = await db.select().from(suggestionVotesTable).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId))).limit(1);
     const suggestion = await db.select().from(suggestionTicketsTable).where(eq(suggestionTicketsTable.id, suggestionId)).limit(1).then((r) => r[0]);
     if (!suggestion) {
-      await interaction.editReply("\u274C \u627E\u4E0D\u5230\u8BE5\u610F\u89C1\u3002");
+      await interaction.editReply("\u274C \u627E\u4E0D\u5230\u8BE5\u6295\u7A3F\u3002");
       return;
     }
     let newUp = suggestion.upvotes;
     let newDown = suggestion.downvotes;
     let replyMsg = "";
+    const label = voteType === "up" ? "\u{1F44D} \u8D5E\u6210" : "\u{1F44E} \u53CD\u5BF9";
+    const otherType = voteType === "up" ? "down" : "up";
     if (existing.length > 0) {
-      const prev = existing[0].voteType;
-      if (prev === "up") {
-        await db.delete(suggestionVotesTable).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId)));
-        newUp = Math.max(0, newUp - 1);
-        replyMsg = "\u5DF2\u53D6\u6D88 \u{1F44D} \u652F\u6301\u3002";
-      } else {
-        await db.update(suggestionVotesTable).set({ voteType: "up", reason: null }).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId)));
-        newUp += 1;
-        newDown = Math.max(0, newDown - 1);
-        replyMsg = "\u5DF2\u6539\u4E3A \u{1F44D} \u652F\u6301\u3002";
-      }
-    } else {
-      await db.insert(suggestionVotesTable).values({ suggestionId, userId, voteType: "up" });
-      newUp += 1;
-      replyMsg = "\u5DF2\u6295 \u{1F44D} \u652F\u6301\uFF01";
-    }
-    await db.update(suggestionTicketsTable).set({ upvotes: newUp, downvotes: newDown }).where(eq(suggestionTicketsTable.id, suggestionId));
-    await refreshSuggestionMessage(client, suggestionId);
-    await interaction.editReply(replyMsg);
-  } catch (err) {
-    logger.error({ err }, "Failed to handle upvote");
-    await interaction.editReply("\u64CD\u4F5C\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
-  }
-}
-async function handleSuggestionDownvoteBtn(interaction, suggestionId) {
-  const modal = new import_discord10.ModalBuilder().setCustomId(`${SUGGESTION_DOWNVOTE_MODAL_PREFIX}${suggestionId}`).setTitle("\u53CD\u5BF9\u610F\u89C1\uFF08\u9009\u586B\u539F\u56E0\uFF09");
-  const reasonInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_DOWNVOTE_REASON_INPUT).setLabel("\u53CD\u5BF9\u539F\u56E0\uFF08\u9009\u586B\uFF0C\u533F\u540D\u5C55\u793A\uFF09").setStyle(import_discord10.TextInputStyle.Short).setPlaceholder("\u7B80\u5355\u8BF4\u660E\u4E3A\u4EC0\u4E48\u53CD\u5BF9\u2026\u2026").setMaxLength(200).setRequired(false);
-  modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(reasonInput));
-  await interaction.showModal(modal);
-}
-async function handleSuggestionDownvoteModal(interaction, suggestionId, client) {
-  await interaction.deferReply({ flags: 64 });
-  const userId = interaction.user.id;
-  const reason = interaction.fields.getTextInputValue(SUGGESTION_DOWNVOTE_REASON_INPUT).trim() || null;
-  try {
-    const existing = await db.select().from(suggestionVotesTable).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId))).limit(1);
-    const suggestion = await db.select().from(suggestionTicketsTable).where(eq(suggestionTicketsTable.id, suggestionId)).limit(1).then((r) => r[0]);
-    if (!suggestion) {
-      await interaction.editReply("\u274C \u627E\u4E0D\u5230\u8BE5\u610F\u89C1\u3002");
-      return;
-    }
-    let newUp = suggestion.upvotes;
-    let newDown = suggestion.downvotes;
-    let replyMsg = "";
-    if (existing.length > 0) {
-      const prev = existing[0].voteType;
-      if (prev === "down") {
-        if (reason !== null) {
+      const prev = existing[0];
+      if (prev.voteType === voteType) {
+        if (reason !== null && reason.trim().length > 0) {
           await db.update(suggestionVotesTable).set({ reason }).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId)));
-          replyMsg = "\u5DF2\u66F4\u65B0\u53CD\u5BF9\u539F\u56E0\u3002";
+          replyMsg = `\u5DF2\u66F4\u65B0\u4F60\u7684${label}\u7406\u7531\u3002`;
         } else {
           await db.delete(suggestionVotesTable).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId)));
-          newDown = Math.max(0, newDown - 1);
-          replyMsg = "\u5DF2\u53D6\u6D88 \u{1F44E} \u53CD\u5BF9\u3002";
+          if (voteType === "up") newUp = Math.max(0, newUp - 1);
+          else newDown = Math.max(0, newDown - 1);
+          replyMsg = `\u5DF2\u53D6\u6D88\u4F60\u7684${label}\u3002`;
         }
       } else {
-        await db.update(suggestionVotesTable).set({ voteType: "down", reason }).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId)));
-        newDown += 1;
-        newUp = Math.max(0, newUp - 1);
-        replyMsg = "\u5DF2\u6539\u4E3A \u{1F44E} \u53CD\u5BF9\u3002";
+        await db.update(suggestionVotesTable).set({ voteType, reason }).where(and(eq(suggestionVotesTable.suggestionId, suggestionId), eq(suggestionVotesTable.userId, userId)));
+        if (voteType === "up") {
+          newUp += 1;
+          newDown = Math.max(0, newDown - 1);
+        } else {
+          newDown += 1;
+          newUp = Math.max(0, newUp - 1);
+        }
+        replyMsg = `\u5DF2\u4ECE${otherType === "up" ? "\u{1F44D} \u8D5E\u6210" : "\u{1F44E} \u53CD\u5BF9"}\u6539\u4E3A${label}\u3002`;
       }
     } else {
-      await db.insert(suggestionVotesTable).values({ suggestionId, userId, voteType: "down", reason });
-      newDown += 1;
-      replyMsg = "\u5DF2\u6295 \u{1F44E} \u53CD\u5BF9\uFF01";
+      await db.insert(suggestionVotesTable).values({ suggestionId, userId, voteType, reason });
+      if (voteType === "up") newUp += 1;
+      else newDown += 1;
+      replyMsg = `\u5DF2\u9009\u62E9${label}\uFF01`;
     }
     await db.update(suggestionTicketsTable).set({ upvotes: newUp, downvotes: newDown }).where(eq(suggestionTicketsTable.id, suggestionId));
     await refreshSuggestionMessage(client, suggestionId);
     await interaction.editReply(replyMsg);
   } catch (err) {
-    logger.error({ err }, "Failed to handle downvote modal");
+    logger.error({ err }, "Failed to process vote");
     await interaction.editReply("\u64CD\u4F5C\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
   }
+}
+function buildVoteModal(prefix, suggestionId, isUpvote) {
+  const modal = new import_discord10.ModalBuilder().setCustomId(`${prefix}${suggestionId}`).setTitle(isUpvote ? "\u9009\u62E9\u8D5E\u6210" : "\u9009\u62E9\u53CD\u5BF9");
+  const reasonInput = new import_discord10.TextInputBuilder().setCustomId(isUpvote ? SUGGESTION_UPVOTE_REASON_INPUT : SUGGESTION_DOWNVOTE_REASON_INPUT).setLabel(isUpvote ? "\u8D5E\u6210\u7406\u7531\u6216\u6539\u8FDB\u5EFA\u8BAE\uFF08\u9009\u586B\uFF09" : "\u53CD\u5BF9\u7406\u7531\u6216\u6539\u8FDB\u5EFA\u8BAE\uFF08\u9009\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Short).setPlaceholder(isUpvote ? "\u8BF4\u8BF4\u4F60\u4E3A\u4EC0\u4E48\u8D5E\u6210\u2026\u2026\uFF08\u7559\u7A7A\u4E5F\u53EF\u4EE5\uFF09" : "\u8BF4\u8BF4\u4F60\u4E3A\u4EC0\u4E48\u53CD\u5BF9\uFF0C\u6216\u63D0\u51FA\u6539\u8FDB\u65B9\u5411\u2026\u2026\uFF08\u7559\u7A7A\u4E5F\u53EF\u4EE5\uFF09").setMaxLength(200).setRequired(false);
+  modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(reasonInput));
+  return modal;
+}
+async function handleSuggestionUpvoteBtn(interaction, suggestionId) {
+  await interaction.showModal(buildVoteModal(SUGGESTION_UPVOTE_MODAL_PREFIX, suggestionId, true));
+}
+async function handleSuggestionUpvoteModal(interaction, suggestionId, client) {
+  const reason = interaction.fields.getTextInputValue(SUGGESTION_UPVOTE_REASON_INPUT).trim() || null;
+  await processVote(interaction, suggestionId, "up", reason, client);
+}
+async function handleSuggestionDownvoteBtn(interaction, suggestionId) {
+  await interaction.showModal(buildVoteModal(SUGGESTION_DOWNVOTE_MODAL_PREFIX, suggestionId, false));
+}
+async function handleSuggestionDownvoteModal(interaction, suggestionId, client) {
+  const reason = interaction.fields.getTextInputValue(SUGGESTION_DOWNVOTE_REASON_INPUT).trim() || null;
+  await processVote(interaction, suggestionId, "down", reason, client);
 }
 async function handleSuggestionAccept(interaction, suggestionId, client) {
   const guildId = interaction.guildId ?? "";
   const member = interaction.member;
   if (!isAdmin(guildId, member)) {
-    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u6807\u8BB0\u91C7\u7EB3\u72B6\u6001\u3002", flags: 64 });
+    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u5F52\u6863\u6295\u7A3F\u3002", flags: 64 });
     return;
   }
   await interaction.deferReply({ flags: 64 });
   try {
     await db.update(suggestionTicketsTable).set({ status: "accepted", rejectReason: null }).where(eq(suggestionTicketsTable.id, suggestionId));
     await refreshSuggestionMessage(client, suggestionId);
-    await interaction.editReply(`\u2705 \u610F\u89C1 #${suggestionId} \u5DF2\u6807\u8BB0\u4E3A\u91C7\u7EB3\u3002`);
+    await interaction.editReply(`\u2705 \u6295\u7A3F #${suggestionId} \u5DF2\u91C7\u7EB3\u5E76\u5F52\u6863\u4E3A\u65E7\u5E16\u3002`);
     logger.info({ suggestionId, adminId: interaction.user.id }, "Suggestion accepted");
   } catch (err) {
     logger.error({ err }, "Failed to accept suggestion");
@@ -132940,11 +132920,11 @@ async function handleSuggestionRejectBtn(interaction, suggestionId) {
   const guildId = interaction.guildId ?? "";
   const member = interaction.member;
   if (!isAdmin(guildId, member)) {
-    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u6807\u8BB0\u91C7\u7EB3\u72B6\u6001\u3002", flags: 64 });
+    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u5F52\u6863\u6295\u7A3F\u3002", flags: 64 });
     return;
   }
-  const modal = new import_discord10.ModalBuilder().setCustomId(`${SUGGESTION_REJECT_MODAL_PREFIX}${suggestionId}`).setTitle("\u6807\u8BB0\u4E0D\u91C7\u7EB3");
-  const reasonInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_REJECT_REASON_INPUT).setLabel("\u4E0D\u91C7\u7EB3\u539F\u56E0\uFF08\u9009\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8BF4\u660E\u4E3A\u4EC0\u4E48\u4E0D\u91C7\u7EB3\u8FD9\u6761\u610F\u89C1\u2026\u2026\uFF08\u7559\u7A7A\u4E5F\u53EF\u4EE5\uFF09").setMaxLength(500).setRequired(false);
+  const modal = new import_discord10.ModalBuilder().setCustomId(`${SUGGESTION_REJECT_MODAL_PREFIX}${suggestionId}`).setTitle("\u4E0D\u91C7\u7EB3\u5E76\u5F52\u6863");
+  const reasonInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_REJECT_REASON_INPUT).setLabel("\u4E0D\u91C7\u7EB3\u7406\u7531\uFF08\u9009\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8BF4\u660E\u4E3A\u4EC0\u4E48\u4E0D\u91C7\u7EB3\u8FD9\u6761\u6295\u7A3F\u2026\u2026\uFF08\u7559\u7A7A\u4E5F\u53EF\u4EE5\uFF09").setMaxLength(500).setRequired(false);
   modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(reasonInput));
   await interaction.showModal(modal);
 }
@@ -132954,7 +132934,7 @@ async function handleSuggestionRejectModal(interaction, suggestionId, client) {
   try {
     await db.update(suggestionTicketsTable).set({ status: "rejected", rejectReason: reason }).where(eq(suggestionTicketsTable.id, suggestionId));
     await refreshSuggestionMessage(client, suggestionId);
-    await interaction.editReply(`\u274C \u610F\u89C1 #${suggestionId} \u5DF2\u6807\u8BB0\u4E3A\u4E0D\u91C7\u7EB3${reason ? "\uFF0C\u7406\u7531\u5DF2\u66F4\u65B0\u5230\u610F\u89C1\u4E2D" : ""}\u3002`);
+    await interaction.editReply(`\u274C \u6295\u7A3F #${suggestionId} \u5DF2\u4E0D\u91C7\u7EB3\u5E76\u5F52\u6863\u4E3A\u65E7\u5E16${reason ? "\uFF0C\u7406\u7531\u5DF2\u66F4\u65B0\u5728\u5E16\u5B50\u4E2D" : ""}\u3002`);
     logger.info({ suggestionId, adminId: interaction.user.id }, "Suggestion rejected");
   } catch (err) {
     logger.error({ err }, "Failed to reject suggestion");
@@ -133310,7 +133290,7 @@ async function startBot(token) {
           await handleSuggestionButton(interaction);
         } else if (customId.startsWith(SUGGESTION_UPVOTE_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_UPVOTE_PREFIX.length), 10);
-          await handleSuggestionVote(interaction, id, client);
+          await handleSuggestionUpvoteBtn(interaction, id);
         } else if (customId.startsWith(SUGGESTION_DOWNVOTE_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_PREFIX.length), 10);
           await handleSuggestionDownvoteBtn(interaction, id);
@@ -133374,6 +133354,9 @@ async function startBot(token) {
           await handleAddTriviaModal(interaction);
         } else if (customId === SUGGESTION_MODAL_ID) {
           await handleSuggestionModal(interaction, client);
+        } else if (customId.startsWith(SUGGESTION_UPVOTE_MODAL_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_UPVOTE_MODAL_PREFIX.length), 10);
+          await handleSuggestionUpvoteModal(interaction, id, client);
         } else if (customId.startsWith(SUGGESTION_DOWNVOTE_MODAL_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_MODAL_PREFIX.length), 10);
           await handleSuggestionDownvoteModal(interaction, id, client);

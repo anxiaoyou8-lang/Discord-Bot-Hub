@@ -70,7 +70,8 @@ import {
   buildSuggestionPanel,
   handleSuggestionButton,
   handleSuggestionModal,
-  handleSuggestionVote,
+  handleSuggestionUpvoteBtn,
+  handleSuggestionUpvoteModal,
   handleSuggestionDownvoteBtn,
   handleSuggestionDownvoteModal,
   handleSuggestionAccept,
@@ -143,6 +144,7 @@ import {
   SUGGESTION_DOWNVOTE_PREFIX,
   SUGGESTION_ACCEPT_PREFIX,
   SUGGESTION_REJECT_PREFIX,
+  SUGGESTION_UPVOTE_MODAL_PREFIX,
   SUGGESTION_DOWNVOTE_MODAL_PREFIX,
   SUGGESTION_REJECT_MODAL_PREFIX,
 } from "./constants.js";
@@ -548,7 +550,7 @@ export async function startBot(token: string) {
 
         } else if (customId.startsWith(SUGGESTION_UPVOTE_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_UPVOTE_PREFIX.length), 10);
-          await handleSuggestionVote(interaction, id, client);
+          await handleSuggestionUpvoteBtn(interaction, id);
 
         } else if (customId.startsWith(SUGGESTION_DOWNVOTE_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_PREFIX.length), 10);
@@ -634,6 +636,10 @@ export async function startBot(token: string) {
 
         } else if (customId === SUGGESTION_MODAL_ID) {
           await handleSuggestionModal(interaction, client);
+
+        } else if (customId.startsWith(SUGGESTION_UPVOTE_MODAL_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_UPVOTE_MODAL_PREFIX.length), 10);
+          await handleSuggestionUpvoteModal(interaction, id, client);
 
         } else if (customId.startsWith(SUGGESTION_DOWNVOTE_MODAL_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_MODAL_PREFIX.length), 10);
