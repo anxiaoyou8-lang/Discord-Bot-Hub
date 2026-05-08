@@ -478,10 +478,43 @@ export async function handleArtworkGetModal(
       }
     }
 
+    const artworkLink = `https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId}`;
+
     await interaction.editReply({
       content: `✅ 这是作品《${artwork.title}》的原文件（共 ${preparedFiles.length} 个），仅你可见：`,
       files: preparedFiles,
     });
+
+    // 私信附件 + 作品链接给获取者
+    try {
+      const dmEmbed = new EmbedBuilder()
+        .setTitle(`🎨 ${artwork.title}`)
+        .setDescription(
+          [
+            `你已成功获取作品《**${artwork.title}**》的原文件。`,
+            "",
+            `**作者：** <@${artwork.authorId}>`,
+            `**作品贴：** [点击跳转](${artworkLink})`,
+          ].join("\n")
+        )
+        .setColor(0x5865f2)
+        .setTimestamp();
+
+      await interaction.user.send({
+        embeds: [dmEmbed],
+        files: preparedFiles,
+      });
+
+      logger.info(
+        { userId: interaction.user.id, artworkId: artwork.messageId },
+        "DM with artwork files sent to user"
+      );
+    } catch (dmErr) {
+      logger.warn(
+        { dmErr, userId: interaction.user.id },
+        "Failed to send DM to user (DMs may be disabled)"
+      );
+    }
 
     await db.insert(artworkAccessLogsTable).values({
       artworkId: artwork.messageId,

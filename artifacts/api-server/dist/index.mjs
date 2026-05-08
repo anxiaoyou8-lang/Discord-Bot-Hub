@@ -131874,10 +131874,34 @@ async function handleArtworkGetModal(interaction, messageId, client) {
         watermarkRecords.push({ traceId, filename: renamedFilename, method: "error" });
       }
     }
+    const artworkLink = `https://discord.com/channels/${guild.id}/${artwork.channelId}/${artwork.messageId}`;
     await interaction.editReply({
       content: `\u2705 \u8FD9\u662F\u4F5C\u54C1\u300A${artwork.title}\u300B\u7684\u539F\u6587\u4EF6\uFF08\u5171 ${preparedFiles.length} \u4E2A\uFF09\uFF0C\u4EC5\u4F60\u53EF\u89C1\uFF1A`,
       files: preparedFiles
     });
+    try {
+      const dmEmbed = new import_discord4.EmbedBuilder().setTitle(`\u{1F3A8} ${artwork.title}`).setDescription(
+        [
+          `\u4F60\u5DF2\u6210\u529F\u83B7\u53D6\u4F5C\u54C1\u300A**${artwork.title}**\u300B\u7684\u539F\u6587\u4EF6\u3002`,
+          "",
+          `**\u4F5C\u8005\uFF1A** <@${artwork.authorId}>`,
+          `**\u4F5C\u54C1\u8D34\uFF1A** [\u70B9\u51FB\u8DF3\u8F6C](${artworkLink})`
+        ].join("\n")
+      ).setColor(5793266).setTimestamp();
+      await interaction.user.send({
+        embeds: [dmEmbed],
+        files: preparedFiles
+      });
+      logger.info(
+        { userId: interaction.user.id, artworkId: artwork.messageId },
+        "DM with artwork files sent to user"
+      );
+    } catch (dmErr) {
+      logger.warn(
+        { dmErr, userId: interaction.user.id },
+        "Failed to send DM to user (DMs may be disabled)"
+      );
+    }
     await db.insert(artworkAccessLogsTable).values({
       artworkId: artwork.messageId,
       artworkTitle: artwork.title,
