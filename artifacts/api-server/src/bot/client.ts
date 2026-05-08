@@ -3,6 +3,7 @@ import {
   GatewayIntentBits,
   Partials,
   Events,
+  PermissionFlagsBits,
   type Interaction,
   type GuildMember,
   type GuildTextBasedChannel,

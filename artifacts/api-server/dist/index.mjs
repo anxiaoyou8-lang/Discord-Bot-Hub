@@ -132628,7 +132628,7 @@ async function startBot(token) {
         } else if (commandName === BOT_SAY_CMD) {
           const adminRoleId = interaction.guildId ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
           const member = interaction.member;
-          const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator) : member.permissions.has(PermissionFlagsBits.Administrator) : false;
+          const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? BigInt(member.permissions) & BigInt(import_discord9.PermissionFlagsBits.Administrator) : member.permissions.has(import_discord9.PermissionFlagsBits.Administrator) : false;
           const hasAdminRole = adminRoleId ? member?.roles instanceof Object && "cache" in member.roles ? member.roles.cache.has(adminRoleId) : false : false;
           if (!isDiscordAdmin && !hasAdminRole) {
             await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
