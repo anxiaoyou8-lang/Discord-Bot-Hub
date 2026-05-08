@@ -243,6 +243,27 @@ export async function startBot(token: string) {
           await handleSetupStats(interaction, client);
 
         } else if (commandName === BOT_SAY_CMD) {
+          // 权限检查：Discord 管理员 OR 已配置的管理员身份组
+          const adminRoleId = interaction.guildId
+            ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE)
+            : undefined;
+          const member = interaction.member as GuildMember | null;
+          const isDiscordAdmin = member?.permissions
+            ? (typeof member.permissions === "string"
+                ? BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator)
+                : member.permissions.has(PermissionFlagsBits.Administrator))
+            : false;
+          const hasAdminRole = adminRoleId
+            ? member?.roles instanceof Object && "cache" in member.roles
+              ? member.roles.cache.has(adminRoleId)
+              : false
+            : false;
+
+          if (!isDiscordAdmin && !hasAdminRole) {
+            await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 });
+            return;
+          }
+
           const content = interaction.options.getString("content", true);
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
