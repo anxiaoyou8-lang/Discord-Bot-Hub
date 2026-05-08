@@ -4,6 +4,10 @@ import {
   Partials,
   Events,
   PermissionFlagsBits,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
   type Interaction,
   type GuildMember,
   type GuildTextBasedChannel,
@@ -100,6 +104,8 @@ import {
   ARTWORK_NOTIFY_BTN_PREFIX,
   ARTWORK_NOTIFY_MODAL_PREFIX,
   BOT_SAY_CMD,
+  BOT_SAY_MODAL_PREFIX,
+  BOT_SAY_TEXT_INPUT,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -266,25 +272,23 @@ export async function startBot(token: string) {
             return;
           }
 
-          const content = interaction.options.getString("content", true);
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
 
-          const ch = await client.channels.fetch(channelId).catch(() => null);
-          if (!ch || !ch.isTextBased()) {
-            await interaction.reply({ content: "❌ 找不到目标频道或该频道不支持发送消息。", flags: 64 });
-            return;
-          }
+          const modal = new ModalBuilder()
+            .setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`)
+            .setTitle("以 Bot 身份发送消息");
 
-          await (ch as GuildTextBasedChannel).send({ content });
-          await interaction.reply({
-            content: `✅ 消息已发送至 <#${channelId}>`,
-            flags: 64,
-          });
-          logger.info(
-            { adminId: interaction.user.id, channelId },
-            "Admin sent message via bot"
-          );
+          const textInput = new TextInputBuilder()
+            .setCustomId(BOT_SAY_TEXT_INPUT)
+            .setLabel("消息内容（支持 Enter 换行）")
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder("输入要发送的内容，支持 Discord Markdown 格式（**粗体**、*斜体* 等）")
+            .setMaxLength(2000)
+            .setRequired(true);
+
+          modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
+          await interaction.showModal(modal);
 
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
@@ -439,6 +443,20 @@ export async function startBot(token: string) {
         } else if (customId.startsWith(ARTWORK_NOTIFY_MODAL_PREFIX)) {
           const channelId = customId.slice(ARTWORK_NOTIFY_MODAL_PREFIX.length);
           await handleArtworkNotifyModal(interaction, channelId, client);
+
+        } else if (customId.startsWith(BOT_SAY_MODAL_PREFIX)) {
+          const channelId = customId.slice(BOT_SAY_MODAL_PREFIX.length);
+          const content = interaction.fields.getTextInputValue(BOT_SAY_TEXT_INPUT);
+
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "❌ 找不到目标频道。", flags: 64 });
+            return;
+          }
+
+          await (ch as GuildTextBasedChannel).send({ content });
+          await interaction.reply({ content: `✅ 消息已发送至 <#${channelId}>`, flags: 64 });
+          logger.info({ adminId: interaction.user.id, channelId }, "Admin sent message via bot");
         }
       }
     } catch (err) {

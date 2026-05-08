@@ -48778,11 +48778,11 @@ var require_message = __commonJS({
       ButtonStyle7[ButtonStyle7["Link"] = 5] = "Link";
       ButtonStyle7[ButtonStyle7["Premium"] = 6] = "Premium";
     })(ButtonStyle6 || (exports2.ButtonStyle = ButtonStyle6 = {}));
-    var TextInputStyle4;
-    (function(TextInputStyle5) {
-      TextInputStyle5[TextInputStyle5["Short"] = 1] = "Short";
-      TextInputStyle5[TextInputStyle5["Paragraph"] = 2] = "Paragraph";
-    })(TextInputStyle4 || (exports2.TextInputStyle = TextInputStyle4 = {}));
+    var TextInputStyle5;
+    (function(TextInputStyle6) {
+      TextInputStyle6[TextInputStyle6["Short"] = 1] = "Short";
+      TextInputStyle6[TextInputStyle6["Paragraph"] = 2] = "Paragraph";
+    })(TextInputStyle5 || (exports2.TextInputStyle = TextInputStyle5 = {}));
     var SelectMenuDefaultValueType;
     (function(SelectMenuDefaultValueType2) {
       SelectMenuDefaultValueType2["Channel"] = "channel";
@@ -70961,7 +70961,7 @@ var require_dist9 = __commonJS({
     };
     var index_exports = {};
     __export2(index_exports, {
-      ActionRowBuilder: () => ActionRowBuilder6,
+      ActionRowBuilder: () => ActionRowBuilder7,
       ApplicationCommandNumericOptionMinMaxValueMixin: () => ApplicationCommandNumericOptionMinMaxValueMixin,
       ApplicationCommandOptionBase: () => ApplicationCommandOptionBase,
       ApplicationCommandOptionChannelTypesMixin: () => ApplicationCommandOptionChannelTypesMixin,
@@ -70991,7 +70991,7 @@ var require_dist9 = __commonJS({
       MediaGalleryItemBuilder: () => MediaGalleryItemBuilder,
       MentionableSelectMenuBuilder: () => MentionableSelectMenuBuilder,
       ModalAssertions: () => Assertions_exports9,
-      ModalBuilder: () => ModalBuilder4,
+      ModalBuilder: () => ModalBuilder5,
       RadioGroupBuilder: () => RadioGroupBuilder,
       RadioGroupOptionBuilder: () => RadioGroupOptionBuilder,
       RoleSelectMenuBuilder: () => RoleSelectMenuBuilder,
@@ -71021,7 +71021,7 @@ var require_dist9 = __commonJS({
       StringSelectMenuOptionBuilder: () => StringSelectMenuOptionBuilder,
       TextDisplayBuilder: () => TextDisplayBuilder,
       TextInputAssertions: () => Assertions_exports5,
-      TextInputBuilder: () => TextInputBuilder4,
+      TextInputBuilder: () => TextInputBuilder5,
       ThumbnailBuilder: () => ThumbnailBuilder,
       UserSelectMenuBuilder: () => UserSelectMenuBuilder,
       createComponentBuilder: () => createComponentBuilder,
@@ -72893,7 +72893,7 @@ var require_dist9 = __commonJS({
     var import_util6 = require_dist2();
     var import_v1016 = require_v106();
     var import_fast_deep_equal = __toESM2(require_fast_deep_equal());
-    var TextInputBuilder4 = class extends ComponentBuilder {
+    var TextInputBuilder5 = class extends ComponentBuilder {
       static {
         __name(this, "TextInputBuilder");
       }
@@ -73153,7 +73153,7 @@ var require_dist9 = __commonJS({
        * @param input - A function that returns a component builder or an already built builder
        */
       setTextInputComponent(input) {
-        this.data.component = resolveBuilder(input, TextInputBuilder4);
+        this.data.component = resolveBuilder(input, TextInputBuilder5);
         return this;
       }
       /**
@@ -73569,7 +73569,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         this.components.push(
-          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder6))
+          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder7))
         );
         return this;
       }
@@ -73955,13 +73955,13 @@ var require_dist9 = __commonJS({
       }
       switch (data.type) {
         case import_v1027.ComponentType.ActionRow:
-          return new ActionRowBuilder6(data);
+          return new ActionRowBuilder7(data);
         case import_v1027.ComponentType.Button:
           return new ButtonBuilder6(data);
         case import_v1027.ComponentType.StringSelect:
           return new StringSelectMenuBuilder(data);
         case import_v1027.ComponentType.TextInput:
-          return new TextInputBuilder4(data);
+          return new TextInputBuilder5(data);
         case import_v1027.ComponentType.UserSelect:
           return new UserSelectMenuBuilder(data);
         case import_v1027.ComponentType.RoleSelect:
@@ -74013,7 +74013,7 @@ var require_dist9 = __commonJS({
       return new Constructor(builder);
     }
     __name(resolveBuilder, "resolveBuilder");
-    var ActionRowBuilder6 = class extends ComponentBuilder {
+    var ActionRowBuilder7 = class extends ComponentBuilder {
       static {
         __name(this, "ActionRowBuilder");
       }
@@ -74096,14 +74096,14 @@ var require_dist9 = __commonJS({
     });
     var import_shapeshift9 = require_cjs4();
     var titleValidator = import_shapeshift9.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(45).setValidationEnabled(isValidationEnabled);
-    var componentsValidator = import_shapeshift9.s.union([import_shapeshift9.s.instance(ActionRowBuilder6), import_shapeshift9.s.instance(LabelBuilder), import_shapeshift9.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
+    var componentsValidator = import_shapeshift9.s.union([import_shapeshift9.s.instance(ActionRowBuilder7), import_shapeshift9.s.instance(LabelBuilder), import_shapeshift9.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
     function validateRequiredParameters2(customId, title, components) {
       customIdValidator.parse(customId);
       titleValidator.parse(title);
       componentsValidator.parse(components);
     }
     __name(validateRequiredParameters2, "validateRequiredParameters");
-    var ModalBuilder4 = class {
+    var ModalBuilder5 = class {
       static {
         __name(this, "ModalBuilder");
       }
@@ -74151,15 +74151,15 @@ var require_dist9 = __commonJS({
       addComponents(...components) {
         this.components.push(
           ...normalizeArray(components).map((component, idx) => {
-            if (component instanceof ActionRowBuilder6 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
+            if (component instanceof ActionRowBuilder7 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
               return component;
             }
-            if (component instanceof TextInputBuilder4) {
-              return new ActionRowBuilder6().addComponents(component);
+            if (component instanceof TextInputBuilder5) {
+              return new ActionRowBuilder7().addComponents(component);
             }
             if ("type" in component) {
               if (component.type === import_v1029.ComponentType.ActionRow) {
-                return new ActionRowBuilder6(component);
+                return new ActionRowBuilder7(component);
               }
               if (component.type === import_v1029.ComponentType.Label) {
                 return new LabelBuilder(component);
@@ -74168,8 +74168,8 @@ var require_dist9 = __commonJS({
                 return new TextDisplayBuilder(component);
               }
               if (component.type === import_v1029.ComponentType.TextInput) {
-                return new ActionRowBuilder6().addComponents(
-                  new TextInputBuilder4(component)
+                return new ActionRowBuilder7().addComponents(
+                  new TextInputBuilder5(component)
                 );
               }
             }
@@ -74208,7 +74208,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         const normalized = normalizeArray(components);
-        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder6));
+        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder7));
         this.components.push(...resolved);
         return this;
       }
@@ -76866,7 +76866,7 @@ var require_ActionRowBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { createComponentBuilder } = require_Components();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ActionRowBuilder6 = class extends BuildersActionRow {
+    var ActionRowBuilder7 = class extends BuildersActionRow {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -76882,7 +76882,7 @@ var require_ActionRowBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ActionRowBuilder6;
+    module2.exports = ActionRowBuilder7;
   }
 });
 
@@ -77524,7 +77524,7 @@ var require_TextInputBuilder = __commonJS({
     var { TextInputBuilder: BuildersTextInput } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var TextInputBuilder4 = class extends BuildersTextInput {
+    var TextInputBuilder5 = class extends BuildersTextInput {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -77537,7 +77537,7 @@ var require_TextInputBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = TextInputBuilder4;
+    module2.exports = TextInputBuilder5;
   }
 });
 
@@ -77671,7 +77671,7 @@ var require_Components = __commonJS({
     }
     module2.exports = { createComponent, createComponentBuilder, findComponentByCustomId };
     var ActionRow = require_ActionRow();
-    var ActionRowBuilder6 = require_ActionRowBuilder();
+    var ActionRowBuilder7 = require_ActionRowBuilder();
     var ButtonBuilder6 = require_ButtonBuilder();
     var ButtonComponent = require_ButtonComponent();
     var ChannelSelectMenuBuilder2 = require_ChannelSelectMenuBuilder();
@@ -77690,7 +77690,7 @@ var require_Components = __commonJS({
     var StringSelectMenuBuilder = require_StringSelectMenuBuilder();
     var StringSelectMenuComponent = require_StringSelectMenuComponent();
     var TextDisplayComponent = require_TextDisplayComponent();
-    var TextInputBuilder4 = require_TextInputBuilder();
+    var TextInputBuilder5 = require_TextInputBuilder();
     var TextInputComponent = require_TextInputComponent();
     var ThumbnailComponent = require_ThumbnailComponent();
     var UserSelectMenuBuilder = require_UserSelectMenuBuilder();
@@ -77714,10 +77714,10 @@ var require_Components = __commonJS({
       [ComponentType.Label]: LabelComponent
     };
     var ComponentTypeToBuilder = {
-      [ComponentType.ActionRow]: ActionRowBuilder6,
+      [ComponentType.ActionRow]: ActionRowBuilder7,
       [ComponentType.Button]: ButtonBuilder6,
       [ComponentType.StringSelect]: StringSelectMenuBuilder,
-      [ComponentType.TextInput]: TextInputBuilder4,
+      [ComponentType.TextInput]: TextInputBuilder5,
       [ComponentType.UserSelect]: UserSelectMenuBuilder,
       [ComponentType.RoleSelect]: RoleSelectMenuBuilder,
       [ComponentType.MentionableSelect]: MentionableSelectMenuBuilder,
@@ -102949,7 +102949,7 @@ var require_ModalBuilder = __commonJS({
     var { ModalBuilder: BuildersModal, ComponentBuilder } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ModalBuilder4 = class extends BuildersModal {
+    var ModalBuilder5 = class extends BuildersModal {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -102967,7 +102967,7 @@ var require_ModalBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ModalBuilder4;
+    module2.exports = ModalBuilder5;
   }
 });
 
@@ -112450,6 +112450,8 @@ var COMPLAINT_PANEL_CUSTOM_ID = "complaint_panel_submit";
 var COMPLAINT_THREAD_SUBMIT_ID = "complaint_thread_submit";
 var COMPLAINT_THREAD_CANCEL_ID = "complaint_thread_cancel";
 var BOT_SAY_CMD = "bot\u53D1\u9001\u6D88\u606F";
+var BOT_SAY_MODAL_PREFIX = "bot_say_modal_";
+var BOT_SAY_TEXT_INPUT = "bot_say_text_input";
 var ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 var ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 var ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
@@ -112498,9 +112500,7 @@ var commands = [
   new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
     (opt) => opt.setName("category").setDescription("\u5C06\u7EDF\u8BA1\u9891\u9053\u653E\u5728\u54EA\u4E2A\u5206\u7C7B\u4E0B\uFF08\u53EF\u9009\uFF09").setRequired(false).addChannelTypes(import_discord.ChannelType.GuildCategory)
   ),
-  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u5728\u6307\u5B9A\u9891\u9053\u53D1\u9001\u4E00\u6761\u6587\u5B57\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addStringOption(
-    (opt) => opt.setName("content").setDescription("\u8981\u53D1\u9001\u7684\u6D88\u606F\u5185\u5BB9").setRequired(true).setMaxLength(2e3)
-  ).addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u5728\u6307\u5B9A\u9891\u9053\u53D1\u9001\u4E00\u6761\u6587\u5B57\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053\uFF08\u4E0D\u586B\u5219\u53D1\u9001\u5230\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
       import_discord.ChannelType.GuildText,
       import_discord.ChannelType.GuildAnnouncement,
@@ -132634,23 +132634,12 @@ async function startBot(token) {
             await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
             return;
           }
-          const content = interaction.options.getString("content", true);
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
-          const ch = await client.channels.fetch(channelId).catch(() => null);
-          if (!ch || !ch.isTextBased()) {
-            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u76EE\u6807\u9891\u9053\u6216\u8BE5\u9891\u9053\u4E0D\u652F\u6301\u53D1\u9001\u6D88\u606F\u3002", flags: 64 });
-            return;
-          }
-          await ch.send({ content });
-          await interaction.reply({
-            content: `\u2705 \u6D88\u606F\u5DF2\u53D1\u9001\u81F3 <#${channelId}>`,
-            flags: 64
-          });
-          logger.info(
-            { adminId: interaction.user.id, channelId },
-            "Admin sent message via bot"
-          );
+          const modal = new import_discord9.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
+          const textInput = new import_discord9.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord9.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
+          modal.addComponents(new import_discord9.ActionRowBuilder().addComponents(textInput));
+          await interaction.showModal(modal);
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
           const attachment = interaction.options.getAttachment("file", true);
@@ -132765,6 +132754,17 @@ async function startBot(token) {
         } else if (customId.startsWith(ARTWORK_NOTIFY_MODAL_PREFIX)) {
           const channelId = customId.slice(ARTWORK_NOTIFY_MODAL_PREFIX.length);
           await handleArtworkNotifyModal(interaction, channelId, client);
+        } else if (customId.startsWith(BOT_SAY_MODAL_PREFIX)) {
+          const channelId = customId.slice(BOT_SAY_MODAL_PREFIX.length);
+          const content = interaction.fields.getTextInputValue(BOT_SAY_TEXT_INPUT);
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u76EE\u6807\u9891\u9053\u3002", flags: 64 });
+            return;
+          }
+          await ch.send({ content });
+          await interaction.reply({ content: `\u2705 \u6D88\u606F\u5DF2\u53D1\u9001\u81F3 <#${channelId}>`, flags: 64 });
+          logger.info({ adminId: interaction.user.id, channelId }, "Admin sent message via bot");
         }
       }
     } catch (err) {

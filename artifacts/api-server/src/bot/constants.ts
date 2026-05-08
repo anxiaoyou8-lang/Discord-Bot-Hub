@@ -48,6 +48,8 @@ export const COMPLAINT_THREAD_SUBMIT_ID = "complaint_thread_submit";
 export const COMPLAINT_THREAD_CANCEL_ID = "complaint_thread_cancel";
 
 export const BOT_SAY_CMD = "bot发送消息";
+export const BOT_SAY_MODAL_PREFIX = "bot_say_modal_";
+export const BOT_SAY_TEXT_INPUT = "bot_say_text_input";
 
 export const ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 export const ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";

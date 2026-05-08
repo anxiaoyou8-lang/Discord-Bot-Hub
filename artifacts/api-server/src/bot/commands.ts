@@ -143,13 +143,6 @@ export const commands = [
   new SlashCommandBuilder()
     .setName(BOT_SAY_CMD)
     .setDescription("以 Bot 身份在指定频道发送一条文字消息（仅管理员可用）")
-    .addStringOption((opt) =>
-      opt
-        .setName("content")
-        .setDescription("要发送的消息内容")
-        .setRequired(true)
-        .setMaxLength(2000)
-    )
     .addChannelOption((opt) =>
       opt
         .setName("channel")
