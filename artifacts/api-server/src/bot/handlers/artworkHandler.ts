@@ -279,23 +279,48 @@ export async function handleArtworkNotifyModal(
   }
 
   try {
-    const subscribers = await db
-      .select()
-      .from(threadSubscriptionsTable)
-      .where(eq(threadSubscriptionsTable.channelId, channelId));
-
-    if (subscribers.length === 0) {
-      await interaction.editReply("此帖目前没有订阅者。");
-      return;
-    }
-
     const channel = await client.channels.fetch(channelId).catch(() => null);
     if (!channel || !channel.isTextBased()) {
       await interaction.editReply("找不到频道，请联系管理员。");
       return;
     }
 
-    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
+    // 收集所有需要通知的用户 ID（去重）
+    const userIdSet = new Set<string>();
+
+    // 1. 我们数据库里的自定义订阅者
+    const dbSubscribers = await db
+      .select()
+      .from(threadSubscriptionsTable)
+      .where(eq(threadSubscriptionsTable.channelId, channelId));
+    for (const s of dbSubscribers) userIdSet.add(s.userId);
+
+    // 2. Discord 原生帖子成员（发过言/点过关注铃铛的人）
+    if (channel.isThread()) {
+      const threadMembers = await channel.members.fetch().catch(() => null);
+      if (threadMembers) {
+        for (const [, member] of threadMembers) {
+          userIdSet.add(member.id);
+        }
+      }
+    }
+
+    // 排除发送者本人和机器人自身
+    userIdSet.delete(interaction.user.id);
+    if (client.user) userIdSet.delete(client.user.id);
+
+    if (userIdSet.size === 0) {
+      await interaction.editReply("此帖目前没有订阅者。");
+      return;
+    }
+
+    // 过滤掉服务器里的 bot 账号
+    const guildMembers = await guild.members.fetch({ user: [...userIdSet] }).catch(() => null);
+    const humanIds = guildMembers
+      ? [...userIdSet].filter((id) => !guildMembers.get(id)?.user.bot)
+      : [...userIdSet];
+
+    const mentions = humanIds.map((id) => `<@${id}>`).join(" ");
     const notifyEmbed = new EmbedBuilder()
       .setTitle("📢 帖子更新通知")
       .setDescription(
@@ -313,9 +338,9 @@ export async function handleArtworkNotifyModal(
       embeds: [notifyEmbed],
     });
 
-    await interaction.editReply(`✅ 已通知 ${subscribers.length} 位订阅者。`);
+    await interaction.editReply(`✅ 已通知 ${humanIds.length} 位订阅者（含 Discord 原生关注者）。`);
     logger.info(
-      { channelId, subscriberCount: subscribers.length, authorId: interaction.user.id },
+      { channelId, dbCount: dbSubscribers.length, totalCount: humanIds.length, authorId: interaction.user.id },
       "Artwork update notification sent"
     );
   } catch (err) {

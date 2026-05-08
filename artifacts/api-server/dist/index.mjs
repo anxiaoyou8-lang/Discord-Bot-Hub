@@ -131733,17 +131733,31 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
     return;
   }
   try {
-    const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
-    if (subscribers.length === 0) {
-      await interaction.editReply("\u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\u3002");
-      return;
-    }
     const channel = await client.channels.fetch(channelId).catch(() => null);
     if (!channel || !channel.isTextBased()) {
       await interaction.editReply("\u627E\u4E0D\u5230\u9891\u9053\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u3002");
       return;
     }
-    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
+    const userIdSet = /* @__PURE__ */ new Set();
+    const dbSubscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
+    for (const s of dbSubscribers) userIdSet.add(s.userId);
+    if (channel.isThread()) {
+      const threadMembers = await channel.members.fetch().catch(() => null);
+      if (threadMembers) {
+        for (const [, member] of threadMembers) {
+          userIdSet.add(member.id);
+        }
+      }
+    }
+    userIdSet.delete(interaction.user.id);
+    if (client.user) userIdSet.delete(client.user.id);
+    if (userIdSet.size === 0) {
+      await interaction.editReply("\u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\u3002");
+      return;
+    }
+    const guildMembers = await guild.members.fetch({ user: [...userIdSet] }).catch(() => null);
+    const humanIds = guildMembers ? [...userIdSet].filter((id) => !guildMembers.get(id)?.user.bot) : [...userIdSet];
+    const mentions = humanIds.map((id) => `<@${id}>`).join(" ");
     const notifyEmbed = new import_discord4.EmbedBuilder().setTitle("\u{1F4E2} \u5E16\u5B50\u66F4\u65B0\u901A\u77E5").setDescription(
       [
         content,
@@ -131755,9 +131769,9 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
       content: mentions,
       embeds: [notifyEmbed]
     });
-    await interaction.editReply(`\u2705 \u5DF2\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005\u3002`);
+    await interaction.editReply(`\u2705 \u5DF2\u901A\u77E5 ${humanIds.length} \u4F4D\u8BA2\u9605\u8005\uFF08\u542B Discord \u539F\u751F\u5173\u6CE8\u8005\uFF09\u3002`);
     logger.info(
-      { channelId, subscriberCount: subscribers.length, authorId: interaction.user.id },
+      { channelId, dbCount: dbSubscribers.length, totalCount: humanIds.length, authorId: interaction.user.id },
       "Artwork update notification sent"
     );
   } catch (err) {
