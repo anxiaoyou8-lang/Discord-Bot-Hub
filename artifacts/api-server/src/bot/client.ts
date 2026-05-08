@@ -71,7 +71,11 @@ import {
   handleSuggestionButton,
   handleSuggestionModal,
   handleSuggestionVote,
-  handleSuggestionStatus,
+  handleSuggestionDownvoteBtn,
+  handleSuggestionDownvoteModal,
+  handleSuggestionAccept,
+  handleSuggestionRejectBtn,
+  handleSuggestionRejectModal,
 } from "./handlers/suggestionHandler.js";
 import {
   getConfig,
@@ -139,6 +143,8 @@ import {
   SUGGESTION_DOWNVOTE_PREFIX,
   SUGGESTION_ACCEPT_PREFIX,
   SUGGESTION_REJECT_PREFIX,
+  SUGGESTION_DOWNVOTE_MODAL_PREFIX,
+  SUGGESTION_REJECT_MODAL_PREFIX,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -542,19 +548,19 @@ export async function startBot(token: string) {
 
         } else if (customId.startsWith(SUGGESTION_UPVOTE_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_UPVOTE_PREFIX.length), 10);
-          await handleSuggestionVote(interaction, id, "up", client);
+          await handleSuggestionVote(interaction, id, client);
 
         } else if (customId.startsWith(SUGGESTION_DOWNVOTE_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_PREFIX.length), 10);
-          await handleSuggestionVote(interaction, id, "down", client);
+          await handleSuggestionDownvoteBtn(interaction, id);
 
         } else if (customId.startsWith(SUGGESTION_ACCEPT_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_ACCEPT_PREFIX.length), 10);
-          await handleSuggestionStatus(interaction, id, "accepted", client);
+          await handleSuggestionAccept(interaction, id, client);
 
         } else if (customId.startsWith(SUGGESTION_REJECT_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_REJECT_PREFIX.length), 10);
-          await handleSuggestionStatus(interaction, id, "rejected", client);
+          await handleSuggestionRejectBtn(interaction, id);
         }
 
       } else if (interaction.isChannelSelectMenu()) {
@@ -628,6 +634,14 @@ export async function startBot(token: string) {
 
         } else if (customId === SUGGESTION_MODAL_ID) {
           await handleSuggestionModal(interaction, client);
+
+        } else if (customId.startsWith(SUGGESTION_DOWNVOTE_MODAL_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_MODAL_PREFIX.length), 10);
+          await handleSuggestionDownvoteModal(interaction, id, client);
+
+        } else if (customId.startsWith(SUGGESTION_REJECT_MODAL_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_REJECT_MODAL_PREFIX.length), 10);
+          await handleSuggestionRejectModal(interaction, id, client);
         }
       }
     } catch (err) {

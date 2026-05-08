@@ -65,6 +65,10 @@ export const SUGGESTION_UPVOTE_PREFIX = "suggestion_up_";
 export const SUGGESTION_DOWNVOTE_PREFIX = "suggestion_down_";
 export const SUGGESTION_ACCEPT_PREFIX = "suggestion_accept_";
 export const SUGGESTION_REJECT_PREFIX = "suggestion_reject_";
+export const SUGGESTION_DOWNVOTE_MODAL_PREFIX = "suggestion_down_modal_";
+export const SUGGESTION_DOWNVOTE_REASON_INPUT = "suggestion_down_reason";
+export const SUGGESTION_REJECT_MODAL_PREFIX = "suggestion_reject_modal_";
+export const SUGGESTION_REJECT_REASON_INPUT = "suggestion_reject_reason";
 
 export const SETUP_TRIVIA_PANEL_CMD = "setup_闲话面板";
 export const ADD_TRIVIA_CMD = "添加闲话";

@@ -92,6 +92,7 @@ export const suggestionTicketsTable = pgTable("suggestion_tickets", {
   downvotes: integer("downvotes").notNull().default(0),
   messageId: text("message_id"),
   channelId: text("channel_id"),
+  rejectReason: text("reject_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -102,6 +103,7 @@ export const suggestionVotesTable = pgTable(
     suggestionId: integer("suggestion_id").notNull(),
     userId: text("user_id").notNull(),
     voteType: text("vote_type").notNull(),
+    reason: text("reason"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [unique("uniq_suggestion_user").on(table.suggestionId, table.userId)]
