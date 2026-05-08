@@ -82,6 +82,13 @@ export const threadSubscriptionsTable = pgTable(
   (table) => [unique("uniq_channel_user").on(table.channelId, table.userId)]
 );
 
+export const suggestionTicketsTable = pgTable("suggestion_tickets", {
+  id: serial("id").primaryKey(),
+  guildId: text("guild_id").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const triviaTable = pgTable("trivia", {
   id: serial("id").primaryKey(),
   content: text("content").notNull(),

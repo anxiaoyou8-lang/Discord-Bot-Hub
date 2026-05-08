@@ -55,6 +55,12 @@ export const BOT_EDIT_CMD = "bot编辑消息";
 export const BOT_EDIT_MODAL_PREFIX = "bot_edit_modal_";
 export const BOT_EDIT_TEXT_INPUT = "bot_edit_text_input";
 
+export const SUGGESTION_PANEL_CMD = "setup_意见箱面板";
+export const SET_SUGGESTION_CHANNEL_CMD = "set_意见箱频道";
+export const SUGGESTION_PANEL_CUSTOM_ID = "suggestion_panel_btn";
+export const SUGGESTION_MODAL_ID = "suggestion_modal";
+export const SUGGESTION_TEXT_INPUT = "suggestion_text_input";
+
 export const SETUP_TRIVIA_PANEL_CMD = "setup_闲话面板";
 export const ADD_TRIVIA_CMD = "添加闲话";
 export const DELETE_TRIVIA_CMD = "删除闲话";

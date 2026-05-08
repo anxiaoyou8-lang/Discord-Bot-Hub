@@ -67,6 +67,11 @@ import {
   handleListTrivia,
 } from "./handlers/triviaHandler.js";
 import {
+  buildSuggestionPanel,
+  handleSuggestionButton,
+  handleSuggestionModal,
+} from "./handlers/suggestionHandler.js";
+import {
   getConfig,
   setConfig,
   loadAllConfigs,
@@ -74,6 +79,7 @@ import {
   CONFIG_KEY_ADMIN_ROLE,
   CONFIG_KEY_APPROVE_ROLE,
   CONFIG_KEY_COMPLAINT_CHANNEL,
+  CONFIG_KEY_SUGGESTION_CHANNEL,
 } from "./config.js";
 import {
   REVIEW_PANEL_CUSTOM_ID,
@@ -123,6 +129,10 @@ import {
   LIST_TRIVIA_CMD,
   TRIVIA_DRAW_BTN_ID,
   TRIVIA_ADD_MODAL_ID,
+  SUGGESTION_PANEL_CMD,
+  SET_SUGGESTION_CHANNEL_CMD,
+  SUGGESTION_PANEL_CUSTOM_ID,
+  SUGGESTION_MODAL_ID,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -429,6 +439,20 @@ export async function startBot(token: string) {
             ].join("\n")
           );
 
+        } else if (commandName === SUGGESTION_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          const panel = buildSuggestionPanel();
+          const guildChannel = interaction.channel as GuildTextBasedChannel | null;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "意见箱面板已发送！", flags: 64 });
+
+        } else if (commandName === SET_SUGGESTION_CHANNEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          const channel = interaction.options.getChannel("channel", true);
+          if (!interaction.guildId) return;
+          await setConfig(interaction.guildId, CONFIG_KEY_SUGGESTION_CHANNEL, channel.id);
+          await interaction.reply({ content: `已将意见箱工单接收频道设置为 <#${channel.id}>`, flags: 64 });
+
         } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
           if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const panel = buildTriviaPanel();
@@ -506,6 +530,9 @@ export async function startBot(token: string) {
 
         } else if (customId === TRIVIA_DRAW_BTN_ID) {
           await handleTriviaDrawButton(interaction);
+
+        } else if (customId === SUGGESTION_PANEL_CUSTOM_ID) {
+          await handleSuggestionButton(interaction);
         }
 
       } else if (interaction.isChannelSelectMenu()) {
@@ -576,6 +603,9 @@ export async function startBot(token: string) {
 
         } else if (customId === TRIVIA_ADD_MODAL_ID) {
           await handleAddTriviaModal(interaction);
+
+        } else if (customId === SUGGESTION_MODAL_ID) {
+          await handleSuggestionModal(interaction, client);
         }
       }
     } catch (err) {

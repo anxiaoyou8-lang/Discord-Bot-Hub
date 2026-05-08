@@ -7,6 +7,7 @@ export const CONFIG_KEY_LOG_CHANNEL = "log_channel";
 export const CONFIG_KEY_ADMIN_ROLE = "admin_role";
 export const CONFIG_KEY_APPROVE_ROLE = "approve_role";
 export const CONFIG_KEY_COMPLAINT_CHANNEL = "complaint_channel";
+export const CONFIG_KEY_SUGGESTION_CHANNEL = "suggestion_channel";
 export const CONFIG_KEY_STATS_TOTAL_CHANNEL = "stats_total_channel";
 export const CONFIG_KEY_STATS_ROLE_CHANNEL = "stats_role_channel";
 export const CONFIG_KEY_STATS_NO_ROLE_CHANNEL = "stats_no_role_channel";

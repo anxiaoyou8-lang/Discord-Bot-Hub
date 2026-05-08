@@ -48769,20 +48769,20 @@ var require_message = __commonJS({
       ComponentType2[ComponentType2["Checkbox"] = 23] = "Checkbox";
       ComponentType2[ComponentType2["SelectMenu"] = 3] = "SelectMenu";
     })(ComponentType || (exports2.ComponentType = ComponentType = {}));
-    var ButtonStyle7;
-    (function(ButtonStyle8) {
-      ButtonStyle8[ButtonStyle8["Primary"] = 1] = "Primary";
-      ButtonStyle8[ButtonStyle8["Secondary"] = 2] = "Secondary";
-      ButtonStyle8[ButtonStyle8["Success"] = 3] = "Success";
-      ButtonStyle8[ButtonStyle8["Danger"] = 4] = "Danger";
-      ButtonStyle8[ButtonStyle8["Link"] = 5] = "Link";
-      ButtonStyle8[ButtonStyle8["Premium"] = 6] = "Premium";
-    })(ButtonStyle7 || (exports2.ButtonStyle = ButtonStyle7 = {}));
-    var TextInputStyle6;
-    (function(TextInputStyle7) {
-      TextInputStyle7[TextInputStyle7["Short"] = 1] = "Short";
-      TextInputStyle7[TextInputStyle7["Paragraph"] = 2] = "Paragraph";
-    })(TextInputStyle6 || (exports2.TextInputStyle = TextInputStyle6 = {}));
+    var ButtonStyle8;
+    (function(ButtonStyle9) {
+      ButtonStyle9[ButtonStyle9["Primary"] = 1] = "Primary";
+      ButtonStyle9[ButtonStyle9["Secondary"] = 2] = "Secondary";
+      ButtonStyle9[ButtonStyle9["Success"] = 3] = "Success";
+      ButtonStyle9[ButtonStyle9["Danger"] = 4] = "Danger";
+      ButtonStyle9[ButtonStyle9["Link"] = 5] = "Link";
+      ButtonStyle9[ButtonStyle9["Premium"] = 6] = "Premium";
+    })(ButtonStyle8 || (exports2.ButtonStyle = ButtonStyle8 = {}));
+    var TextInputStyle7;
+    (function(TextInputStyle8) {
+      TextInputStyle8[TextInputStyle8["Short"] = 1] = "Short";
+      TextInputStyle8[TextInputStyle8["Paragraph"] = 2] = "Paragraph";
+    })(TextInputStyle7 || (exports2.TextInputStyle = TextInputStyle7 = {}));
     var SelectMenuDefaultValueType;
     (function(SelectMenuDefaultValueType2) {
       SelectMenuDefaultValueType2["Channel"] = "channel";
@@ -70961,14 +70961,14 @@ var require_dist9 = __commonJS({
     };
     var index_exports = {};
     __export2(index_exports, {
-      ActionRowBuilder: () => ActionRowBuilder8,
+      ActionRowBuilder: () => ActionRowBuilder9,
       ApplicationCommandNumericOptionMinMaxValueMixin: () => ApplicationCommandNumericOptionMinMaxValueMixin,
       ApplicationCommandOptionBase: () => ApplicationCommandOptionBase,
       ApplicationCommandOptionChannelTypesMixin: () => ApplicationCommandOptionChannelTypesMixin,
       ApplicationCommandOptionWithAutocompleteMixin: () => ApplicationCommandOptionWithAutocompleteMixin,
       ApplicationCommandOptionWithChoicesMixin: () => ApplicationCommandOptionWithChoicesMixin,
       BaseSelectMenuBuilder: () => BaseSelectMenuBuilder,
-      ButtonBuilder: () => ButtonBuilder7,
+      ButtonBuilder: () => ButtonBuilder8,
       ChannelSelectMenuBuilder: () => ChannelSelectMenuBuilder2,
       CheckboxAssertions: () => Assertions_exports3,
       CheckboxBuilder: () => CheckboxBuilder,
@@ -70981,7 +70981,7 @@ var require_dist9 = __commonJS({
       ContextMenuCommandAssertions: () => Assertions_exports11,
       ContextMenuCommandBuilder: () => ContextMenuCommandBuilder,
       EmbedAssertions: () => Assertions_exports,
-      EmbedBuilder: () => EmbedBuilder6,
+      EmbedBuilder: () => EmbedBuilder7,
       FileBuilder: () => FileBuilder,
       FileUploadAssertions: () => Assertions_exports4,
       FileUploadBuilder: () => FileUploadBuilder,
@@ -70991,7 +70991,7 @@ var require_dist9 = __commonJS({
       MediaGalleryItemBuilder: () => MediaGalleryItemBuilder,
       MentionableSelectMenuBuilder: () => MentionableSelectMenuBuilder,
       ModalAssertions: () => Assertions_exports9,
-      ModalBuilder: () => ModalBuilder6,
+      ModalBuilder: () => ModalBuilder7,
       RadioGroupBuilder: () => RadioGroupBuilder,
       RadioGroupOptionBuilder: () => RadioGroupOptionBuilder,
       RoleSelectMenuBuilder: () => RoleSelectMenuBuilder,
@@ -71021,7 +71021,7 @@ var require_dist9 = __commonJS({
       StringSelectMenuOptionBuilder: () => StringSelectMenuOptionBuilder,
       TextDisplayBuilder: () => TextDisplayBuilder,
       TextInputAssertions: () => Assertions_exports5,
-      TextInputBuilder: () => TextInputBuilder6,
+      TextInputBuilder: () => TextInputBuilder7,
       ThumbnailBuilder: () => ThumbnailBuilder,
       UserSelectMenuBuilder: () => UserSelectMenuBuilder,
       createComponentBuilder: () => createComponentBuilder,
@@ -71110,7 +71110,7 @@ var require_dist9 = __commonJS({
       return arr;
     }
     __name(normalizeArray, "normalizeArray");
-    var EmbedBuilder6 = class {
+    var EmbedBuilder7 = class {
       static {
         __name(this, "EmbedBuilder");
       }
@@ -71534,7 +71534,7 @@ var require_dist9 = __commonJS({
     };
     var import_v1027 = require_v106();
     var import_v102 = require_v106();
-    var ButtonBuilder7 = class extends ComponentBuilder {
+    var ButtonBuilder8 = class extends ComponentBuilder {
       static {
         __name(this, "ButtonBuilder");
       }
@@ -72893,7 +72893,7 @@ var require_dist9 = __commonJS({
     var import_util6 = require_dist2();
     var import_v1016 = require_v106();
     var import_fast_deep_equal = __toESM2(require_fast_deep_equal());
-    var TextInputBuilder6 = class extends ComponentBuilder {
+    var TextInputBuilder7 = class extends ComponentBuilder {
       static {
         __name(this, "TextInputBuilder");
       }
@@ -73153,7 +73153,7 @@ var require_dist9 = __commonJS({
        * @param input - A function that returns a component builder or an already built builder
        */
       setTextInputComponent(input) {
-        this.data.component = resolveBuilder(input, TextInputBuilder6);
+        this.data.component = resolveBuilder(input, TextInputBuilder7);
         return this;
       }
       /**
@@ -73316,7 +73316,7 @@ var require_dist9 = __commonJS({
     var dividerPredicate = import_shapeshift8.s.boolean();
     var spacingPredicate = import_shapeshift8.s.nativeEnum(import_v1020.SeparatorSpacingSize);
     var textDisplayContentPredicate = import_shapeshift8.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(4e3).setValidationEnabled(isValidationEnabled);
-    var accessoryPredicate = import_shapeshift8.s.instance(ButtonBuilder7).or(import_shapeshift8.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
+    var accessoryPredicate = import_shapeshift8.s.instance(ButtonBuilder8).or(import_shapeshift8.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
     var containerColorPredicate = colorPredicate.nullish();
     function assertReturnOfBuilder(input, ExpectedInstanceOf) {
       import_shapeshift8.s.instance(ExpectedInstanceOf).setValidationEnabled(isValidationEnabled).parse(input);
@@ -73569,7 +73569,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         this.components.push(
-          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder8))
+          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder9))
         );
         return this;
       }
@@ -73891,7 +73891,7 @@ var require_dist9 = __commonJS({
        * @param accessory - The accessory to use
        */
       setButtonAccessory(accessory) {
-        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder7)));
+        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder8)));
         return this;
       }
       /**
@@ -73955,13 +73955,13 @@ var require_dist9 = __commonJS({
       }
       switch (data.type) {
         case import_v1027.ComponentType.ActionRow:
-          return new ActionRowBuilder8(data);
+          return new ActionRowBuilder9(data);
         case import_v1027.ComponentType.Button:
-          return new ButtonBuilder7(data);
+          return new ButtonBuilder8(data);
         case import_v1027.ComponentType.StringSelect:
           return new StringSelectMenuBuilder(data);
         case import_v1027.ComponentType.TextInput:
-          return new TextInputBuilder6(data);
+          return new TextInputBuilder7(data);
         case import_v1027.ComponentType.UserSelect:
           return new UserSelectMenuBuilder(data);
         case import_v1027.ComponentType.RoleSelect:
@@ -74013,7 +74013,7 @@ var require_dist9 = __commonJS({
       return new Constructor(builder);
     }
     __name(resolveBuilder, "resolveBuilder");
-    var ActionRowBuilder8 = class extends ComponentBuilder {
+    var ActionRowBuilder9 = class extends ComponentBuilder {
       static {
         __name(this, "ActionRowBuilder");
       }
@@ -74096,14 +74096,14 @@ var require_dist9 = __commonJS({
     });
     var import_shapeshift9 = require_cjs4();
     var titleValidator = import_shapeshift9.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(45).setValidationEnabled(isValidationEnabled);
-    var componentsValidator = import_shapeshift9.s.union([import_shapeshift9.s.instance(ActionRowBuilder8), import_shapeshift9.s.instance(LabelBuilder), import_shapeshift9.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
+    var componentsValidator = import_shapeshift9.s.union([import_shapeshift9.s.instance(ActionRowBuilder9), import_shapeshift9.s.instance(LabelBuilder), import_shapeshift9.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
     function validateRequiredParameters2(customId, title, components) {
       customIdValidator.parse(customId);
       titleValidator.parse(title);
       componentsValidator.parse(components);
     }
     __name(validateRequiredParameters2, "validateRequiredParameters");
-    var ModalBuilder6 = class {
+    var ModalBuilder7 = class {
       static {
         __name(this, "ModalBuilder");
       }
@@ -74151,15 +74151,15 @@ var require_dist9 = __commonJS({
       addComponents(...components) {
         this.components.push(
           ...normalizeArray(components).map((component, idx) => {
-            if (component instanceof ActionRowBuilder8 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
+            if (component instanceof ActionRowBuilder9 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
               return component;
             }
-            if (component instanceof TextInputBuilder6) {
-              return new ActionRowBuilder8().addComponents(component);
+            if (component instanceof TextInputBuilder7) {
+              return new ActionRowBuilder9().addComponents(component);
             }
             if ("type" in component) {
               if (component.type === import_v1029.ComponentType.ActionRow) {
-                return new ActionRowBuilder8(component);
+                return new ActionRowBuilder9(component);
               }
               if (component.type === import_v1029.ComponentType.Label) {
                 return new LabelBuilder(component);
@@ -74168,8 +74168,8 @@ var require_dist9 = __commonJS({
                 return new TextDisplayBuilder(component);
               }
               if (component.type === import_v1029.ComponentType.TextInput) {
-                return new ActionRowBuilder8().addComponents(
-                  new TextInputBuilder6(component)
+                return new ActionRowBuilder9().addComponents(
+                  new TextInputBuilder7(component)
                 );
               }
             }
@@ -74208,7 +74208,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         const normalized = normalizeArray(components);
-        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder8));
+        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder9));
         this.components.push(...resolved);
         return this;
       }
@@ -76866,7 +76866,7 @@ var require_ActionRowBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { createComponentBuilder } = require_Components();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ActionRowBuilder8 = class extends BuildersActionRow {
+    var ActionRowBuilder9 = class extends BuildersActionRow {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -76882,7 +76882,7 @@ var require_ActionRowBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ActionRowBuilder8;
+    module2.exports = ActionRowBuilder9;
   }
 });
 
@@ -76894,7 +76894,7 @@ var require_ButtonBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolvePartialEmoji } = require_Util();
-    var ButtonBuilder7 = class extends BuildersButton {
+    var ButtonBuilder8 = class extends BuildersButton {
       constructor({ emoji: emoji3, ...data } = {}) {
         super(toSnakeCase2({ ...data, emoji: emoji3 && typeof emoji3 === "string" ? resolvePartialEmoji(emoji3) : emoji3 }));
       }
@@ -76918,7 +76918,7 @@ var require_ButtonBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ButtonBuilder7;
+    module2.exports = ButtonBuilder8;
   }
 });
 
@@ -77524,7 +77524,7 @@ var require_TextInputBuilder = __commonJS({
     var { TextInputBuilder: BuildersTextInput } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var TextInputBuilder6 = class extends BuildersTextInput {
+    var TextInputBuilder7 = class extends BuildersTextInput {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -77537,7 +77537,7 @@ var require_TextInputBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = TextInputBuilder6;
+    module2.exports = TextInputBuilder7;
   }
 });
 
@@ -77671,8 +77671,8 @@ var require_Components = __commonJS({
     }
     module2.exports = { createComponent, createComponentBuilder, findComponentByCustomId };
     var ActionRow = require_ActionRow();
-    var ActionRowBuilder8 = require_ActionRowBuilder();
-    var ButtonBuilder7 = require_ButtonBuilder();
+    var ActionRowBuilder9 = require_ActionRowBuilder();
+    var ButtonBuilder8 = require_ButtonBuilder();
     var ButtonComponent = require_ButtonComponent();
     var ChannelSelectMenuBuilder2 = require_ChannelSelectMenuBuilder();
     var ChannelSelectMenuComponent = require_ChannelSelectMenuComponent();
@@ -77690,7 +77690,7 @@ var require_Components = __commonJS({
     var StringSelectMenuBuilder = require_StringSelectMenuBuilder();
     var StringSelectMenuComponent = require_StringSelectMenuComponent();
     var TextDisplayComponent = require_TextDisplayComponent();
-    var TextInputBuilder6 = require_TextInputBuilder();
+    var TextInputBuilder7 = require_TextInputBuilder();
     var TextInputComponent = require_TextInputComponent();
     var ThumbnailComponent = require_ThumbnailComponent();
     var UserSelectMenuBuilder = require_UserSelectMenuBuilder();
@@ -77714,10 +77714,10 @@ var require_Components = __commonJS({
       [ComponentType.Label]: LabelComponent
     };
     var ComponentTypeToBuilder = {
-      [ComponentType.ActionRow]: ActionRowBuilder8,
-      [ComponentType.Button]: ButtonBuilder7,
+      [ComponentType.ActionRow]: ActionRowBuilder9,
+      [ComponentType.Button]: ButtonBuilder8,
       [ComponentType.StringSelect]: StringSelectMenuBuilder,
-      [ComponentType.TextInput]: TextInputBuilder6,
+      [ComponentType.TextInput]: TextInputBuilder7,
       [ComponentType.UserSelect]: UserSelectMenuBuilder,
       [ComponentType.RoleSelect]: RoleSelectMenuBuilder,
       [ComponentType.MentionableSelect]: MentionableSelectMenuBuilder,
@@ -102824,7 +102824,7 @@ var require_EmbedBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolveColor } = require_Util();
-    var EmbedBuilder6 = class extends BuildersEmbed {
+    var EmbedBuilder7 = class extends BuildersEmbed {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -102853,7 +102853,7 @@ var require_EmbedBuilder = __commonJS({
         return embedLength(this.data);
       }
     };
-    module2.exports = EmbedBuilder6;
+    module2.exports = EmbedBuilder7;
   }
 });
 
@@ -102949,7 +102949,7 @@ var require_ModalBuilder = __commonJS({
     var { ModalBuilder: BuildersModal, ComponentBuilder } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ModalBuilder6 = class extends BuildersModal {
+    var ModalBuilder7 = class extends BuildersModal {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -102967,7 +102967,7 @@ var require_ModalBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ModalBuilder6;
+    module2.exports = ModalBuilder7;
   }
 });
 
@@ -112404,7 +112404,7 @@ app.use("/api", routes_default);
 var app_default = app;
 
 // src/bot/client.ts
-var import_discord10 = __toESM(require_src2(), 1);
+var import_discord11 = __toESM(require_src2(), 1);
 
 // src/bot/registerCommands.ts
 var import_discord2 = __toESM(require_src2(), 1);
@@ -112455,6 +112455,11 @@ var BOT_SAY_TEXT_INPUT = "bot_say_text_input";
 var BOT_EDIT_CMD = "bot\u7F16\u8F91\u6D88\u606F";
 var BOT_EDIT_MODAL_PREFIX = "bot_edit_modal_";
 var BOT_EDIT_TEXT_INPUT = "bot_edit_text_input";
+var SUGGESTION_PANEL_CMD = "setup_\u610F\u89C1\u7BB1\u9762\u677F";
+var SET_SUGGESTION_CHANNEL_CMD = "set_\u610F\u89C1\u7BB1\u9891\u9053";
+var SUGGESTION_PANEL_CUSTOM_ID = "suggestion_panel_btn";
+var SUGGESTION_MODAL_ID = "suggestion_modal";
+var SUGGESTION_TEXT_INPUT = "suggestion_text_input";
 var SETUP_TRIVIA_PANEL_CMD = "setup_\u95F2\u8BDD\u9762\u677F";
 var ADD_TRIVIA_CMD = "\u6DFB\u52A0\u95F2\u8BDD";
 var DELETE_TRIVIA_CMD = "\u5220\u9664\u95F2\u8BDD";
@@ -112536,6 +112541,10 @@ var commands = [
     (opt) => opt.setName("id").setDescription("\u8981\u5220\u9664\u7684\u95F2\u8BDD ID\uFF08\u53EF\u5728 /\u5217\u51FA\u95F2\u8BDD \u4E2D\u67E5\u770B\uFF09").setRequired(true).setMinValue(1)
   ),
   new import_discord.SlashCommandBuilder().setName(LIST_TRIVIA_CMD).setDescription("\u5217\u51FA\u6240\u6709\u95F2\u8BDD\u53CA\u5176 ID\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
+  new import_discord.SlashCommandBuilder().setName(SUGGESTION_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u533F\u540D\u610F\u89C1\u7BB1\u9762\u677F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
+  new import_discord.SlashCommandBuilder().setName(SET_SUGGESTION_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u610F\u89C1\u7BB1\u5DE5\u5355\u7684\u9891\u9053\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
+    (opt) => opt.setName("channel").setDescription("\u610F\u89C1\u7BB1\u5DE5\u5355\u63A5\u6536\u9891\u9053").setRequired(true)
+  ),
   uploadArtworkCmd
 ].map((cmd) => cmd.toJSON());
 
@@ -119547,6 +119556,7 @@ __export(schema_exports, {
   guildConfigsTable: () => guildConfigsTable,
   insertArtworkSchema: () => insertArtworkSchema,
   reviewThreadsTable: () => reviewThreadsTable,
+  suggestionTicketsTable: () => suggestionTicketsTable,
   threadSubscriptionsTable: () => threadSubscriptionsTable,
   triviaTable: () => triviaTable
 });
@@ -131011,6 +131021,12 @@ var threadSubscriptionsTable = pgTable(
   },
   (table) => [unique("uniq_channel_user").on(table.channelId, table.userId)]
 );
+var suggestionTicketsTable = pgTable("suggestion_tickets", {
+  id: serial("id").primaryKey(),
+  guildId: text("guild_id").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});
 var triviaTable = pgTable("trivia", {
   id: serial("id").primaryKey(),
   content: text("content").notNull(),
@@ -131035,6 +131051,7 @@ var CONFIG_KEY_LOG_CHANNEL = "log_channel";
 var CONFIG_KEY_ADMIN_ROLE = "admin_role";
 var CONFIG_KEY_APPROVE_ROLE = "approve_role";
 var CONFIG_KEY_COMPLAINT_CHANNEL = "complaint_channel";
+var CONFIG_KEY_SUGGESTION_CHANNEL = "suggestion_channel";
 var CONFIG_KEY_STATS_TOTAL_CHANNEL = "stats_total_channel";
 var CONFIG_KEY_STATS_ROLE_CHANNEL = "stats_role_channel";
 var CONFIG_KEY_STATS_NO_ROLE_CHANNEL = "stats_no_role_channel";
@@ -132650,26 +132667,73 @@ async function handleSetupStats(interaction, client) {
   }
 }
 
+// src/bot/handlers/suggestionHandler.ts
+var import_discord10 = __toESM(require_src2(), 1);
+function buildSuggestionPanel() {
+  const embed = new import_discord10.EmbedBuilder().setTitle("\u{1F4A1} \u533F\u540D\u610F\u89C1\u7BB1").setDescription(
+    [
+      "\u6709\u4EFB\u4F55\u60F3\u6CD5\u3001\u5EFA\u8BAE\u6216\u610F\u89C1\u90FD\u53EF\u4EE5\u901A\u8FC7\u4E0B\u65B9\u6309\u94AE\u533F\u540D\u63D0\u4EA4\uFF01",
+      "",
+      "\u2022 \u4F60\u7684\u8EAB\u4EFD\u4FE1\u606F**\u4E0D\u4F1A**\u51FA\u73B0\u5728\u610F\u89C1\u5185\u5BB9\u4E2D",
+      "\u2022 \u610F\u89C1\u5C06\u7531\u7BA1\u7406\u5458\u5728\u5185\u90E8\u9891\u9053\u67E5\u770B",
+      "\u2022 \u6B22\u8FCE\u5982\u5B9E\u8868\u8FBE\uFF0C\u8BF7\u52FF\u6EE5\u7528"
+    ].join("\n")
+  ).setColor(5793266).setFooter({ text: "\u610F\u89C1\u5B8C\u5168\u533F\u540D\uFF0C\u7BA1\u7406\u5458\u65E0\u6CD5\u5F97\u77E5\u63D0\u4EA4\u8005\u8EAB\u4EFD" });
+  const button = new import_discord10.ButtonBuilder().setCustomId(SUGGESTION_PANEL_CUSTOM_ID).setLabel("\u63D0\u4EA4\u610F\u89C1").setStyle(import_discord10.ButtonStyle.Primary).setEmoji("\u{1F4A1}");
+  const row = new import_discord10.ActionRowBuilder().addComponents(button);
+  return { embeds: [embed], components: [row] };
+}
+async function handleSuggestionButton(interaction) {
+  const modal = new import_discord10.ModalBuilder().setCustomId(SUGGESTION_MODAL_ID).setTitle("\u533F\u540D\u610F\u89C1\u7BB1");
+  const textInput = new import_discord10.TextInputBuilder().setCustomId(SUGGESTION_TEXT_INPUT).setLabel("\u4F60\u7684\u610F\u89C1\u6216\u5EFA\u8BAE").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u5728\u8FD9\u91CC\u5199\u4E0B\u4F60\u7684\u60F3\u6CD5\uFF0C\u53EF\u4EE5\u662F\u5EFA\u8BAE\u3001\u53CD\u9988\u6216\u4EFB\u4F55\u610F\u89C1\u2026\u2026").setMinLength(5).setMaxLength(1e3).setRequired(true);
+  modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(textInput));
+  await interaction.showModal(modal);
+}
+async function handleSuggestionModal(interaction, client) {
+  await interaction.deferReply({ flags: 64 });
+  const content = interaction.fields.getTextInputValue(SUGGESTION_TEXT_INPUT).trim();
+  const guildId = interaction.guildId ?? "";
+  try {
+    const result = await db.insert(suggestionTicketsTable).values({ guildId, content }).returning({ id: suggestionTicketsTable.id });
+    const ticketId = result[0]?.id ?? 0;
+    const suggestionChannelId = getConfig(guildId, CONFIG_KEY_SUGGESTION_CHANNEL);
+    if (suggestionChannelId) {
+      const ch = await client.channels.fetch(suggestionChannelId).catch(() => null);
+      if (ch && ch.isTextBased()) {
+        const embed = new import_discord10.EmbedBuilder().setTitle(`\u{1F4A1} \u533F\u540D\u610F\u89C1 #${ticketId}`).setDescription(content).setColor(5793266).setFooter({ text: "\u6B64\u610F\u89C1\u5B8C\u5168\u533F\u540D\uFF0C\u7CFB\u7EDF\u672A\u8BB0\u5F55\u63D0\u4EA4\u8005\u8EAB\u4EFD" }).setTimestamp();
+        await ch.send({ embeds: [embed] });
+        logger.info({ ticketId, guildId }, "Suggestion sent to log channel");
+      }
+    }
+    await interaction.editReply(
+      `\u2705 \u610F\u89C1 #${ticketId} \u5DF2\u533F\u540D\u63D0\u4EA4\uFF01\u611F\u8C22\u4F60\u7684\u53CD\u9988\uFF0C\u7BA1\u7406\u5458\u5C06\u4F1A\u67E5\u9605\u3002`
+    );
+  } catch (err) {
+    logger.error({ err }, "Failed to submit suggestion");
+    await interaction.editReply("\u274C \u63D0\u4EA4\u65F6\u51FA\u9519\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+
 // src/bot/client.ts
 function checkIsAdmin(guildId, member) {
   const adminRoleId = guildId ? getConfig(guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
-  const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? !!(BigInt(member.permissions) & BigInt(import_discord10.PermissionFlagsBits.Administrator)) : member.permissions.has(import_discord10.PermissionFlagsBits.Administrator) : false;
+  const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? !!(BigInt(member.permissions) & BigInt(import_discord11.PermissionFlagsBits.Administrator)) : member.permissions.has(import_discord11.PermissionFlagsBits.Administrator) : false;
   const hasAdminRole = adminRoleId ? member?.roles instanceof Object && "cache" in member.roles ? member.roles.cache.has(adminRoleId) : false : false;
   return isDiscordAdmin || hasAdminRole;
 }
 async function startBot(token) {
-  const client = new import_discord10.Client({
+  const client = new import_discord11.Client({
     intents: [
-      import_discord10.GatewayIntentBits.Guilds,
-      import_discord10.GatewayIntentBits.GuildMessages,
-      import_discord10.GatewayIntentBits.GuildMembers,
-      import_discord10.GatewayIntentBits.MessageContent,
-      import_discord10.GatewayIntentBits.GuildMessageReactions,
-      import_discord10.GatewayIntentBits.DirectMessages
+      import_discord11.GatewayIntentBits.Guilds,
+      import_discord11.GatewayIntentBits.GuildMessages,
+      import_discord11.GatewayIntentBits.GuildMembers,
+      import_discord11.GatewayIntentBits.MessageContent,
+      import_discord11.GatewayIntentBits.GuildMessageReactions,
+      import_discord11.GatewayIntentBits.DirectMessages
     ],
-    partials: [import_discord10.Partials.Message, import_discord10.Partials.Channel, import_discord10.Partials.Reaction]
+    partials: [import_discord11.Partials.Message, import_discord11.Partials.Channel, import_discord11.Partials.Reaction]
   });
-  client.once(import_discord10.Events.ClientReady, async (c) => {
+  client.once(import_discord11.Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
     await loadAllConfigs();
     const guildIds = c.guilds.cache.map((g) => g.id);
@@ -132677,12 +132741,12 @@ async function startBot(token) {
     await runAutoDeleteScheduler(client);
     startStatsScheduler(client);
   });
-  client.on(import_discord10.Events.GuildCreate, async (guild) => {
+  client.on(import_discord11.Events.GuildCreate, async (guild) => {
     const guildIds = [guild.id];
     await registerCommands(token, client.user.id, guildIds);
     logger.info({ guildId: guild.id }, "Registered commands for new guild");
   });
-  client.on(import_discord10.Events.InteractionCreate, async (interaction) => {
+  client.on(import_discord11.Events.InteractionCreate, async (interaction) => {
     try {
       if (interaction.isChatInputCommand()) {
         const { commandName } = interaction;
@@ -132823,9 +132887,9 @@ async function startBot(token) {
           }
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
-          const modal = new import_discord10.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
-          const textInput = new import_discord10.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
-          modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(textInput));
+          const modal = new import_discord11.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
+          const textInput = new import_discord11.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
+          modal.addComponents(new import_discord11.ActionRowBuilder().addComponents(textInput));
           await interaction.showModal(modal);
         } else if (commandName === BOT_EDIT_CMD) {
           if (!isAdmin) {
@@ -132849,9 +132913,9 @@ async function startBot(token) {
             await interaction.reply({ content: "\u274C \u8BE5\u6D88\u606F\u4E0D\u662F Bot \u53D1\u9001\u7684\uFF0C\u65E0\u6CD5\u7F16\u8F91\u3002", flags: 64 });
             return;
           }
-          const modal = new import_discord10.ModalBuilder().setCustomId(`${BOT_EDIT_MODAL_PREFIX}${channelId}:${messageId}`).setTitle("\u7F16\u8F91 Bot \u6D88\u606F");
-          const textInput = new import_discord10.TextInputBuilder().setCustomId(BOT_EDIT_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setValue(originalMsg.content).setMaxLength(2e3).setRequired(true);
-          modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(textInput));
+          const modal = new import_discord11.ModalBuilder().setCustomId(`${BOT_EDIT_MODAL_PREFIX}${channelId}:${messageId}`).setTitle("\u7F16\u8F91 Bot \u6D88\u606F");
+          const textInput = new import_discord11.TextInputBuilder().setCustomId(BOT_EDIT_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setValue(originalMsg.content).setMaxLength(2e3).setRequired(true);
+          modal.addComponents(new import_discord11.ActionRowBuilder().addComponents(textInput));
           await interaction.showModal(modal);
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
@@ -132907,6 +132971,24 @@ async function startBot(token) {
               `**\u539F\u59CB\u6587\u4EF6\u540D\uFF1A** \`${row.filename}\``
             ].join("\n")
           );
+        } else if (commandName === SUGGESTION_PANEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          const panel = buildSuggestionPanel();
+          const guildChannel = interaction.channel;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "\u610F\u89C1\u7BB1\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
+        } else if (commandName === SET_SUGGESTION_CHANNEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          const channel = interaction.options.getChannel("channel", true);
+          if (!interaction.guildId) return;
+          await setConfig(interaction.guildId, CONFIG_KEY_SUGGESTION_CHANNEL, channel.id);
+          await interaction.reply({ content: `\u5DF2\u5C06\u610F\u89C1\u7BB1\u5DE5\u5355\u63A5\u6536\u9891\u9053\u8BBE\u7F6E\u4E3A <#${channel.id}>`, flags: 64 });
         } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
           if (!isAdmin) {
             await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
@@ -132976,6 +133058,8 @@ async function startBot(token) {
           await handleArtworkNotifyBtn(interaction, channelId);
         } else if (customId === TRIVIA_DRAW_BTN_ID) {
           await handleTriviaDrawButton(interaction);
+        } else if (customId === SUGGESTION_PANEL_CUSTOM_ID) {
+          await handleSuggestionButton(interaction);
         }
       } else if (interaction.isChannelSelectMenu()) {
         const { customId } = interaction;
@@ -133028,22 +133112,24 @@ async function startBot(token) {
           logger.info({ adminId: interaction.user.id, channelId, messageId }, "Admin edited bot message");
         } else if (customId === TRIVIA_ADD_MODAL_ID) {
           await handleAddTriviaModal(interaction);
+        } else if (customId === SUGGESTION_MODAL_ID) {
+          await handleSuggestionModal(interaction, client);
         }
       }
     } catch (err) {
       logger.error({ err }, "Unhandled interaction error");
     }
   });
-  client.on(import_discord10.Events.GuildMemberAdd, (member) => {
+  client.on(import_discord11.Events.GuildMemberAdd, (member) => {
     scheduleStatsUpdate(member.guild);
   });
-  client.on(import_discord10.Events.GuildMemberRemove, (member) => {
+  client.on(import_discord11.Events.GuildMemberRemove, (member) => {
     if (member.guild) scheduleStatsUpdate(member.guild);
   });
-  client.on(import_discord10.Events.GuildMemberUpdate, (_oldMember, newMember) => {
+  client.on(import_discord11.Events.GuildMemberUpdate, (_oldMember, newMember) => {
     scheduleStatsUpdate(newMember.guild);
   });
-  client.on(import_discord10.Events.Error, (err) => {
+  client.on(import_discord11.Events.Error, (err) => {
     logger.error({ err }, "Discord client error");
   });
   try {

@@ -25,6 +25,8 @@ import {
   ADD_TRIVIA_CMD,
   DELETE_TRIVIA_CMD,
   LIST_TRIVIA_CMD,
+  SUGGESTION_PANEL_CMD,
+  SET_SUGGESTION_CHANNEL_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -196,6 +198,17 @@ export const commands = [
   new SlashCommandBuilder()
     .setName(LIST_TRIVIA_CMD)
     .setDescription("列出所有闲话及其 ID（仅管理员可用）"),
+
+  new SlashCommandBuilder()
+    .setName(SUGGESTION_PANEL_CMD)
+    .setDescription("在当前频道发送匿名意见箱面板（仅管理员可用）"),
+
+  new SlashCommandBuilder()
+    .setName(SET_SUGGESTION_CHANNEL_CMD)
+    .setDescription("设置接收意见箱工单的频道（仅管理员可用）")
+    .addChannelOption((opt) =>
+      opt.setName("channel").setDescription("意见箱工单接收频道").setRequired(true)
+    ),
 
   uploadArtworkCmd,
 ].map((cmd) => cmd.toJSON());
