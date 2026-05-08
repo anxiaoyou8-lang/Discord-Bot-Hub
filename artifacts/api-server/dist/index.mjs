@@ -131742,33 +131742,6 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
       { channelId, channelType: channel.type, isThread: channel.isThread() },
       "Notify modal: channel info"
     );
-    const userIdSet = /* @__PURE__ */ new Set();
-    const dbSubscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
-    for (const s of dbSubscribers) userIdSet.add(s.userId);
-    logger.info({ channelId, dbSubscriberIds: dbSubscribers.map((s) => s.userId) }, "Notify modal: DB subscribers");
-    if (channel.isThread()) {
-      const threadMembers = await channel.members.fetch().catch((err) => {
-        logger.warn({ err }, "Failed to fetch thread members");
-        return null;
-      });
-      if (threadMembers) {
-        const ids = [...threadMembers.keys()];
-        logger.info({ channelId, threadMemberIds: ids }, "Notify modal: thread members fetched");
-        for (const id of ids) {
-          if (id !== interaction.user.id) userIdSet.add(id);
-        }
-      }
-    } else {
-      logger.info({ channelId, channelType: channel.type }, "Notify modal: channel is not a thread, skipping native members");
-    }
-    if (client.user) userIdSet.delete(client.user.id);
-    if (userIdSet.size === 0) {
-      await interaction.editReply("\u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\u3002");
-      return;
-    }
-    const guildMembers = await guild.members.fetch({ user: [...userIdSet] }).catch(() => null);
-    const humanIds = guildMembers ? [...userIdSet].filter((id) => !guildMembers.get(id)?.user.bot) : [...userIdSet];
-    const mentions = humanIds.map((id) => `<@${id}>`).join(" ");
     const notifyEmbed = new import_discord4.EmbedBuilder().setTitle("\u{1F4E2} \u5E16\u5B50\u66F4\u65B0\u901A\u77E5").setDescription(
       [
         content,
@@ -131777,13 +131750,13 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
       ].join("\n")
     ).setColor(16426522).setTimestamp();
     await channel.send({
-      content: mentions,
+      content: "@everyone",
       embeds: [notifyEmbed]
     });
-    await interaction.editReply(`\u2705 \u5DF2\u901A\u77E5 ${humanIds.length} \u4F4D\u8BA2\u9605\u8005\uFF08\u542B Discord \u539F\u751F\u5173\u6CE8\u8005\uFF09\u3002`);
+    await interaction.editReply("\u2705 \u5DF2\u901A\u77E5\u6240\u6709\u4EBA\u3002");
     logger.info(
-      { channelId, dbCount: dbSubscribers.length, totalCount: humanIds.length, authorId: interaction.user.id },
-      "Artwork update notification sent"
+      { channelId, authorId: interaction.user.id },
+      "Artwork update notification sent (@everyone)"
     );
   } catch (err) {
     logger.error({ err }, "Failed to send artwork notification");

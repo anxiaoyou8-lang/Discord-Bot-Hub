@@ -290,51 +290,6 @@ export async function handleArtworkNotifyModal(
       "Notify modal: channel info"
     );
 
-    // 收集所有需要通知的用户 ID（去重）
-    const userIdSet = new Set<string>();
-
-    // 1. 我们数据库里的自定义订阅者（无论是否是发送者，都保留）
-    const dbSubscribers = await db
-      .select()
-      .from(threadSubscriptionsTable)
-      .where(eq(threadSubscriptionsTable.channelId, channelId));
-    for (const s of dbSubscribers) userIdSet.add(s.userId);
-
-    logger.info({ channelId, dbSubscriberIds: dbSubscribers.map(s => s.userId) }, "Notify modal: DB subscribers");
-
-    // 2. Discord 原生帖子成员（发过言/点过关注铃铛的人），排除发送者和 bot
-    if (channel.isThread()) {
-      const threadMembers = await channel.members.fetch().catch((err) => {
-        logger.warn({ err }, "Failed to fetch thread members");
-        return null;
-      });
-      if (threadMembers) {
-        const ids = [...threadMembers.keys()];
-        logger.info({ channelId, threadMemberIds: ids }, "Notify modal: thread members fetched");
-        for (const id of ids) {
-          // 原生成员里排除发送者（避免重复，DB 订阅者保留）
-          if (id !== interaction.user.id) userIdSet.add(id);
-        }
-      }
-    } else {
-      logger.info({ channelId, channelType: channel.type }, "Notify modal: channel is not a thread, skipping native members");
-    }
-
-    // 只排除机器人自身
-    if (client.user) userIdSet.delete(client.user.id);
-
-    if (userIdSet.size === 0) {
-      await interaction.editReply("此帖目前没有订阅者。");
-      return;
-    }
-
-    // 过滤掉服务器里的 bot 账号
-    const guildMembers = await guild.members.fetch({ user: [...userIdSet] }).catch(() => null);
-    const humanIds = guildMembers
-      ? [...userIdSet].filter((id) => !guildMembers.get(id)?.user.bot)
-      : [...userIdSet];
-
-    const mentions = humanIds.map((id) => `<@${id}>`).join(" ");
     const notifyEmbed = new EmbedBuilder()
       .setTitle("📢 帖子更新通知")
       .setDescription(
@@ -348,14 +303,14 @@ export async function handleArtworkNotifyModal(
       .setTimestamp();
 
     await (channel as GuildTextBasedChannel).send({
-      content: mentions,
+      content: "@everyone",
       embeds: [notifyEmbed],
     });
 
-    await interaction.editReply(`✅ 已通知 ${humanIds.length} 位订阅者（含 Discord 原生关注者）。`);
+    await interaction.editReply("✅ 已通知所有人。");
     logger.info(
-      { channelId, dbCount: dbSubscribers.length, totalCount: humanIds.length, authorId: interaction.user.id },
-      "Artwork update notification sent"
+      { channelId, authorId: interaction.user.id },
+      "Artwork update notification sent (@everyone)"
     );
   } catch (err) {
     logger.error({ err }, "Failed to send artwork notification");
