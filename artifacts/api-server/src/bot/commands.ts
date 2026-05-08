@@ -19,6 +19,7 @@ import {
   COMPLAINT_PANEL_CMD,
   SET_COMPLAINT_CHANNEL_CMD,
   SETUP_STATS_CMD,
+  BOT_SAY_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -137,6 +138,31 @@ export const commands = [
         .setDescription("将统计频道放在哪个分类下（可选）")
         .setRequired(false)
         .addChannelTypes(ChannelType.GuildCategory)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(BOT_SAY_CMD)
+    .setDescription("以 Bot 身份在指定频道发送一条文字消息（仅管理员可用）")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addStringOption((opt) =>
+      opt
+        .setName("content")
+        .setDescription("要发送的消息内容")
+        .setRequired(true)
+        .setMaxLength(2000)
+    )
+    .addChannelOption((opt) =>
+      opt
+        .setName("channel")
+        .setDescription("目标频道（不填则发送到当前频道）")
+        .setRequired(false)
+        .addChannelTypes(
+          ChannelType.GuildText,
+          ChannelType.GuildAnnouncement,
+          ChannelType.PublicThread,
+          ChannelType.PrivateThread,
+          ChannelType.GuildForum
+        )
     ),
 
   uploadArtworkCmd,

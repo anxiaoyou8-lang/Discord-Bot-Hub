@@ -112449,6 +112449,7 @@ var DELETE_THREAD_CANCEL_ID = "delete_thread_cancel";
 var COMPLAINT_PANEL_CUSTOM_ID = "complaint_panel_submit";
 var COMPLAINT_THREAD_SUBMIT_ID = "complaint_thread_submit";
 var COMPLAINT_THREAD_CANCEL_ID = "complaint_thread_cancel";
+var BOT_SAY_CMD = "bot\u53D1\u9001\u6D88\u606F";
 var ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 var ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 var ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
@@ -112496,6 +112497,17 @@ var commands = [
   new import_discord.SlashCommandBuilder().setName(SEARCH_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u641C\u7D22\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator),
   new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
     (opt) => opt.setName("category").setDescription("\u5C06\u7EDF\u8BA1\u9891\u9053\u653E\u5728\u54EA\u4E2A\u5206\u7C7B\u4E0B\uFF08\u53EF\u9009\uFF09").setRequired(false).addChannelTypes(import_discord.ChannelType.GuildCategory)
+  ),
+  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u5728\u6307\u5B9A\u9891\u9053\u53D1\u9001\u4E00\u6761\u6587\u5B57\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addStringOption(
+    (opt) => opt.setName("content").setDescription("\u8981\u53D1\u9001\u7684\u6D88\u606F\u5185\u5BB9").setRequired(true).setMaxLength(2e3)
+  ).addChannelOption(
+    (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053\uFF08\u4E0D\u586B\u5219\u53D1\u9001\u5230\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
+      import_discord.ChannelType.GuildText,
+      import_discord.ChannelType.GuildAnnouncement,
+      import_discord.ChannelType.PublicThread,
+      import_discord.ChannelType.PrivateThread,
+      import_discord.ChannelType.GuildForum
+    )
   ),
   uploadArtworkCmd
 ].map((cmd) => cmd.toJSON());
@@ -132613,6 +132625,24 @@ async function startBot(token) {
         } else if (commandName === SETUP_STATS_CMD) {
           logger.info({ guildId: interaction.guildId }, "setup_stats interaction received");
           await handleSetupStats(interaction, client);
+        } else if (commandName === BOT_SAY_CMD) {
+          const content = interaction.options.getString("content", true);
+          const targetChannel = interaction.options.getChannel("channel");
+          const channelId = targetChannel?.id ?? interaction.channelId;
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u76EE\u6807\u9891\u9053\u6216\u8BE5\u9891\u9053\u4E0D\u652F\u6301\u53D1\u9001\u6D88\u606F\u3002", flags: 64 });
+            return;
+          }
+          await ch.send({ content });
+          await interaction.reply({
+            content: `\u2705 \u6D88\u606F\u5DF2\u53D1\u9001\u81F3 <#${channelId}>`,
+            flags: 64
+          });
+          logger.info(
+            { adminId: interaction.user.id, channelId },
+            "Admin sent message via bot"
+          );
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
           const attachment = interaction.options.getAttachment("file", true);

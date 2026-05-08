@@ -97,6 +97,7 @@ import {
   ARTWORK_SUBSCRIBE_PREFIX,
   ARTWORK_NOTIFY_BTN_PREFIX,
   ARTWORK_NOTIFY_MODAL_PREFIX,
+  BOT_SAY_CMD,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -240,6 +241,27 @@ export async function startBot(token: string) {
         } else if (commandName === SETUP_STATS_CMD) {
           logger.info({ guildId: interaction.guildId }, "setup_stats interaction received");
           await handleSetupStats(interaction, client);
+
+        } else if (commandName === BOT_SAY_CMD) {
+          const content = interaction.options.getString("content", true);
+          const targetChannel = interaction.options.getChannel("channel");
+          const channelId = targetChannel?.id ?? interaction.channelId;
+
+          const ch = await client.channels.fetch(channelId).catch(() => null);
+          if (!ch || !ch.isTextBased()) {
+            await interaction.reply({ content: "❌ 找不到目标频道或该频道不支持发送消息。", flags: 64 });
+            return;
+          }
+
+          await (ch as GuildTextBasedChannel).send({ content });
+          await interaction.reply({
+            content: `✅ 消息已发送至 <#${channelId}>`,
+            flags: 64,
+          });
+          logger.info(
+            { adminId: interaction.user.id, channelId },
+            "Admin sent message via bot"
+          );
 
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
