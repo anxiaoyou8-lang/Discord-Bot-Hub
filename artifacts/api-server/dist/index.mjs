@@ -112482,6 +112482,7 @@ var ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 var ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 var ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
 var ARTWORK_NOTIFY_TEXT_INPUT = "artwork_notify_text_input";
+var NOTIFY_SUBSCRIBERS_CMD = "\u901A\u77E5\u8BA2\u9605\u8005";
 
 // src/bot/commands.ts
 var uploadArtworkCmd = new import_discord.SlashCommandBuilder().setName(ARTWORK_UPLOAD_CMD).setDescription("\u4E0A\u4F20\u4F60\u7684\u4F5C\u54C1\uFF08\u6700\u591A10\u4E2A\u6587\u4EF6\uFF09").addStringOption(
@@ -112556,7 +112557,8 @@ var commands = [
   new import_discord.SlashCommandBuilder().setName(SET_SUGGESTION_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u610F\u89C1\u7BB1\u5DE5\u5355\u7684\u9891\u9053\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u610F\u89C1\u7BB1\u5DE5\u5355\u63A5\u6536\u9891\u9053").setRequired(true)
   ),
-  uploadArtworkCmd
+  uploadArtworkCmd,
+  new import_discord.SlashCommandBuilder().setName(NOTIFY_SUBSCRIBERS_CMD).setDescription("\u5411\u5F53\u524D\u4F5C\u54C1\u5E16\u7684\u8BA2\u9605\u8005\u53D1\u9001\u66F4\u65B0\u901A\u77E5\uFF08\u4EC5\u4F5C\u54C1\u4F5C\u8005\u53EF\u7528\uFF09")
 ].map((cmd) => cmd.toJSON());
 
 // src/bot/registerCommands.ts
@@ -131919,6 +131921,22 @@ async function handleArtworkSubscribe(interaction, channelId) {
     await interaction.editReply("\u64CD\u4F5C\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
   }
 }
+async function handleNotifySubscribersCmd(interaction, _client) {
+  const channel = interaction.channel;
+  if (!channel) {
+    await interaction.reply({ content: "\u65E0\u6CD5\u83B7\u53D6\u5F53\u524D\u9891\u9053\u3002", flags: 64 });
+    return;
+  }
+  const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channel.id));
+  if (subscribers.length === 0) {
+    await interaction.reply({ content: "\u{1F4ED} \u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u4EFB\u4F55\u8BA2\u9605\u8005\uFF0C\u65E0\u9700\u901A\u77E5\u3002", flags: 64 });
+    return;
+  }
+  const modal = new import_discord5.ModalBuilder().setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channel.id}`).setTitle(`\u901A\u77E5\u8BA2\u9605\u8005\uFF08\u5171 ${subscribers.length} \u4EBA\uFF09`);
+  const textInput = new import_discord5.TextInputBuilder().setCustomId(ARTWORK_NOTIFY_TEXT_INPUT).setLabel("\u901A\u77E5\u5185\u5BB9").setStyle(import_discord5.TextInputStyle.Paragraph).setPlaceholder("\u4F8B\u5982\uFF1A\u65B0\u7684\u4F5C\u54C1\u5DF2\u4E0A\u4F20\uFF0C\u6B22\u8FCE\u83B7\u53D6\uFF01").setMaxLength(500).setRequired(true);
+  modal.addComponents(new import_discord5.ActionRowBuilder().addComponents(textInput));
+  await interaction.showModal(modal);
+}
 async function handleArtworkNotifyBtn(interaction, channelId) {
   const modal = new import_discord5.ModalBuilder().setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channelId}`).setTitle("\u901A\u77E5\u8BA2\u9605\u8005");
   const textInput = new import_discord5.TextInputBuilder().setCustomId(ARTWORK_NOTIFY_TEXT_INPUT).setLabel("\u901A\u77E5\u5185\u5BB9").setStyle(import_discord5.TextInputStyle.Paragraph).setPlaceholder("\u4F8B\u5982\uFF1A\u65B0\u7684\u4F5C\u54C1\u5DF2\u4E0A\u4F20\uFF0C\u6B22\u8FCE\u83B7\u53D6\uFF01").setMaxLength(500).setRequired(true);
@@ -131950,14 +131968,20 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
         `**\u53D1\u5E03\u8005\uFF1A** <@${interaction.user.id}>`
       ].join("\n")
     ).setColor(16426522).setTimestamp();
+    const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channelId));
+    if (subscribers.length === 0) {
+      await interaction.editReply("\u{1F4ED} \u6B64\u5E16\u76EE\u524D\u6CA1\u6709\u8BA2\u9605\u8005\uFF0C\u65E0\u9700\u901A\u77E5\u3002");
+      return;
+    }
+    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
     await channel.send({
-      content: "@everyone",
+      content: mentions,
       embeds: [notifyEmbed]
     });
-    await interaction.editReply("\u2705 \u5DF2\u901A\u77E5\u6240\u6709\u4EBA\u3002");
+    await interaction.editReply(`\u2705 \u5DF2\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005\u3002`);
     logger.info(
-      { channelId, authorId: interaction.user.id },
-      "Artwork update notification sent (@everyone)"
+      { channelId, authorId: interaction.user.id, count: subscribers.length },
+      "Artwork update notification sent to subscribers"
     );
   } catch (err) {
     logger.error({ err }, "Failed to send artwork notification");
@@ -132998,6 +133022,8 @@ async function startBot(token) {
           const guildChannel = interaction.channel;
           if (guildChannel) await guildChannel.send(panel);
           await interaction.reply({ content: "\u4F5C\u54C1\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
+        } else if (commandName === NOTIFY_SUBSCRIBERS_CMD) {
+          await handleNotifySubscribersCmd(interaction, client);
         } else if (commandName === ARTWORK_UPLOAD_CMD) {
           await handleArtworkUpload(interaction, client);
         } else if (commandName === SET_LOG_CHANNEL_CMD) {

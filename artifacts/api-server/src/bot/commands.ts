@@ -27,6 +27,7 @@ import {
   LIST_TRIVIA_CMD,
   SUGGESTION_PANEL_CMD,
   SET_SUGGESTION_CHANNEL_CMD,
+  NOTIFY_SUBSCRIBERS_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -211,4 +212,8 @@ export const commands = [
     ),
 
   uploadArtworkCmd,
+
+  new SlashCommandBuilder()
+    .setName(NOTIFY_SUBSCRIBERS_CMD)
+    .setDescription("向当前作品帖的订阅者发送更新通知（仅作品作者可用）"),
 ].map((cmd) => cmd.toJSON());

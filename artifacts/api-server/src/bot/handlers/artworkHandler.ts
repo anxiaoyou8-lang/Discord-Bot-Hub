@@ -244,6 +244,42 @@ export async function handleArtworkSubscribe(
   }
 }
 
+export async function handleNotifySubscribersCmd(
+  interaction: ChatInputCommandInteraction,
+  _client: Client
+) {
+  const channel = interaction.channel;
+  if (!channel) {
+    await interaction.reply({ content: "无法获取当前频道。", flags: 64 });
+    return;
+  }
+
+  const subscribers = await db
+    .select()
+    .from(threadSubscriptionsTable)
+    .where(eq(threadSubscriptionsTable.channelId, channel.id));
+
+  if (subscribers.length === 0) {
+    await interaction.reply({ content: "📭 此帖目前没有任何订阅者，无需通知。", flags: 64 });
+    return;
+  }
+
+  const modal = new ModalBuilder()
+    .setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channel.id}`)
+    .setTitle(`通知订阅者（共 ${subscribers.length} 人）`);
+
+  const textInput = new TextInputBuilder()
+    .setCustomId(ARTWORK_NOTIFY_TEXT_INPUT)
+    .setLabel("通知内容")
+    .setStyle(TextInputStyle.Paragraph)
+    .setPlaceholder("例如：新的作品已上传，欢迎获取！")
+    .setMaxLength(500)
+    .setRequired(true);
+
+  modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
+  await interaction.showModal(modal);
+}
+
 export async function handleArtworkNotifyBtn(
   interaction: ButtonInteraction,
   channelId: string
@@ -303,15 +339,27 @@ export async function handleArtworkNotifyModal(
       .setColor(0xfaa61a)
       .setTimestamp();
 
+    const subscribers = await db
+      .select()
+      .from(threadSubscriptionsTable)
+      .where(eq(threadSubscriptionsTable.channelId, channelId));
+
+    if (subscribers.length === 0) {
+      await interaction.editReply("📭 此帖目前没有订阅者，无需通知。");
+      return;
+    }
+
+    const mentions = subscribers.map((s) => `<@${s.userId}>`).join(" ");
+
     await (channel as GuildTextBasedChannel).send({
-      content: "@everyone",
+      content: mentions,
       embeds: [notifyEmbed],
     });
 
-    await interaction.editReply("✅ 已通知所有人。");
+    await interaction.editReply(`✅ 已通知 ${subscribers.length} 位订阅者。`);
     logger.info(
-      { channelId, authorId: interaction.user.id },
-      "Artwork update notification sent (@everyone)"
+      { channelId, authorId: interaction.user.id, count: subscribers.length },
+      "Artwork update notification sent to subscribers"
     );
   } catch (err) {
     logger.error({ err }, "Failed to send artwork notification");

@@ -84,3 +84,4 @@ export const ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 export const ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 export const ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
 export const ARTWORK_NOTIFY_TEXT_INPUT = "artwork_notify_text_input";
+export const NOTIFY_SUBSCRIBERS_CMD = "通知订阅者";

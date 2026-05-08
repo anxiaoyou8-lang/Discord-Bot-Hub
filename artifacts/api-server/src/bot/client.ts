@@ -32,6 +32,7 @@ import {
   handleArtworkSubscribe,
   handleArtworkNotifyBtn,
   handleArtworkNotifyModal,
+  handleNotifySubscribersCmd,
 } from "./handlers/artworkHandler.js";
 import {
   handleGoTop,
@@ -136,6 +137,7 @@ import {
   LIST_TRIVIA_CMD,
   TRIVIA_DRAW_BTN_ID,
   TRIVIA_ADD_MODAL_ID,
+  NOTIFY_SUBSCRIBERS_CMD,
   SUGGESTION_PANEL_CMD,
   SET_SUGGESTION_CHANNEL_CMD,
   SUGGESTION_PANEL_CUSTOM_ID,
@@ -224,6 +226,9 @@ export async function startBot(token: string) {
           const guildChannel = interaction.channel as GuildTextBasedChannel | null;
           if (guildChannel) await guildChannel.send(panel);
           await interaction.reply({ content: "作品面板已发送！", flags: 64 });
+
+        } else if (commandName === NOTIFY_SUBSCRIBERS_CMD) {
+          await handleNotifySubscribersCmd(interaction, client);
 
         } else if (commandName === ARTWORK_UPLOAD_CMD) {
           await handleArtworkUpload(interaction, client);
