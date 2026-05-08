@@ -82,6 +82,14 @@ export const threadSubscriptionsTable = pgTable(
   (table) => [unique("uniq_channel_user").on(table.channelId, table.userId)]
 );
 
+export const triviaTable = pgTable("trivia", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  authorId: text("author_id").notNull(),
+  guildId: text("guild_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertArtworkSchema = createInsertSchema(artworksTable).omit({ id: true, createdAt: true });
 export type InsertArtwork = z.infer<typeof insertArtworkSchema>;
 export type Artwork = typeof artworksTable.$inferSelect;

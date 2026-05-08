@@ -23,6 +23,7 @@ import {
 } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../../lib/logger.js";
+import { getRandomTrivia } from "./triviaHandler.js";
 import {
   ARTWORK_GET_MODAL_PREFIX,
   ARTWORK_PASSWORD_INPUT,
@@ -487,6 +488,8 @@ export async function handleArtworkGetModal(
 
     // 私信附件 + 作品链接给获取者
     try {
+      const triviaContent = await getRandomTrivia(guild.id);
+
       const dmEmbed = new EmbedBuilder()
         .setTitle(`🎨 ${artwork.title}`)
         .setDescription(
@@ -501,6 +504,7 @@ export async function handleArtworkGetModal(
         .setTimestamp();
 
       await interaction.user.send({
+        content: triviaContent ? `每日闲话：${triviaContent}` : undefined,
         embeds: [dmEmbed],
         files: preparedFiles,
       });

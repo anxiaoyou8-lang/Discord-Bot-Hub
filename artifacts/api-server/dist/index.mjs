@@ -48769,20 +48769,20 @@ var require_message = __commonJS({
       ComponentType2[ComponentType2["Checkbox"] = 23] = "Checkbox";
       ComponentType2[ComponentType2["SelectMenu"] = 3] = "SelectMenu";
     })(ComponentType || (exports2.ComponentType = ComponentType = {}));
-    var ButtonStyle6;
-    (function(ButtonStyle7) {
-      ButtonStyle7[ButtonStyle7["Primary"] = 1] = "Primary";
-      ButtonStyle7[ButtonStyle7["Secondary"] = 2] = "Secondary";
-      ButtonStyle7[ButtonStyle7["Success"] = 3] = "Success";
-      ButtonStyle7[ButtonStyle7["Danger"] = 4] = "Danger";
-      ButtonStyle7[ButtonStyle7["Link"] = 5] = "Link";
-      ButtonStyle7[ButtonStyle7["Premium"] = 6] = "Premium";
-    })(ButtonStyle6 || (exports2.ButtonStyle = ButtonStyle6 = {}));
-    var TextInputStyle5;
-    (function(TextInputStyle6) {
-      TextInputStyle6[TextInputStyle6["Short"] = 1] = "Short";
-      TextInputStyle6[TextInputStyle6["Paragraph"] = 2] = "Paragraph";
-    })(TextInputStyle5 || (exports2.TextInputStyle = TextInputStyle5 = {}));
+    var ButtonStyle7;
+    (function(ButtonStyle8) {
+      ButtonStyle8[ButtonStyle8["Primary"] = 1] = "Primary";
+      ButtonStyle8[ButtonStyle8["Secondary"] = 2] = "Secondary";
+      ButtonStyle8[ButtonStyle8["Success"] = 3] = "Success";
+      ButtonStyle8[ButtonStyle8["Danger"] = 4] = "Danger";
+      ButtonStyle8[ButtonStyle8["Link"] = 5] = "Link";
+      ButtonStyle8[ButtonStyle8["Premium"] = 6] = "Premium";
+    })(ButtonStyle7 || (exports2.ButtonStyle = ButtonStyle7 = {}));
+    var TextInputStyle6;
+    (function(TextInputStyle7) {
+      TextInputStyle7[TextInputStyle7["Short"] = 1] = "Short";
+      TextInputStyle7[TextInputStyle7["Paragraph"] = 2] = "Paragraph";
+    })(TextInputStyle6 || (exports2.TextInputStyle = TextInputStyle6 = {}));
     var SelectMenuDefaultValueType;
     (function(SelectMenuDefaultValueType2) {
       SelectMenuDefaultValueType2["Channel"] = "channel";
@@ -70961,14 +70961,14 @@ var require_dist9 = __commonJS({
     };
     var index_exports = {};
     __export2(index_exports, {
-      ActionRowBuilder: () => ActionRowBuilder7,
+      ActionRowBuilder: () => ActionRowBuilder8,
       ApplicationCommandNumericOptionMinMaxValueMixin: () => ApplicationCommandNumericOptionMinMaxValueMixin,
       ApplicationCommandOptionBase: () => ApplicationCommandOptionBase,
       ApplicationCommandOptionChannelTypesMixin: () => ApplicationCommandOptionChannelTypesMixin,
       ApplicationCommandOptionWithAutocompleteMixin: () => ApplicationCommandOptionWithAutocompleteMixin,
       ApplicationCommandOptionWithChoicesMixin: () => ApplicationCommandOptionWithChoicesMixin,
       BaseSelectMenuBuilder: () => BaseSelectMenuBuilder,
-      ButtonBuilder: () => ButtonBuilder6,
+      ButtonBuilder: () => ButtonBuilder7,
       ChannelSelectMenuBuilder: () => ChannelSelectMenuBuilder2,
       CheckboxAssertions: () => Assertions_exports3,
       CheckboxBuilder: () => CheckboxBuilder,
@@ -70981,7 +70981,7 @@ var require_dist9 = __commonJS({
       ContextMenuCommandAssertions: () => Assertions_exports11,
       ContextMenuCommandBuilder: () => ContextMenuCommandBuilder,
       EmbedAssertions: () => Assertions_exports,
-      EmbedBuilder: () => EmbedBuilder5,
+      EmbedBuilder: () => EmbedBuilder6,
       FileBuilder: () => FileBuilder,
       FileUploadAssertions: () => Assertions_exports4,
       FileUploadBuilder: () => FileUploadBuilder,
@@ -70991,7 +70991,7 @@ var require_dist9 = __commonJS({
       MediaGalleryItemBuilder: () => MediaGalleryItemBuilder,
       MentionableSelectMenuBuilder: () => MentionableSelectMenuBuilder,
       ModalAssertions: () => Assertions_exports9,
-      ModalBuilder: () => ModalBuilder5,
+      ModalBuilder: () => ModalBuilder6,
       RadioGroupBuilder: () => RadioGroupBuilder,
       RadioGroupOptionBuilder: () => RadioGroupOptionBuilder,
       RoleSelectMenuBuilder: () => RoleSelectMenuBuilder,
@@ -71021,7 +71021,7 @@ var require_dist9 = __commonJS({
       StringSelectMenuOptionBuilder: () => StringSelectMenuOptionBuilder,
       TextDisplayBuilder: () => TextDisplayBuilder,
       TextInputAssertions: () => Assertions_exports5,
-      TextInputBuilder: () => TextInputBuilder5,
+      TextInputBuilder: () => TextInputBuilder6,
       ThumbnailBuilder: () => ThumbnailBuilder,
       UserSelectMenuBuilder: () => UserSelectMenuBuilder,
       createComponentBuilder: () => createComponentBuilder,
@@ -71110,7 +71110,7 @@ var require_dist9 = __commonJS({
       return arr;
     }
     __name(normalizeArray, "normalizeArray");
-    var EmbedBuilder5 = class {
+    var EmbedBuilder6 = class {
       static {
         __name(this, "EmbedBuilder");
       }
@@ -71534,7 +71534,7 @@ var require_dist9 = __commonJS({
     };
     var import_v1027 = require_v106();
     var import_v102 = require_v106();
-    var ButtonBuilder6 = class extends ComponentBuilder {
+    var ButtonBuilder7 = class extends ComponentBuilder {
       static {
         __name(this, "ButtonBuilder");
       }
@@ -72893,7 +72893,7 @@ var require_dist9 = __commonJS({
     var import_util6 = require_dist2();
     var import_v1016 = require_v106();
     var import_fast_deep_equal = __toESM2(require_fast_deep_equal());
-    var TextInputBuilder5 = class extends ComponentBuilder {
+    var TextInputBuilder6 = class extends ComponentBuilder {
       static {
         __name(this, "TextInputBuilder");
       }
@@ -73153,7 +73153,7 @@ var require_dist9 = __commonJS({
        * @param input - A function that returns a component builder or an already built builder
        */
       setTextInputComponent(input) {
-        this.data.component = resolveBuilder(input, TextInputBuilder5);
+        this.data.component = resolveBuilder(input, TextInputBuilder6);
         return this;
       }
       /**
@@ -73316,7 +73316,7 @@ var require_dist9 = __commonJS({
     var dividerPredicate = import_shapeshift8.s.boolean();
     var spacingPredicate = import_shapeshift8.s.nativeEnum(import_v1020.SeparatorSpacingSize);
     var textDisplayContentPredicate = import_shapeshift8.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(4e3).setValidationEnabled(isValidationEnabled);
-    var accessoryPredicate = import_shapeshift8.s.instance(ButtonBuilder6).or(import_shapeshift8.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
+    var accessoryPredicate = import_shapeshift8.s.instance(ButtonBuilder7).or(import_shapeshift8.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
     var containerColorPredicate = colorPredicate.nullish();
     function assertReturnOfBuilder(input, ExpectedInstanceOf) {
       import_shapeshift8.s.instance(ExpectedInstanceOf).setValidationEnabled(isValidationEnabled).parse(input);
@@ -73569,7 +73569,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         this.components.push(
-          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder7))
+          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder8))
         );
         return this;
       }
@@ -73891,7 +73891,7 @@ var require_dist9 = __commonJS({
        * @param accessory - The accessory to use
        */
       setButtonAccessory(accessory) {
-        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder6)));
+        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder7)));
         return this;
       }
       /**
@@ -73955,13 +73955,13 @@ var require_dist9 = __commonJS({
       }
       switch (data.type) {
         case import_v1027.ComponentType.ActionRow:
-          return new ActionRowBuilder7(data);
+          return new ActionRowBuilder8(data);
         case import_v1027.ComponentType.Button:
-          return new ButtonBuilder6(data);
+          return new ButtonBuilder7(data);
         case import_v1027.ComponentType.StringSelect:
           return new StringSelectMenuBuilder(data);
         case import_v1027.ComponentType.TextInput:
-          return new TextInputBuilder5(data);
+          return new TextInputBuilder6(data);
         case import_v1027.ComponentType.UserSelect:
           return new UserSelectMenuBuilder(data);
         case import_v1027.ComponentType.RoleSelect:
@@ -74013,7 +74013,7 @@ var require_dist9 = __commonJS({
       return new Constructor(builder);
     }
     __name(resolveBuilder, "resolveBuilder");
-    var ActionRowBuilder7 = class extends ComponentBuilder {
+    var ActionRowBuilder8 = class extends ComponentBuilder {
       static {
         __name(this, "ActionRowBuilder");
       }
@@ -74096,14 +74096,14 @@ var require_dist9 = __commonJS({
     });
     var import_shapeshift9 = require_cjs4();
     var titleValidator = import_shapeshift9.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(45).setValidationEnabled(isValidationEnabled);
-    var componentsValidator = import_shapeshift9.s.union([import_shapeshift9.s.instance(ActionRowBuilder7), import_shapeshift9.s.instance(LabelBuilder), import_shapeshift9.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
+    var componentsValidator = import_shapeshift9.s.union([import_shapeshift9.s.instance(ActionRowBuilder8), import_shapeshift9.s.instance(LabelBuilder), import_shapeshift9.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
     function validateRequiredParameters2(customId, title, components) {
       customIdValidator.parse(customId);
       titleValidator.parse(title);
       componentsValidator.parse(components);
     }
     __name(validateRequiredParameters2, "validateRequiredParameters");
-    var ModalBuilder5 = class {
+    var ModalBuilder6 = class {
       static {
         __name(this, "ModalBuilder");
       }
@@ -74151,15 +74151,15 @@ var require_dist9 = __commonJS({
       addComponents(...components) {
         this.components.push(
           ...normalizeArray(components).map((component, idx) => {
-            if (component instanceof ActionRowBuilder7 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
+            if (component instanceof ActionRowBuilder8 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
               return component;
             }
-            if (component instanceof TextInputBuilder5) {
-              return new ActionRowBuilder7().addComponents(component);
+            if (component instanceof TextInputBuilder6) {
+              return new ActionRowBuilder8().addComponents(component);
             }
             if ("type" in component) {
               if (component.type === import_v1029.ComponentType.ActionRow) {
-                return new ActionRowBuilder7(component);
+                return new ActionRowBuilder8(component);
               }
               if (component.type === import_v1029.ComponentType.Label) {
                 return new LabelBuilder(component);
@@ -74168,8 +74168,8 @@ var require_dist9 = __commonJS({
                 return new TextDisplayBuilder(component);
               }
               if (component.type === import_v1029.ComponentType.TextInput) {
-                return new ActionRowBuilder7().addComponents(
-                  new TextInputBuilder5(component)
+                return new ActionRowBuilder8().addComponents(
+                  new TextInputBuilder6(component)
                 );
               }
             }
@@ -74208,7 +74208,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         const normalized = normalizeArray(components);
-        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder7));
+        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder8));
         this.components.push(...resolved);
         return this;
       }
@@ -76866,7 +76866,7 @@ var require_ActionRowBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { createComponentBuilder } = require_Components();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ActionRowBuilder7 = class extends BuildersActionRow {
+    var ActionRowBuilder8 = class extends BuildersActionRow {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -76882,7 +76882,7 @@ var require_ActionRowBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ActionRowBuilder7;
+    module2.exports = ActionRowBuilder8;
   }
 });
 
@@ -76894,7 +76894,7 @@ var require_ButtonBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolvePartialEmoji } = require_Util();
-    var ButtonBuilder6 = class extends BuildersButton {
+    var ButtonBuilder7 = class extends BuildersButton {
       constructor({ emoji: emoji3, ...data } = {}) {
         super(toSnakeCase2({ ...data, emoji: emoji3 && typeof emoji3 === "string" ? resolvePartialEmoji(emoji3) : emoji3 }));
       }
@@ -76918,7 +76918,7 @@ var require_ButtonBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ButtonBuilder6;
+    module2.exports = ButtonBuilder7;
   }
 });
 
@@ -77524,7 +77524,7 @@ var require_TextInputBuilder = __commonJS({
     var { TextInputBuilder: BuildersTextInput } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var TextInputBuilder5 = class extends BuildersTextInput {
+    var TextInputBuilder6 = class extends BuildersTextInput {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -77537,7 +77537,7 @@ var require_TextInputBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = TextInputBuilder5;
+    module2.exports = TextInputBuilder6;
   }
 });
 
@@ -77671,8 +77671,8 @@ var require_Components = __commonJS({
     }
     module2.exports = { createComponent, createComponentBuilder, findComponentByCustomId };
     var ActionRow = require_ActionRow();
-    var ActionRowBuilder7 = require_ActionRowBuilder();
-    var ButtonBuilder6 = require_ButtonBuilder();
+    var ActionRowBuilder8 = require_ActionRowBuilder();
+    var ButtonBuilder7 = require_ButtonBuilder();
     var ButtonComponent = require_ButtonComponent();
     var ChannelSelectMenuBuilder2 = require_ChannelSelectMenuBuilder();
     var ChannelSelectMenuComponent = require_ChannelSelectMenuComponent();
@@ -77690,7 +77690,7 @@ var require_Components = __commonJS({
     var StringSelectMenuBuilder = require_StringSelectMenuBuilder();
     var StringSelectMenuComponent = require_StringSelectMenuComponent();
     var TextDisplayComponent = require_TextDisplayComponent();
-    var TextInputBuilder5 = require_TextInputBuilder();
+    var TextInputBuilder6 = require_TextInputBuilder();
     var TextInputComponent = require_TextInputComponent();
     var ThumbnailComponent = require_ThumbnailComponent();
     var UserSelectMenuBuilder = require_UserSelectMenuBuilder();
@@ -77714,10 +77714,10 @@ var require_Components = __commonJS({
       [ComponentType.Label]: LabelComponent
     };
     var ComponentTypeToBuilder = {
-      [ComponentType.ActionRow]: ActionRowBuilder7,
-      [ComponentType.Button]: ButtonBuilder6,
+      [ComponentType.ActionRow]: ActionRowBuilder8,
+      [ComponentType.Button]: ButtonBuilder7,
       [ComponentType.StringSelect]: StringSelectMenuBuilder,
-      [ComponentType.TextInput]: TextInputBuilder5,
+      [ComponentType.TextInput]: TextInputBuilder6,
       [ComponentType.UserSelect]: UserSelectMenuBuilder,
       [ComponentType.RoleSelect]: RoleSelectMenuBuilder,
       [ComponentType.MentionableSelect]: MentionableSelectMenuBuilder,
@@ -102824,7 +102824,7 @@ var require_EmbedBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolveColor } = require_Util();
-    var EmbedBuilder5 = class extends BuildersEmbed {
+    var EmbedBuilder6 = class extends BuildersEmbed {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -102853,7 +102853,7 @@ var require_EmbedBuilder = __commonJS({
         return embedLength(this.data);
       }
     };
-    module2.exports = EmbedBuilder5;
+    module2.exports = EmbedBuilder6;
   }
 });
 
@@ -102949,7 +102949,7 @@ var require_ModalBuilder = __commonJS({
     var { ModalBuilder: BuildersModal, ComponentBuilder } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ModalBuilder5 = class extends BuildersModal {
+    var ModalBuilder6 = class extends BuildersModal {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -102967,7 +102967,7 @@ var require_ModalBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ModalBuilder5;
+    module2.exports = ModalBuilder6;
   }
 });
 
@@ -112404,7 +112404,7 @@ app.use("/api", routes_default);
 var app_default = app;
 
 // src/bot/client.ts
-var import_discord9 = __toESM(require_src2(), 1);
+var import_discord10 = __toESM(require_src2(), 1);
 
 // src/bot/registerCommands.ts
 var import_discord2 = __toESM(require_src2(), 1);
@@ -112455,6 +112455,13 @@ var BOT_SAY_TEXT_INPUT = "bot_say_text_input";
 var BOT_EDIT_CMD = "bot\u7F16\u8F91\u6D88\u606F";
 var BOT_EDIT_MODAL_PREFIX = "bot_edit_modal_";
 var BOT_EDIT_TEXT_INPUT = "bot_edit_text_input";
+var SETUP_TRIVIA_PANEL_CMD = "setup_\u95F2\u8BDD\u9762\u677F";
+var ADD_TRIVIA_CMD = "\u6DFB\u52A0\u95F2\u8BDD";
+var DELETE_TRIVIA_CMD = "\u5220\u9664\u95F2\u8BDD";
+var LIST_TRIVIA_CMD = "\u5217\u51FA\u95F2\u8BDD";
+var TRIVIA_DRAW_BTN_ID = "trivia_draw_btn";
+var TRIVIA_ADD_MODAL_ID = "trivia_add_modal";
+var TRIVIA_ADD_TEXT_INPUT = "trivia_add_text_input";
 var ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 var ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 var ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
@@ -112476,31 +112483,31 @@ for (let i = 2; i <= 10; i++) {
   );
 }
 var commands = [
-  new import_discord.SlashCommandBuilder().setName(REVIEW_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5BA1\u6838\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator),
-  new import_discord.SlashCommandBuilder().setName(ARTWORK_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u4F5C\u54C1\u4EA4\u4E92\u9762\u677F\u8BF4\u660E").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator),
-  new import_discord.SlashCommandBuilder().setName(SET_LOG_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55\u53D1\u9001\u7684\u79C1\u5BC6\u9891\u9053").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(REVIEW_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5BA1\u6838\u4EA4\u4E92\u9762\u677F"),
+  new import_discord.SlashCommandBuilder().setName(ARTWORK_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u4F5C\u54C1\u4EA4\u4E92\u9762\u677F\u8BF4\u660E"),
+  new import_discord.SlashCommandBuilder().setName(SET_LOG_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55\u53D1\u9001\u7684\u79C1\u5BC6\u9891\u9053").addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_ROLE_CMD).setDescription("\u8BBE\u7F6E\u62E5\u6709\u5BA1\u6838\u6743\u9650\u7684\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addRoleOption(
+  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_ROLE_CMD).setDescription("\u8BBE\u7F6E\u62E5\u6709\u5BA1\u6838\u6743\u9650\u7684\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").addRoleOption(
     (opt) => opt.setName("role").setDescription("\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SET_APPROVE_ROLE_CMD).setDescription("\u8BBE\u7F6E\u5BA1\u6838\u901A\u8FC7\u540E\u81EA\u52A8\u8D4B\u4E88\u7684\u8EAB\u4EFD\u7EC4").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addRoleOption(
+  new import_discord.SlashCommandBuilder().setName(SET_APPROVE_ROLE_CMD).setDescription("\u8BBE\u7F6E\u5BA1\u6838\u901A\u8FC7\u540E\u81EA\u52A8\u8D4B\u4E88\u7684\u8EAB\u4EFD\u7EC4").addRoleOption(
     (opt) => opt.setName("role").setDescription("\u5BA1\u6838\u901A\u8FC7\u8EAB\u4EFD\u7EC4").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(DECODE_FILENAME_CMD).setDescription("\u89E3\u7801\u4F5C\u54C1\u6587\u4EF6\u540D\uFF0C\u8FD8\u539F\u83B7\u53D6\u65F6\u95F4\u4E0E\u83B7\u53D6\u8005\u4FE1\u606F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addStringOption(
+  new import_discord.SlashCommandBuilder().setName(DECODE_FILENAME_CMD).setDescription("\u89E3\u7801\u4F5C\u54C1\u6587\u4EF6\u540D\uFF0C\u8FD8\u539F\u83B7\u53D6\u65F6\u95F4\u4E0E\u83B7\u53D6\u8005\u4FE1\u606F").addStringOption(
     (opt) => opt.setName("code").setDescription("\u6587\u4EF6\u540D\u4E2D\u7684\u7F16\u7801\u90E8\u5206\uFF08\u53BB\u6389\u6269\u5C55\u540D\u7684\u90E8\u5206\uFF09").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(LOOKUP_TRACE_CMD).setDescription("\u4E0A\u4F20\u6CC4\u9732\u7684\u4F5C\u54C1\u6587\u4EF6\uFF0C\u81EA\u52A8\u63D0\u53D6\u6EAF\u6E90ID\u5E76\u67E5\u627E\u83B7\u53D6\u8005").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addAttachmentOption(
+  new import_discord.SlashCommandBuilder().setName(LOOKUP_TRACE_CMD).setDescription("\u4E0A\u4F20\u6CC4\u9732\u7684\u4F5C\u54C1\u6587\u4EF6\uFF0C\u81EA\u52A8\u63D0\u53D6\u6EAF\u6E90ID\u5E76\u67E5\u627E\u83B7\u53D6\u8005").addAttachmentOption(
     (opt) => opt.setName("file").setDescription("\u4E0A\u4F20\u7591\u4F3C\u6CC4\u9732\u7684\u539F\u59CB\u6587\u4EF6\uFF08\u652F\u6301 PNG / JSON / \u6587\u672C\u7C7B\u6587\u4EF6\uFF09").setRequired(true)
   ),
   new import_discord.SlashCommandBuilder().setName(GO_TOP_CMD).setDescription("\u53D1\u9001\u8DF3\u8F6C\u5230\u672C\u5E16\u9996\u697C\u7684\u94FE\u63A5"),
   new import_discord.SlashCommandBuilder().setName(DELETE_THREAD_CMD).setDescription("\u5220\u9664\u5F53\u524D\u5E16\u5B50\uFF08\u6B64\u64CD\u4F5C\u4E0D\u53EF\u9006\uFF09").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.ManageThreads),
-  new import_discord.SlashCommandBuilder().setName(COMPLAINT_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u533F\u540D\u6295\u8BC9\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator),
-  new import_discord.SlashCommandBuilder().setName(SET_COMPLAINT_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u6295\u8BC9\u5DE5\u5355\u7684\u9891\u9053").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(COMPLAINT_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u533F\u540D\u6295\u8BC9\u4EA4\u4E92\u9762\u677F"),
+  new import_discord.SlashCommandBuilder().setName(SET_COMPLAINT_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u6295\u8BC9\u5DE5\u5355\u7684\u9891\u9053").addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u6295\u8BC9\u5DE5\u5355\u63A5\u6536\u9891\u9053").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SEARCH_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u641C\u7D22\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator),
-  new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.Administrator).addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(SEARCH_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u641C\u7D22\u4EA4\u4E92\u9762\u677F"),
+  new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").addChannelOption(
     (opt) => opt.setName("category").setDescription("\u5C06\u7EDF\u8BA1\u9891\u9053\u653E\u5728\u54EA\u4E2A\u5206\u7C7B\u4E0B\uFF08\u53EF\u9009\uFF09").setRequired(false).addChannelTypes(import_discord.ChannelType.GuildCategory)
   ),
   new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u5728\u6307\u5B9A\u9891\u9053\u53D1\u9001\u4E00\u6761\u6587\u5B57\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
@@ -112523,6 +112530,12 @@ var commands = [
       import_discord.ChannelType.GuildForum
     )
   ),
+  new import_discord.SlashCommandBuilder().setName(SETUP_TRIVIA_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u95F2\u8BDD\u968F\u673A\u62BD\u53D6\u9762\u677F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
+  new import_discord.SlashCommandBuilder().setName(ADD_TRIVIA_CMD).setDescription("\u6DFB\u52A0\u4E00\u5219\u95F2\u8BDD / \u51B7\u77E5\u8BC6\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
+  new import_discord.SlashCommandBuilder().setName(DELETE_TRIVIA_CMD).setDescription("\u5220\u9664\u4E00\u5219\u95F2\u8BDD\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addIntegerOption(
+    (opt) => opt.setName("id").setDescription("\u8981\u5220\u9664\u7684\u95F2\u8BDD ID\uFF08\u53EF\u5728 /\u5217\u51FA\u95F2\u8BDD \u4E2D\u67E5\u770B\uFF09").setRequired(true).setMinValue(1)
+  ),
+  new import_discord.SlashCommandBuilder().setName(LIST_TRIVIA_CMD).setDescription("\u5217\u51FA\u6240\u6709\u95F2\u8BDD\u53CA\u5176 ID\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
   uploadArtworkCmd
 ].map((cmd) => cmd.toJSON());
 
@@ -119534,7 +119547,8 @@ __export(schema_exports, {
   guildConfigsTable: () => guildConfigsTable,
   insertArtworkSchema: () => insertArtworkSchema,
   reviewThreadsTable: () => reviewThreadsTable,
-  threadSubscriptionsTable: () => threadSubscriptionsTable
+  threadSubscriptionsTable: () => threadSubscriptionsTable,
+  triviaTable: () => triviaTable
 });
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/external.js
@@ -130997,6 +131011,13 @@ var threadSubscriptionsTable = pgTable(
   },
   (table) => [unique("uniq_channel_user").on(table.channelId, table.userId)]
 );
+var triviaTable = pgTable("trivia", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  authorId: text("author_id").notNull(),
+  guildId: text("guild_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});
 var insertArtworkSchema = createInsertSchema(artworksTable).omit({ id: true, createdAt: true });
 
 // ../../lib/db/src/index.ts
@@ -131386,7 +131407,102 @@ async function runAutoDeleteScheduler(client) {
 }
 
 // src/bot/handlers/artworkHandler.ts
+var import_discord5 = __toESM(require_src2(), 1);
+
+// src/bot/handlers/triviaHandler.ts
 var import_discord4 = __toESM(require_src2(), 1);
+function buildTriviaPanel() {
+  const embed = new import_discord4.EmbedBuilder().setTitle("\u{1F4AC} \u95F2\u8BDD\u65F6\u95F4").setDescription("\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\uFF0C\u968F\u673A\u62BD\u53D6\u4E00\u5219\u51B7\u77E5\u8BC6\u6216\u6709\u8DA3\u7684\u95F2\u8BDD\uFF01").setColor(5763719);
+  const drawBtn = new import_discord4.ButtonBuilder().setCustomId(TRIVIA_DRAW_BTN_ID).setLabel("\u62BD\u53D6\u95F2\u8BDD").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3B2}");
+  const row = new import_discord4.ActionRowBuilder().addComponents(drawBtn);
+  return { embeds: [embed], components: [row] };
+}
+async function handleTriviaDrawButton(interaction) {
+  await interaction.deferReply({ flags: 64 });
+  const guildId = interaction.guildId;
+  if (!guildId) {
+    await interaction.editReply("\u6B64\u529F\u80FD\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
+    return;
+  }
+  try {
+    const rows = await db.select().from(triviaTable).where(eq(triviaTable.guildId, guildId));
+    if (rows.length === 0) {
+      await interaction.editReply("\u76EE\u524D\u8FD8\u6CA1\u6709\u95F2\u8BDD\uFF0C\u5FEB\u8BA9\u7BA1\u7406\u5458\u6765\u6DFB\u52A0\u5427\uFF01");
+      return;
+    }
+    const picked = rows[Math.floor(Math.random() * rows.length)];
+    const embed = new import_discord4.EmbedBuilder().setTitle("\u{1F4AC} \u4ECA\u65E5\u95F2\u8BDD").setDescription(picked.content).setColor(5763719).setFooter({ text: `\u5171 ${rows.length} \u5219\u95F2\u8BDD \xB7 \u968F\u673A\u62BD\u53D6` }).setTimestamp();
+    await interaction.editReply({ embeds: [embed] });
+  } catch (err) {
+    logger.error({ err }, "Failed to draw trivia");
+    await interaction.editReply("\u62BD\u53D6\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function handleAddTrivia(interaction) {
+  const modal = new import_discord4.ModalBuilder().setCustomId(TRIVIA_ADD_MODAL_ID).setTitle("\u6DFB\u52A0\u95F2\u8BDD / \u51B7\u77E5\u8BC6");
+  const textInput = new import_discord4.TextInputBuilder().setCustomId(TRIVIA_ADD_TEXT_INPUT).setLabel("\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord4.TextInputStyle.Paragraph).setPlaceholder("\u5728\u8FD9\u91CC\u8F93\u5165\u4E00\u5219\u51B7\u77E5\u8BC6\u6216\u6709\u8DA3\u7684\u95F2\u8BDD\u2026\u2026").setMaxLength(500).setRequired(true);
+  modal.addComponents(new import_discord4.ActionRowBuilder().addComponents(textInput));
+  await interaction.showModal(modal);
+}
+async function handleAddTriviaModal(interaction) {
+  await interaction.deferReply({ flags: 64 });
+  const content = interaction.fields.getTextInputValue(TRIVIA_ADD_TEXT_INPUT);
+  const guildId = interaction.guildId ?? "";
+  try {
+    const result = await db.insert(triviaTable).values({ content, authorId: interaction.user.id, guildId }).returning({ id: triviaTable.id });
+    const id = result[0]?.id;
+    await interaction.editReply(`\u2705 \u95F2\u8BDD\u5DF2\u6DFB\u52A0\uFF08ID: \`${id}\`\uFF09\uFF1A
+> ${content}`);
+    logger.info({ id, authorId: interaction.user.id, guildId }, "Trivia added");
+  } catch (err) {
+    logger.error({ err }, "Failed to add trivia");
+    await interaction.editReply("\u6DFB\u52A0\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function handleDeleteTrivia(interaction) {
+  await interaction.deferReply({ flags: 64 });
+  const id = interaction.options.getInteger("id", true);
+  const guildId = interaction.guildId ?? "";
+  try {
+    const deleted = await db.delete(triviaTable).where(and(eq(triviaTable.id, id), eq(triviaTable.guildId, guildId))).returning({ id: triviaTable.id, content: triviaTable.content });
+    if (deleted.length === 0) {
+      await interaction.editReply(`\u274C \u627E\u4E0D\u5230 ID \u4E3A \`${id}\` \u7684\u95F2\u8BDD\u3002`);
+      return;
+    }
+    await interaction.editReply(`\u2705 \u5DF2\u5220\u9664\u95F2\u8BDD\uFF08ID: \`${id}\`\uFF09\uFF1A
+> ${deleted[0].content}`);
+    logger.info({ id, guildId }, "Trivia deleted");
+  } catch (err) {
+    logger.error({ err }, "Failed to delete trivia");
+    await interaction.editReply("\u5220\u9664\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function handleListTrivia(interaction) {
+  await interaction.deferReply({ flags: 64 });
+  const guildId = interaction.guildId ?? "";
+  try {
+    const rows = await db.select().from(triviaTable).where(eq(triviaTable.guildId, guildId));
+    if (rows.length === 0) {
+      await interaction.editReply("\u76EE\u524D\u6CA1\u6709\u4EFB\u4F55\u95F2\u8BDD\uFF0C\u4F7F\u7528 `/\u6DFB\u52A0\u95F2\u8BDD` \u6765\u6DFB\u52A0\uFF01");
+      return;
+    }
+    const list = rows.map((r) => `**[${r.id}]** ${r.content}`).join("\n");
+    const embed = new import_discord4.EmbedBuilder().setTitle(`\u{1F4CB} \u95F2\u8BDD\u5217\u8868\uFF08\u5171 ${rows.length} \u5219\uFF09`).setDescription(list.slice(0, 4e3)).setColor(5763719);
+    await interaction.editReply({ embeds: [embed] });
+  } catch (err) {
+    logger.error({ err }, "Failed to list trivia");
+    await interaction.editReply("\u83B7\u53D6\u5217\u8868\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002");
+  }
+}
+async function getRandomTrivia(guildId) {
+  try {
+    const rows = await db.select().from(triviaTable).where(eq(triviaTable.guildId, guildId));
+    if (rows.length === 0) return null;
+    return rows[Math.floor(Math.random() * rows.length)].content;
+  } catch {
+    return null;
+  }
+}
 
 // src/bot/filenameCodec.ts
 var SEPARATOR = ":";
@@ -131611,7 +131727,7 @@ function isStorageKey(value) {
 
 // src/bot/handlers/artworkHandler.ts
 function buildArtworkPanel() {
-  const embed = new import_discord4.EmbedBuilder().setTitle("\u4F5C\u54C1\u5C55\u793A\u533A").setDescription(
+  const embed = new import_discord5.EmbedBuilder().setTitle("\u4F5C\u54C1\u5C55\u793A\u533A").setDescription(
     [
       "\u6B22\u8FCE\u6765\u5230\u4F5C\u54C1\u5C55\u793A\u533A\uFF01",
       "",
@@ -131629,9 +131745,9 @@ function buildArtworkPanel() {
   return { embeds: [embed] };
 }
 function buildArtworkRow(messageId, channelId) {
-  const getBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}${messageId}`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3A8}");
-  const subscribeBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channelId}`).setLabel("\u8BA2\u9605\u6B64\u5E16").setStyle(import_discord4.ButtonStyle.Secondary).setEmoji("\u{1F514}");
-  return new import_discord4.ActionRowBuilder().addComponents(getBtn, subscribeBtn);
+  const getBtn = new import_discord5.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}${messageId}`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord5.ButtonStyle.Primary).setEmoji("\u{1F3A8}");
+  const subscribeBtn = new import_discord5.ButtonBuilder().setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channelId}`).setLabel("\u8BA2\u9605\u6B64\u5E16").setStyle(import_discord5.ButtonStyle.Secondary).setEmoji("\u{1F514}");
+  return new import_discord5.ActionRowBuilder().addComponents(getBtn, subscribeBtn);
 }
 async function handleArtworkUpload(interaction, _client) {
   await interaction.deferReply({ flags: 64 });
@@ -131670,7 +131786,7 @@ async function handleArtworkUpload(interaction, _client) {
       fileNames.push(att.name);
       await interaction.editReply(`\u6B63\u5728\u4FDD\u5B58\u6587\u4EF6\uFF08${storageKeys.length}/${attachments.length}\uFF09\u2026\u2026`);
     }
-    const embed = new import_discord4.EmbedBuilder().setTitle(title).setDescription(
+    const embed = new import_discord5.EmbedBuilder().setTitle(title).setDescription(
       [
         `**\u4F5C\u8005\uFF1A** <@${interaction.user.id}>`,
         `**\u4E0A\u4F20\u65F6\u95F4\uFF1A** <t:${Math.floor(Date.now() / 1e3)}:F>`,
@@ -131680,9 +131796,9 @@ async function handleArtworkUpload(interaction, _client) {
         "\u60F3\u83B7\u53D6\u539F\u6587\u4EF6\uFF1F\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\uFF0C\u8F93\u5165\u5BC6\u7801\u5E76\u5BF9\u9891\u9053\u7B2C\u4E00\u6761\u6D88\u606F\u6DFB\u52A0\u8868\u60C5\u540E\u5373\u53EF\u83B7\u53D6\u3002"
       ].filter(Boolean).join("\n")
     ).setColor(5793266).setFooter({ text: "\u4F5C\u54C1\u7CFB\u7EDF \xB7 \u8BF7\u5411\u4F5C\u8005\u8BE2\u95EE\u5BC6\u7801" }).setTimestamp();
-    const placeholderRow = new import_discord4.ActionRowBuilder().addComponents(
-      new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}PLACEHOLDER`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord4.ButtonStyle.Primary).setEmoji("\u{1F3A8}"),
-      new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channel.id}`).setLabel("\u8BA2\u9605\u6B64\u5E16").setStyle(import_discord4.ButtonStyle.Secondary).setEmoji("\u{1F514}")
+    const placeholderRow = new import_discord5.ActionRowBuilder().addComponents(
+      new import_discord5.ButtonBuilder().setCustomId(`${ARTWORK_GET_CUSTOM_ID}PLACEHOLDER`).setLabel("\u83B7\u53D6\u4F5C\u54C1").setStyle(import_discord5.ButtonStyle.Primary).setEmoji("\u{1F3A8}"),
+      new import_discord5.ButtonBuilder().setCustomId(`${ARTWORK_SUBSCRIBE_PREFIX}${channel.id}`).setLabel("\u8BA2\u9605\u6B64\u5E16").setStyle(import_discord5.ButtonStyle.Secondary).setEmoji("\u{1F514}")
     );
     const msg = await channel.send({ embeds: [embed], components: [placeholderRow] });
     await msg.edit({ components: [buildArtworkRow(msg.id, channel.id)] });
@@ -131703,8 +131819,8 @@ async function handleArtworkUpload(interaction, _client) {
     );
     const subscribers = await db.select().from(threadSubscriptionsTable).where(eq(threadSubscriptionsTable.channelId, channel.id));
     if (subscribers.length > 0) {
-      const notifyBtn = new import_discord4.ButtonBuilder().setCustomId(`${ARTWORK_NOTIFY_BTN_PREFIX}${channel.id}`).setLabel(`\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005`).setStyle(import_discord4.ButtonStyle.Success).setEmoji("\u{1F4E2}");
-      const notifyRow = new import_discord4.ActionRowBuilder().addComponents(notifyBtn);
+      const notifyBtn = new import_discord5.ButtonBuilder().setCustomId(`${ARTWORK_NOTIFY_BTN_PREFIX}${channel.id}`).setLabel(`\u901A\u77E5 ${subscribers.length} \u4F4D\u8BA2\u9605\u8005`).setStyle(import_discord5.ButtonStyle.Success).setEmoji("\u{1F4E2}");
+      const notifyRow = new import_discord5.ActionRowBuilder().addComponents(notifyBtn);
       await interaction.followUp({
         content: `\u6B64\u5E16\u6709 **${subscribers.length}** \u4F4D\u8BA2\u9605\u8005\uFF0C\u662F\u5426\u8981\u53D1\u5E03\u66F4\u65B0\u901A\u77E5\uFF1F`,
         components: [notifyRow],
@@ -131745,9 +131861,9 @@ async function handleArtworkSubscribe(interaction, channelId) {
   }
 }
 async function handleArtworkNotifyBtn(interaction, channelId) {
-  const modal = new import_discord4.ModalBuilder().setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channelId}`).setTitle("\u901A\u77E5\u8BA2\u9605\u8005");
-  const textInput = new import_discord4.TextInputBuilder().setCustomId(ARTWORK_NOTIFY_TEXT_INPUT).setLabel("\u901A\u77E5\u5185\u5BB9").setStyle(import_discord4.TextInputStyle.Paragraph).setPlaceholder("\u4F8B\u5982\uFF1A\u65B0\u7684\u4F5C\u54C1\u5DF2\u4E0A\u4F20\uFF0C\u6B22\u8FCE\u83B7\u53D6\uFF01").setMaxLength(500).setRequired(true);
-  modal.addComponents(new import_discord4.ActionRowBuilder().addComponents(textInput));
+  const modal = new import_discord5.ModalBuilder().setCustomId(`${ARTWORK_NOTIFY_MODAL_PREFIX}${channelId}`).setTitle("\u901A\u77E5\u8BA2\u9605\u8005");
+  const textInput = new import_discord5.TextInputBuilder().setCustomId(ARTWORK_NOTIFY_TEXT_INPUT).setLabel("\u901A\u77E5\u5185\u5BB9").setStyle(import_discord5.TextInputStyle.Paragraph).setPlaceholder("\u4F8B\u5982\uFF1A\u65B0\u7684\u4F5C\u54C1\u5DF2\u4E0A\u4F20\uFF0C\u6B22\u8FCE\u83B7\u53D6\uFF01").setMaxLength(500).setRequired(true);
+  modal.addComponents(new import_discord5.ActionRowBuilder().addComponents(textInput));
   await interaction.showModal(modal);
 }
 async function handleArtworkNotifyModal(interaction, channelId, client) {
@@ -131768,7 +131884,7 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
       { channelId, channelType: channel.type, isThread: channel.isThread() },
       "Notify modal: channel info"
     );
-    const notifyEmbed = new import_discord4.EmbedBuilder().setTitle("\u{1F4E2} \u5E16\u5B50\u66F4\u65B0\u901A\u77E5").setDescription(
+    const notifyEmbed = new import_discord5.EmbedBuilder().setTitle("\u{1F4E2} \u5E16\u5B50\u66F4\u65B0\u901A\u77E5").setDescription(
       [
         content,
         "",
@@ -131790,10 +131906,10 @@ async function handleArtworkNotifyModal(interaction, channelId, client) {
   }
 }
 async function handleArtworkGetButton(interaction, messageId) {
-  const modal = new import_discord4.ModalBuilder().setCustomId(`${ARTWORK_GET_MODAL_PREFIX}${messageId}`).setTitle("\u83B7\u53D6\u4F5C\u54C1");
-  const passwordInput = new import_discord4.TextInputBuilder().setCustomId(ARTWORK_PASSWORD_INPUT).setLabel("\u8BF7\u8F93\u5165\u4F5C\u54C1\u5BC6\u7801").setStyle(import_discord4.TextInputStyle.Short).setPlaceholder("\u5411\u4F5C\u8005\u8BE2\u95EE\u5BC6\u7801").setRequired(true);
+  const modal = new import_discord5.ModalBuilder().setCustomId(`${ARTWORK_GET_MODAL_PREFIX}${messageId}`).setTitle("\u83B7\u53D6\u4F5C\u54C1");
+  const passwordInput = new import_discord5.TextInputBuilder().setCustomId(ARTWORK_PASSWORD_INPUT).setLabel("\u8BF7\u8F93\u5165\u4F5C\u54C1\u5BC6\u7801").setStyle(import_discord5.TextInputStyle.Short).setPlaceholder("\u5411\u4F5C\u8005\u8BE2\u95EE\u5BC6\u7801").setRequired(true);
   modal.addComponents(
-    new import_discord4.ActionRowBuilder().addComponents(passwordInput)
+    new import_discord5.ActionRowBuilder().addComponents(passwordInput)
   );
   await interaction.showModal(modal);
 }
@@ -131883,7 +131999,7 @@ async function handleArtworkGetModal(interaction, messageId, client) {
           buf = Buffer.from(await res.arrayBuffer());
         }
         const result = applyWatermark(buf, originalName, traceId);
-        preparedFiles.push(new import_discord4.AttachmentBuilder(result.buffer, { name: renamedFilename }));
+        preparedFiles.push(new import_discord5.AttachmentBuilder(result.buffer, { name: renamedFilename }));
         watermarkRecords.push({
           traceId,
           filename: renamedFilename,
@@ -131906,7 +132022,8 @@ async function handleArtworkGetModal(interaction, messageId, client) {
       files: preparedFiles
     });
     try {
-      const dmEmbed = new import_discord4.EmbedBuilder().setTitle(`\u{1F3A8} ${artwork.title}`).setDescription(
+      const triviaContent = await getRandomTrivia(guild.id);
+      const dmEmbed = new import_discord5.EmbedBuilder().setTitle(`\u{1F3A8} ${artwork.title}`).setDescription(
         [
           `\u4F60\u5DF2\u6210\u529F\u83B7\u53D6\u4F5C\u54C1\u300A**${artwork.title}**\u300B\u7684\u539F\u6587\u4EF6\u3002`,
           "",
@@ -131915,6 +132032,7 @@ async function handleArtworkGetModal(interaction, messageId, client) {
         ].join("\n")
       ).setColor(5793266).setTimestamp();
       await interaction.user.send({
+        content: triviaContent ? `\u6BCF\u65E5\u95F2\u8BDD\uFF1A${triviaContent}` : void 0,
         embeds: [dmEmbed],
         files: preparedFiles
       });
@@ -131951,7 +132069,7 @@ async function handleArtworkGetModal(interaction, messageId, client) {
         const logChannel = await client.channels.fetch(logChannelId).catch(() => null);
         if (logChannel && logChannel.isTextBased()) {
           const logTextChannel = logChannel;
-          const logEmbed = new import_discord4.EmbedBuilder().setTitle("\u{1F4E5} \u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55").setDescription(
+          const logEmbed = new import_discord5.EmbedBuilder().setTitle("\u{1F4E5} \u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55").setDescription(
             [
               `**\u4F5C\u54C1\uFF1A** ${artwork.title}`,
               `**\u4F5C\u8005\uFF1A** <@${artwork.authorId}>`,
@@ -131981,7 +132099,7 @@ async function handleArtworkGetModal(interaction, messageId, client) {
 }
 
 // src/bot/handlers/threadHandler.ts
-var import_discord5 = __toESM(require_src2(), 1);
+var import_discord6 = __toESM(require_src2(), 1);
 async function handleGoTop(interaction) {
   const channel = interaction.channel;
   if (!channel) {
@@ -132021,14 +132139,14 @@ async function handleDeleteThread(interaction) {
     await interaction.reply({ content: "\u274C \u8BE5\u6307\u4EE4\u53EA\u80FD\u5728\u5E16\u5B50\uFF08\u5B50\u533A\uFF09\u4E2D\u4F7F\u7528\u3002", flags: 64 });
     return;
   }
-  const hasPermission = interaction.memberPermissions?.has(import_discord5.PermissionFlagsBits.ManageThreads) ?? false;
+  const hasPermission = interaction.memberPermissions?.has(import_discord6.PermissionFlagsBits.ManageThreads) ?? false;
   if (!hasPermission) {
     await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u300C\u7BA1\u7406\u5E16\u5B50\u300D\u6743\u9650\uFF0C\u65E0\u6CD5\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
     return;
   }
-  const confirmBtn = new import_discord5.ButtonBuilder().setCustomId(DELETE_THREAD_CONFIRM_ID).setLabel("\u786E\u8BA4\u5220\u9664").setStyle(import_discord5.ButtonStyle.Danger).setEmoji("\u{1F5D1}\uFE0F");
-  const cancelBtn = new import_discord5.ButtonBuilder().setCustomId(DELETE_THREAD_CANCEL_ID).setLabel("\u53D6\u6D88").setStyle(import_discord5.ButtonStyle.Secondary);
-  const row = new import_discord5.ActionRowBuilder().addComponents(confirmBtn, cancelBtn);
+  const confirmBtn = new import_discord6.ButtonBuilder().setCustomId(DELETE_THREAD_CONFIRM_ID).setLabel("\u786E\u8BA4\u5220\u9664").setStyle(import_discord6.ButtonStyle.Danger).setEmoji("\u{1F5D1}\uFE0F");
+  const cancelBtn = new import_discord6.ButtonBuilder().setCustomId(DELETE_THREAD_CANCEL_ID).setLabel("\u53D6\u6D88").setStyle(import_discord6.ButtonStyle.Secondary);
+  const row = new import_discord6.ActionRowBuilder().addComponents(confirmBtn, cancelBtn);
   await interaction.reply({
     content: "\u26A0\uFE0F **\u8B66\u544A\uFF1A\u6B64\u64CD\u4F5C\u4E0D\u53EF\u9006\uFF01**\n\u5373\u5C06\u5220\u9664\u5F53\u524D\u5E16\u5B50\u53CA\u5176\u4E2D\u6240\u6709\u5185\u5BB9\uFF0C\u786E\u8BA4\u8981\u7EE7\u7EED\u5417\uFF1F",
     components: [row],
@@ -132060,17 +132178,17 @@ async function handleDeleteThreadCancel(interaction) {
 }
 
 // src/bot/handlers/searchPanelHandler.ts
-var import_discord6 = __toESM(require_src2(), 1);
+var import_discord7 = __toESM(require_src2(), 1);
 var userChannelMap = /* @__PURE__ */ new Map();
 function buildSearchPanel() {
-  const embed = new import_discord6.EmbedBuilder().setTitle("\u{1F50D} \u641C\u7D22\u9762\u677F").setDescription(
+  const embed = new import_discord7.EmbedBuilder().setTitle("\u{1F50D} \u641C\u7D22\u9762\u677F").setDescription(
     "**\u4F7F\u7528\u65B9\u6CD5\uFF1A**\n\u2022 **\u5173\u952E\u8BCD\u641C\u7D22**\uFF1A\u5728\u5E16\u5B50\u6D88\u606F\u8BB0\u5F55\u4E2D\u67E5\u627E\u542B\u7279\u5B9A\u5173\u952E\u8BCD\u7684\u6D88\u606F\n  - \u53EF\u5148\u5728\u4E0B\u65B9\u9009\u62E9\u8BBA\u575B\u6765\u6307\u5B9A\u641C\u7D22\u8303\u56F4\uFF0C\u5426\u5219\u5C06\u641C\u7D22\u5F53\u524D\u9891\u9053\n\u2022 **\u4F5C\u8005\u641C\u7D22**\uFF1A\u6309\u7528\u6237\u540D\u6216\u670D\u52A1\u5668\u6635\u79F0\u67E5\u627E\u5176\u5728\u6570\u636E\u5E93\u4E2D\u53D1\u5E03\u7684\u6240\u6709\u4F5C\u54C1"
   ).setColor(5793266);
-  const channelSelect = new import_discord6.ChannelSelectMenuBuilder().setCustomId(SEARCH_CHANNEL_SELECT_ID).setPlaceholder("\uFF08\u53EF\u9009\uFF09\u9009\u62E9\u5173\u952E\u8BCD\u641C\u7D22\u7684\u76EE\u6807\u8BBA\u575B").setChannelTypes(import_discord6.ChannelType.GuildForum);
-  const keywordBtn = new import_discord6.ButtonBuilder().setCustomId(SEARCH_KEYWORD_BTN_ID).setLabel("\u5173\u952E\u8BCD\u641C\u7D22").setEmoji("\u{1F4AC}").setStyle(import_discord6.ButtonStyle.Primary);
-  const nicknameBtn = new import_discord6.ButtonBuilder().setCustomId(SEARCH_NICKNAME_BTN_ID).setLabel("\u4F5C\u8005\u641C\u7D22").setEmoji("\u{1F3A8}").setStyle(import_discord6.ButtonStyle.Secondary);
-  const selectRow = new import_discord6.ActionRowBuilder().addComponents(channelSelect);
-  const btnRow = new import_discord6.ActionRowBuilder().addComponents(keywordBtn, nicknameBtn);
+  const channelSelect = new import_discord7.ChannelSelectMenuBuilder().setCustomId(SEARCH_CHANNEL_SELECT_ID).setPlaceholder("\uFF08\u53EF\u9009\uFF09\u9009\u62E9\u5173\u952E\u8BCD\u641C\u7D22\u7684\u76EE\u6807\u8BBA\u575B").setChannelTypes(import_discord7.ChannelType.GuildForum);
+  const keywordBtn = new import_discord7.ButtonBuilder().setCustomId(SEARCH_KEYWORD_BTN_ID).setLabel("\u5173\u952E\u8BCD\u641C\u7D22").setEmoji("\u{1F4AC}").setStyle(import_discord7.ButtonStyle.Primary);
+  const nicknameBtn = new import_discord7.ButtonBuilder().setCustomId(SEARCH_NICKNAME_BTN_ID).setLabel("\u4F5C\u8005\u641C\u7D22").setEmoji("\u{1F3A8}").setStyle(import_discord7.ButtonStyle.Secondary);
+  const selectRow = new import_discord7.ActionRowBuilder().addComponents(channelSelect);
+  const btnRow = new import_discord7.ActionRowBuilder().addComponents(keywordBtn, nicknameBtn);
   return { embeds: [embed], components: [selectRow, btnRow] };
 }
 async function handleSearchChannelSelect(interaction) {
@@ -132080,7 +132198,7 @@ async function handleSearchChannelSelect(interaction) {
     return;
   }
   const channel = interaction.guild?.channels.cache.get(channelId) ?? await interaction.guild?.channels.fetch(channelId).catch(() => null);
-  if (!channel || channel.type !== import_discord6.ChannelType.GuildForum) {
+  if (!channel || channel.type !== import_discord7.ChannelType.GuildForum) {
     await interaction.reply({
       content: "\u274C \u8BF7\u9009\u62E9**\u8BBA\u575B\u9891\u9053**\uFF0C\u4E0D\u652F\u6301\u666E\u901A\u6587\u5B57\u9891\u9053\u6216\u5176\u4ED6\u7C7B\u578B\u9891\u9053\u3002",
       flags: 64
@@ -132094,15 +132212,15 @@ async function handleSearchChannelSelect(interaction) {
   });
 }
 async function handleSearchKeywordBtn(interaction) {
-  const modal = new import_discord6.ModalBuilder().setCustomId(SEARCH_KEYWORD_MODAL_ID).setTitle("\u5173\u952E\u8BCD\u641C\u7D22\u6D88\u606F");
-  const input = new import_discord6.TextInputBuilder().setCustomId(SEARCH_KEYWORD_INPUT).setLabel("\u5173\u952E\u8BCD").setPlaceholder("\u8BF7\u8F93\u5165\u8981\u641C\u7D22\u7684\u5173\u952E\u8BCD").setStyle(import_discord6.TextInputStyle.Short).setRequired(true).setMaxLength(100);
-  modal.addComponents(new import_discord6.ActionRowBuilder().addComponents(input));
+  const modal = new import_discord7.ModalBuilder().setCustomId(SEARCH_KEYWORD_MODAL_ID).setTitle("\u5173\u952E\u8BCD\u641C\u7D22\u6D88\u606F");
+  const input = new import_discord7.TextInputBuilder().setCustomId(SEARCH_KEYWORD_INPUT).setLabel("\u5173\u952E\u8BCD").setPlaceholder("\u8BF7\u8F93\u5165\u8981\u641C\u7D22\u7684\u5173\u952E\u8BCD").setStyle(import_discord7.TextInputStyle.Short).setRequired(true).setMaxLength(100);
+  modal.addComponents(new import_discord7.ActionRowBuilder().addComponents(input));
   await interaction.showModal(modal);
 }
 async function handleSearchNicknameBtn(interaction) {
-  const modal = new import_discord6.ModalBuilder().setCustomId(SEARCH_NICKNAME_MODAL_ID).setTitle("\u6309\u4F5C\u8005\u641C\u7D22\u4F5C\u54C1");
-  const input = new import_discord6.TextInputBuilder().setCustomId(SEARCH_NICKNAME_INPUT).setLabel("\u4F5C\u8005\u7528\u6237\u540D / \u6635\u79F0").setPlaceholder("\u8BF7\u8F93\u5165\u4F5C\u8005\u7684\u7528\u6237\u540D\u6216 Discord \u6807\u7B7E").setStyle(import_discord6.TextInputStyle.Short).setRequired(true).setMaxLength(100);
-  modal.addComponents(new import_discord6.ActionRowBuilder().addComponents(input));
+  const modal = new import_discord7.ModalBuilder().setCustomId(SEARCH_NICKNAME_MODAL_ID).setTitle("\u6309\u4F5C\u8005\u641C\u7D22\u4F5C\u54C1");
+  const input = new import_discord7.TextInputBuilder().setCustomId(SEARCH_NICKNAME_INPUT).setLabel("\u4F5C\u8005\u7528\u6237\u540D / \u6635\u79F0").setPlaceholder("\u8BF7\u8F93\u5165\u4F5C\u8005\u7684\u7528\u6237\u540D\u6216 Discord \u6807\u7B7E").setStyle(import_discord7.TextInputStyle.Short).setRequired(true).setMaxLength(100);
+  modal.addComponents(new import_discord7.ActionRowBuilder().addComponents(input));
   await interaction.showModal(modal);
 }
 async function handleSearchKeywordModal(interaction) {
@@ -132151,7 +132269,7 @@ async function handleSearchKeywordModal(interaction) {
     let allResults = [];
     let totalScanned = 0;
     let targetName = rawChannel.name;
-    if (rawChannel.type === import_discord6.ChannelType.GuildForum) {
+    if (rawChannel.type === import_discord7.ChannelType.GuildForum) {
       const forum = rawChannel;
       const { threads: activeThreads } = await forum.threads.fetchActive();
       const { threads: archivedThreads } = await forum.threads.fetchArchived({ limit: 25 });
@@ -132189,7 +132307,7 @@ async function handleSearchKeywordModal(interaction) {
       );
       return;
     }
-    const embed = new import_discord6.EmbedBuilder().setTitle(`\u{1F50D} \u5173\u952E\u8BCD\u641C\u7D22\uFF1A\u300C${keyword}\u300D`).setColor(5793266).setFooter({
+    const embed = new import_discord7.EmbedBuilder().setTitle(`\u{1F50D} \u5173\u952E\u8BCD\u641C\u7D22\uFF1A\u300C${keyword}\u300D`).setColor(5793266).setFooter({
       text: `#${targetName} \xB7 \u5DF2\u626B\u63CF ${totalScanned} \u6761\u6D88\u606F\uFF0C\u663E\u793A\u524D ${allResults.length} \u6761`
     });
     const lines = allResults.map(({ msg, threadId, threadName }) => {
@@ -132244,7 +132362,7 @@ async function handleSearchNicknameModal(interaction) {
       arr.push(row);
       byAuthor.set(key, arr);
     }
-    const embed = new import_discord6.EmbedBuilder().setTitle(`\u{1F3A8} \u4F5C\u8005\u641C\u7D22\uFF1A\u300C${query}\u300D`).setColor(5793266).setFooter({ text: `\u5171\u627E\u5230 ${allRows.length} \u4EF6\u4F5C\u54C1` });
+    const embed = new import_discord7.EmbedBuilder().setTitle(`\u{1F3A8} \u4F5C\u8005\u641C\u7D22\uFF1A\u300C${query}\u300D`).setColor(5793266).setFooter({ text: `\u5171\u627E\u5230 ${allRows.length} \u4EF6\u4F5C\u54C1` });
     const sections = [];
     for (const [key, artworks] of byAuthor) {
       const [authorId, authorTag] = key.split("|");
@@ -132270,9 +132388,9 @@ async function handleSearchNicknameModal(interaction) {
 }
 
 // src/bot/handlers/complaintHandler.ts
-var import_discord7 = __toESM(require_src2(), 1);
+var import_discord8 = __toESM(require_src2(), 1);
 function buildComplaintPanel() {
-  const embed = new import_discord7.EmbedBuilder().setTitle("\u{1F4E2} \u533F\u540D\u6295\u8BC9").setDescription(
+  const embed = new import_discord8.EmbedBuilder().setTitle("\u{1F4E2} \u533F\u540D\u6295\u8BC9").setDescription(
     [
       "\u5982\u679C\u4F60\u6709\u4EFB\u4F55\u60F3\u8981\u53CD\u6620\u7684\u95EE\u9898\uFF0C\u53EF\u4EE5\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\u8FDB\u884C**\u533F\u540D\u6295\u8BC9**\u3002",
       "",
@@ -132282,8 +132400,8 @@ function buildComplaintPanel() {
       "\u2022 \u8BF7\u5982\u5B9E\u63CF\u8FF0\u95EE\u9898\uFF0C\u5207\u52FF\u6EE5\u7528"
     ].join("\n")
   ).setColor(16753920).setFooter({ text: "\u6295\u8BC9\u5B8C\u5168\u533F\u540D\uFF0C\u7BA1\u7406\u5458\u65E0\u6CD5\u5F97\u77E5\u6295\u8BC9\u8005\u8EAB\u4EFD" });
-  const button = new import_discord7.ButtonBuilder().setCustomId(COMPLAINT_PANEL_CUSTOM_ID).setLabel("\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord7.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
-  const row = new import_discord7.ActionRowBuilder().addComponents(button);
+  const button = new import_discord8.ButtonBuilder().setCustomId(COMPLAINT_PANEL_CUSTOM_ID).setLabel("\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord8.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
+  const row = new import_discord8.ActionRowBuilder().addComponents(button);
   return { embeds: [embed], components: [row] };
 }
 async function handleComplaintButton(interaction) {
@@ -132296,13 +132414,13 @@ async function handleComplaintButton(interaction) {
   try {
     const thread = await channel.threads.create({
       name: `\u6295\u8BC9\u5B50\u533A-${Date.now().toString(36)}`,
-      type: import_discord7.ChannelType.PrivateThread,
+      type: import_discord8.ChannelType.PrivateThread,
       invitable: false
     });
     await thread.members.add(interaction.user.id);
-    const submitBtn = new import_discord7.ButtonBuilder().setCustomId(COMPLAINT_THREAD_SUBMIT_ID).setLabel("\u786E\u8BA4\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord7.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
-    const cancelBtn = new import_discord7.ButtonBuilder().setCustomId(COMPLAINT_THREAD_CANCEL_ID).setLabel("\u53D6\u6D88").setStyle(import_discord7.ButtonStyle.Secondary);
-    const row = new import_discord7.ActionRowBuilder().addComponents(submitBtn, cancelBtn);
+    const submitBtn = new import_discord8.ButtonBuilder().setCustomId(COMPLAINT_THREAD_SUBMIT_ID).setLabel("\u786E\u8BA4\u63D0\u4EA4\u6295\u8BC9").setStyle(import_discord8.ButtonStyle.Danger).setEmoji("\u{1F4E2}");
+    const cancelBtn = new import_discord8.ButtonBuilder().setCustomId(COMPLAINT_THREAD_CANCEL_ID).setLabel("\u53D6\u6D88").setStyle(import_discord8.ButtonStyle.Secondary);
+    const row = new import_discord8.ActionRowBuilder().addComponents(submitBtn, cancelBtn);
     await thread.send({
       content: [
         `\u4F60\u597D <@${interaction.user.id}>\uFF01\u8FD9\u662F\u4F60\u7684**\u533F\u540D\u6295\u8BC9\u4E13\u5C5E\u5B50\u533A**\uFF0C\u53EA\u6709\u4F60\u548C Bot \u53EF\u89C1\u3002`,
@@ -132353,7 +132471,7 @@ async function handleComplaintThreadSubmit(interaction, client) {
     if (complaintChannelId) {
       const complaintChannel = await client.channels.fetch(complaintChannelId).catch(() => null);
       if (complaintChannel && complaintChannel.isTextBased()) {
-        const embed = new import_discord7.EmbedBuilder().setTitle(`\u{1F4E2} \u533F\u540D\u6295\u8BC9\u5DE5\u5355 #${ticketId}`).setColor(16753920).setFooter({ text: "\u6B64\u6295\u8BC9\u5B8C\u5168\u533F\u540D\uFF0C\u7CFB\u7EDF\u672A\u8BB0\u5F55\u6295\u8BC9\u8005\u8EAB\u4EFD" }).setTimestamp();
+        const embed = new import_discord8.EmbedBuilder().setTitle(`\u{1F4E2} \u533F\u540D\u6295\u8BC9\u5DE5\u5355 #${ticketId}`).setColor(16753920).setFooter({ text: "\u6B64\u6295\u8BC9\u5B8C\u5168\u533F\u540D\uFF0C\u7CFB\u7EDF\u672A\u8BB0\u5F55\u6295\u8BC9\u8005\u8EAB\u4EFD" }).setTimestamp();
         if (textContent) {
           embed.setDescription(textContent);
         }
@@ -132396,7 +132514,7 @@ async function handleComplaintThreadCancel(interaction) {
 }
 
 // src/bot/handlers/statsHandler.ts
-var import_discord8 = __toESM(require_src2(), 1);
+var import_discord9 = __toESM(require_src2(), 1);
 var debounceTimers = /* @__PURE__ */ new Map();
 async function getStats(guild) {
   await guild.members.fetch();
@@ -132484,13 +132602,13 @@ async function handleSetupStats(interaction, client) {
     }
     const everyone = guild.roles.everyone;
     const channelOptions = {
-      type: import_discord8.ChannelType.GuildVoice,
+      type: import_discord9.ChannelType.GuildVoice,
       ...categoryOption ? { parent: categoryOption.id } : {},
       permissionOverwrites: [
         {
           id: everyone.id,
-          deny: [import_discord8.PermissionFlagsBits.Connect],
-          allow: [import_discord8.PermissionFlagsBits.ViewChannel]
+          deny: [import_discord9.PermissionFlagsBits.Connect],
+          allow: [import_discord9.PermissionFlagsBits.ViewChannel]
         }
       ]
     };
@@ -132522,19 +132640,25 @@ async function handleSetupStats(interaction, client) {
 }
 
 // src/bot/client.ts
+function checkIsAdmin(guildId, member) {
+  const adminRoleId = guildId ? getConfig(guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
+  const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? !!(BigInt(member.permissions) & BigInt(import_discord10.PermissionFlagsBits.Administrator)) : member.permissions.has(import_discord10.PermissionFlagsBits.Administrator) : false;
+  const hasAdminRole = adminRoleId ? member?.roles instanceof Object && "cache" in member.roles ? member.roles.cache.has(adminRoleId) : false : false;
+  return isDiscordAdmin || hasAdminRole;
+}
 async function startBot(token) {
-  const client = new import_discord9.Client({
+  const client = new import_discord10.Client({
     intents: [
-      import_discord9.GatewayIntentBits.Guilds,
-      import_discord9.GatewayIntentBits.GuildMessages,
-      import_discord9.GatewayIntentBits.GuildMembers,
-      import_discord9.GatewayIntentBits.MessageContent,
-      import_discord9.GatewayIntentBits.GuildMessageReactions,
-      import_discord9.GatewayIntentBits.DirectMessages
+      import_discord10.GatewayIntentBits.Guilds,
+      import_discord10.GatewayIntentBits.GuildMessages,
+      import_discord10.GatewayIntentBits.GuildMembers,
+      import_discord10.GatewayIntentBits.MessageContent,
+      import_discord10.GatewayIntentBits.GuildMessageReactions,
+      import_discord10.GatewayIntentBits.DirectMessages
     ],
-    partials: [import_discord9.Partials.Message, import_discord9.Partials.Channel, import_discord9.Partials.Reaction]
+    partials: [import_discord10.Partials.Message, import_discord10.Partials.Channel, import_discord10.Partials.Reaction]
   });
-  client.once(import_discord9.Events.ClientReady, async (c) => {
+  client.once(import_discord10.Events.ClientReady, async (c) => {
     logger.info(`Discord bot logged in as ${c.user.tag}`);
     await loadAllConfigs();
     const guildIds = c.guilds.cache.map((g) => g.id);
@@ -132542,21 +132666,31 @@ async function startBot(token) {
     await runAutoDeleteScheduler(client);
     startStatsScheduler(client);
   });
-  client.on(import_discord9.Events.GuildCreate, async (guild) => {
+  client.on(import_discord10.Events.GuildCreate, async (guild) => {
     const guildIds = [guild.id];
     await registerCommands(token, client.user.id, guildIds);
     logger.info({ guildId: guild.id }, "Registered commands for new guild");
   });
-  client.on(import_discord9.Events.InteractionCreate, async (interaction) => {
+  client.on(import_discord10.Events.InteractionCreate, async (interaction) => {
     try {
       if (interaction.isChatInputCommand()) {
         const { commandName } = interaction;
+        const member = interaction.member;
+        const isAdmin = checkIsAdmin(interaction.guildId, member);
         if (commandName === REVIEW_PANEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const panel = buildReviewPanel();
           const guildChannel = interaction.channel;
           if (guildChannel) await guildChannel.send(panel);
           await interaction.reply({ content: "\u5BA1\u6838\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
         } else if (commandName === ARTWORK_PANEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const panel = buildArtworkPanel();
           const guildChannel = interaction.channel;
           if (guildChannel) await guildChannel.send(panel);
@@ -132564,6 +132698,10 @@ async function startBot(token) {
         } else if (commandName === ARTWORK_UPLOAD_CMD) {
           await handleArtworkUpload(interaction, client);
         } else if (commandName === SET_LOG_CHANNEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const channel = interaction.options.getChannel("channel", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_LOG_CHANNEL, channel.id);
@@ -132572,6 +132710,10 @@ async function startBot(token) {
             flags: 64
           });
         } else if (commandName === SET_ADMIN_ROLE_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const role = interaction.options.getRole("role", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE, role.id);
@@ -132580,6 +132722,10 @@ async function startBot(token) {
             flags: 64
           });
         } else if (commandName === SET_APPROVE_ROLE_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const role = interaction.options.getRole("role", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_APPROVE_ROLE, role.id);
@@ -132588,6 +132734,10 @@ async function startBot(token) {
             flags: 64
           });
         } else if (commandName === DECODE_FILENAME_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const code = interaction.options.getString("code", true).trim();
           const info = decodeFileInfo(code);
           if (!info) {
@@ -132612,11 +132762,19 @@ async function startBot(token) {
         } else if (commandName === DELETE_THREAD_CMD) {
           await handleDeleteThread(interaction);
         } else if (commandName === COMPLAINT_PANEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const panel = buildComplaintPanel();
           const guildChannel = interaction.channel;
           if (guildChannel) await guildChannel.send(panel);
           await interaction.reply({ content: "\u6295\u8BC9\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
         } else if (commandName === SET_COMPLAINT_CHANNEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const channel = interaction.options.getChannel("channel", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_COMPLAINT_CHANNEL, channel.id);
@@ -132625,6 +132783,10 @@ async function startBot(token) {
             flags: 64
           });
         } else if (commandName === SEARCH_PANEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           const panel = buildSearchPanel();
           let guildChannel = interaction.channel;
           if (!guildChannel && interaction.channelId) {
@@ -132637,29 +132799,25 @@ async function startBot(token) {
           await guildChannel.send(panel);
           await interaction.reply({ content: "\u641C\u7D22\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
         } else if (commandName === SETUP_STATS_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
           logger.info({ guildId: interaction.guildId }, "setup_stats interaction received");
           await handleSetupStats(interaction, client);
         } else if (commandName === BOT_SAY_CMD) {
-          const adminRoleId = interaction.guildId ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
-          const member = interaction.member;
-          const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? BigInt(member.permissions) & BigInt(import_discord9.PermissionFlagsBits.Administrator) : member.permissions.has(import_discord9.PermissionFlagsBits.Administrator) : false;
-          const hasAdminRole = adminRoleId ? member?.roles instanceof Object && "cache" in member.roles ? member.roles.cache.has(adminRoleId) : false : false;
-          if (!isDiscordAdmin && !hasAdminRole) {
+          if (!isAdmin) {
             await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
             return;
           }
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
-          const modal = new import_discord9.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
-          const textInput = new import_discord9.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord9.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
-          modal.addComponents(new import_discord9.ActionRowBuilder().addComponents(textInput));
+          const modal = new import_discord10.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
+          const textInput = new import_discord10.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
+          modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(textInput));
           await interaction.showModal(modal);
         } else if (commandName === BOT_EDIT_CMD) {
-          const adminRoleId = interaction.guildId ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
-          const member = interaction.member;
-          const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? BigInt(member.permissions) & BigInt(import_discord9.PermissionFlagsBits.Administrator) : member.permissions.has(import_discord9.PermissionFlagsBits.Administrator) : false;
-          const hasAdminRole = adminRoleId ? member?.roles instanceof Object && "cache" in member.roles ? member.roles.cache.has(adminRoleId) : false : false;
-          if (!isDiscordAdmin && !hasAdminRole) {
+          if (!isAdmin) {
             await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
             return;
           }
@@ -132680,9 +132838,9 @@ async function startBot(token) {
             await interaction.reply({ content: "\u274C \u8BE5\u6D88\u606F\u4E0D\u662F Bot \u53D1\u9001\u7684\uFF0C\u65E0\u6CD5\u7F16\u8F91\u3002", flags: 64 });
             return;
           }
-          const modal = new import_discord9.ModalBuilder().setCustomId(`${BOT_EDIT_MODAL_PREFIX}${channelId}:${messageId}`).setTitle("\u7F16\u8F91 Bot \u6D88\u606F");
-          const textInput = new import_discord9.TextInputBuilder().setCustomId(BOT_EDIT_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord9.TextInputStyle.Paragraph).setValue(originalMsg.content).setMaxLength(2e3).setRequired(true);
-          modal.addComponents(new import_discord9.ActionRowBuilder().addComponents(textInput));
+          const modal = new import_discord10.ModalBuilder().setCustomId(`${BOT_EDIT_MODAL_PREFIX}${channelId}:${messageId}`).setTitle("\u7F16\u8F91 Bot \u6D88\u606F");
+          const textInput = new import_discord10.TextInputBuilder().setCustomId(BOT_EDIT_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setValue(originalMsg.content).setMaxLength(2e3).setRequired(true);
+          modal.addComponents(new import_discord10.ActionRowBuilder().addComponents(textInput));
           await interaction.showModal(modal);
         } else if (commandName === LOOKUP_TRACE_CMD) {
           await interaction.deferReply({ flags: 64 });
@@ -132738,6 +132896,33 @@ async function startBot(token) {
               `**\u539F\u59CB\u6587\u4EF6\u540D\uFF1A** \`${row.filename}\``
             ].join("\n")
           );
+        } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          const panel = buildTriviaPanel();
+          const guildChannel = interaction.channel;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "\u95F2\u8BDD\u9762\u677F\u5DF2\u53D1\u9001\uFF01", flags: 64 });
+        } else if (commandName === ADD_TRIVIA_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          await handleAddTrivia(interaction);
+        } else if (commandName === DELETE_TRIVIA_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          await handleDeleteTrivia(interaction);
+        } else if (commandName === LIST_TRIVIA_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          await handleListTrivia(interaction);
         }
       } else if (interaction.isButton()) {
         const { customId } = interaction;
@@ -132778,6 +132963,8 @@ async function startBot(token) {
         } else if (customId.startsWith(ARTWORK_NOTIFY_BTN_PREFIX)) {
           const channelId = customId.slice(ARTWORK_NOTIFY_BTN_PREFIX.length);
           await handleArtworkNotifyBtn(interaction, channelId);
+        } else if (customId === TRIVIA_DRAW_BTN_ID) {
+          await handleTriviaDrawButton(interaction);
         }
       } else if (interaction.isChannelSelectMenu()) {
         const { customId } = interaction;
@@ -132828,22 +133015,24 @@ async function startBot(token) {
           await msg.edit({ content: newContent });
           await interaction.reply({ content: "\u2705 \u6D88\u606F\u5DF2\u66F4\u65B0\u3002", flags: 64 });
           logger.info({ adminId: interaction.user.id, channelId, messageId }, "Admin edited bot message");
+        } else if (customId === TRIVIA_ADD_MODAL_ID) {
+          await handleAddTriviaModal(interaction);
         }
       }
     } catch (err) {
       logger.error({ err }, "Unhandled interaction error");
     }
   });
-  client.on(import_discord9.Events.GuildMemberAdd, (member) => {
+  client.on(import_discord10.Events.GuildMemberAdd, (member) => {
     scheduleStatsUpdate(member.guild);
   });
-  client.on(import_discord9.Events.GuildMemberRemove, (member) => {
+  client.on(import_discord10.Events.GuildMemberRemove, (member) => {
     if (member.guild) scheduleStatsUpdate(member.guild);
   });
-  client.on(import_discord9.Events.GuildMemberUpdate, (_oldMember, newMember) => {
+  client.on(import_discord10.Events.GuildMemberUpdate, (_oldMember, newMember) => {
     scheduleStatsUpdate(newMember.guild);
   });
-  client.on(import_discord9.Events.Error, (err) => {
+  client.on(import_discord10.Events.Error, (err) => {
     logger.error({ err }, "Discord client error");
   });
   try {

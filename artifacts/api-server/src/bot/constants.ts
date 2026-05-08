@@ -55,6 +55,14 @@ export const BOT_EDIT_CMD = "bot编辑消息";
 export const BOT_EDIT_MODAL_PREFIX = "bot_edit_modal_";
 export const BOT_EDIT_TEXT_INPUT = "bot_edit_text_input";
 
+export const SETUP_TRIVIA_PANEL_CMD = "setup_闲话面板";
+export const ADD_TRIVIA_CMD = "添加闲话";
+export const DELETE_TRIVIA_CMD = "删除闲话";
+export const LIST_TRIVIA_CMD = "列出闲话";
+export const TRIVIA_DRAW_BTN_ID = "trivia_draw_btn";
+export const TRIVIA_ADD_MODAL_ID = "trivia_add_modal";
+export const TRIVIA_ADD_TEXT_INPUT = "trivia_add_text_input";
+
 export const ARTWORK_SUBSCRIBE_PREFIX = "artwork_subscribe_";
 export const ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 export const ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";

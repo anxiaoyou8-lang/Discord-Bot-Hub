@@ -59,6 +59,14 @@ import {
   scheduleStatsUpdate,
 } from "./handlers/statsHandler.js";
 import {
+  buildTriviaPanel,
+  handleTriviaDrawButton,
+  handleAddTrivia,
+  handleAddTriviaModal,
+  handleDeleteTrivia,
+  handleListTrivia,
+} from "./handlers/triviaHandler.js";
+import {
   getConfig,
   setConfig,
   loadAllConfigs,
@@ -109,6 +117,12 @@ import {
   BOT_EDIT_CMD,
   BOT_EDIT_MODAL_PREFIX,
   BOT_EDIT_TEXT_INPUT,
+  SETUP_TRIVIA_PANEL_CMD,
+  ADD_TRIVIA_CMD,
+  DELETE_TRIVIA_CMD,
+  LIST_TRIVIA_CMD,
+  TRIVIA_DRAW_BTN_ID,
+  TRIVIA_ADD_MODAL_ID,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -118,6 +132,24 @@ import {
   extractJsonWatermark,
   extractTextWatermark,
 } from "./watermark.js";
+
+function checkIsAdmin(
+  guildId: string | null,
+  member: GuildMember | null
+): boolean {
+  const adminRoleId = guildId ? getConfig(guildId, CONFIG_KEY_ADMIN_ROLE) : undefined;
+  const isDiscordAdmin = member?.permissions
+    ? typeof member.permissions === "string"
+      ? !!(BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator))
+      : member.permissions.has(PermissionFlagsBits.Administrator)
+    : false;
+  const hasAdminRole = adminRoleId
+    ? member?.roles instanceof Object && "cache" in member.roles
+      ? member.roles.cache.has(adminRoleId)
+      : false
+    : false;
+  return isDiscordAdmin || hasAdminRole;
+}
 
 export async function startBot(token: string) {
   const client = new Client({
@@ -152,13 +184,18 @@ export async function startBot(token: string) {
       if (interaction.isChatInputCommand()) {
         const { commandName } = interaction;
 
+        const member = interaction.member as GuildMember | null;
+        const isAdmin = checkIsAdmin(interaction.guildId, member);
+
         if (commandName === REVIEW_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const panel = buildReviewPanel();
           const guildChannel = interaction.channel as GuildTextBasedChannel | null;
           if (guildChannel) await guildChannel.send(panel);
           await interaction.reply({ content: "审核面板已发送！", flags: 64 });
 
         } else if (commandName === ARTWORK_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const panel = buildArtworkPanel();
           const guildChannel = interaction.channel as GuildTextBasedChannel | null;
           if (guildChannel) await guildChannel.send(panel);
@@ -168,6 +205,7 @@ export async function startBot(token: string) {
           await handleArtworkUpload(interaction, client);
 
         } else if (commandName === SET_LOG_CHANNEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const channel = interaction.options.getChannel("channel", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_LOG_CHANNEL, channel.id);
@@ -177,6 +215,7 @@ export async function startBot(token: string) {
           });
 
         } else if (commandName === SET_ADMIN_ROLE_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const role = interaction.options.getRole("role", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE, role.id);
@@ -186,6 +225,7 @@ export async function startBot(token: string) {
           });
 
         } else if (commandName === SET_APPROVE_ROLE_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const role = interaction.options.getRole("role", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_APPROVE_ROLE, role.id);
@@ -195,6 +235,7 @@ export async function startBot(token: string) {
           });
 
         } else if (commandName === DECODE_FILENAME_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const code = interaction.options.getString("code", true).trim();
           const info = decodeFileInfo(code);
           if (!info) {
@@ -222,12 +263,14 @@ export async function startBot(token: string) {
           await handleDeleteThread(interaction);
 
         } else if (commandName === COMPLAINT_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const panel = buildComplaintPanel();
           const guildChannel = interaction.channel as GuildTextBasedChannel | null;
           if (guildChannel) await guildChannel.send(panel);
           await interaction.reply({ content: "投诉面板已发送！", flags: 64 });
 
         } else if (commandName === SET_COMPLAINT_CHANNEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const channel = interaction.options.getChannel("channel", true);
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_COMPLAINT_CHANNEL, channel.id);
@@ -237,6 +280,7 @@ export async function startBot(token: string) {
           });
 
         } else if (commandName === SEARCH_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const panel = buildSearchPanel();
           let guildChannel = interaction.channel as GuildTextBasedChannel | null;
           if (!guildChannel && interaction.channelId) {
@@ -250,30 +294,12 @@ export async function startBot(token: string) {
           await interaction.reply({ content: "搜索面板已发送！", flags: 64 });
 
         } else if (commandName === SETUP_STATS_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           logger.info({ guildId: interaction.guildId }, "setup_stats interaction received");
           await handleSetupStats(interaction, client);
 
         } else if (commandName === BOT_SAY_CMD) {
-          // 权限检查：Discord 管理员 OR 已配置的管理员身份组
-          const adminRoleId = interaction.guildId
-            ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE)
-            : undefined;
-          const member = interaction.member as GuildMember | null;
-          const isDiscordAdmin = member?.permissions
-            ? (typeof member.permissions === "string"
-                ? BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator)
-                : member.permissions.has(PermissionFlagsBits.Administrator))
-            : false;
-          const hasAdminRole = adminRoleId
-            ? member?.roles instanceof Object && "cache" in member.roles
-              ? member.roles.cache.has(adminRoleId)
-              : false
-            : false;
-
-          if (!isDiscordAdmin && !hasAdminRole) {
-            await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 });
-            return;
-          }
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
 
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
@@ -294,26 +320,7 @@ export async function startBot(token: string) {
           await interaction.showModal(modal);
 
         } else if (commandName === BOT_EDIT_CMD) {
-          // 权限检查（与 bot发送消息 相同）
-          const adminRoleId = interaction.guildId
-            ? getConfig(interaction.guildId, CONFIG_KEY_ADMIN_ROLE)
-            : undefined;
-          const member = interaction.member as GuildMember | null;
-          const isDiscordAdmin = member?.permissions
-            ? (typeof member.permissions === "string"
-                ? BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator)
-                : member.permissions.has(PermissionFlagsBits.Administrator))
-            : false;
-          const hasAdminRole = adminRoleId
-            ? member?.roles instanceof Object && "cache" in member.roles
-              ? member.roles.cache.has(adminRoleId)
-              : false
-            : false;
-
-          if (!isDiscordAdmin && !hasAdminRole) {
-            await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 });
-            return;
-          }
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
 
           const messageId = interaction.options.getString("message_id", true);
           const targetChannel = interaction.options.getChannel("channel");
@@ -421,6 +428,25 @@ export async function startBot(token: string) {
               `**原始文件名：** \`${row.filename}\``,
             ].join("\n")
           );
+
+        } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          const panel = buildTriviaPanel();
+          const guildChannel = interaction.channel as GuildTextBasedChannel | null;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "闲话面板已发送！", flags: 64 });
+
+        } else if (commandName === ADD_TRIVIA_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          await handleAddTrivia(interaction);
+
+        } else if (commandName === DELETE_TRIVIA_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          await handleDeleteTrivia(interaction);
+
+        } else if (commandName === LIST_TRIVIA_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          await handleListTrivia(interaction);
         }
 
       } else if (interaction.isButton()) {
@@ -477,6 +503,9 @@ export async function startBot(token: string) {
         } else if (customId.startsWith(ARTWORK_NOTIFY_BTN_PREFIX)) {
           const channelId = customId.slice(ARTWORK_NOTIFY_BTN_PREFIX.length);
           await handleArtworkNotifyBtn(interaction, channelId);
+
+        } else if (customId === TRIVIA_DRAW_BTN_ID) {
+          await handleTriviaDrawButton(interaction);
         }
 
       } else if (interaction.isChannelSelectMenu()) {
@@ -544,6 +573,9 @@ export async function startBot(token: string) {
           await msg.edit({ content: newContent });
           await interaction.reply({ content: "✅ 消息已更新。", flags: 64 });
           logger.info({ adminId: interaction.user.id, channelId, messageId }, "Admin edited bot message");
+
+        } else if (customId === TRIVIA_ADD_MODAL_ID) {
+          await handleAddTriviaModal(interaction);
         }
       }
     } catch (err) {
