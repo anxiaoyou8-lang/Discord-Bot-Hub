@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, boolean, unique } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -86,8 +86,26 @@ export const suggestionTicketsTable = pgTable("suggestion_tickets", {
   id: serial("id").primaryKey(),
   guildId: text("guild_id").notNull(),
   content: text("content").notNull(),
+  category: text("category"),
+  status: text("status").notNull().default("pending"),
+  upvotes: integer("upvotes").notNull().default(0),
+  downvotes: integer("downvotes").notNull().default(0),
+  messageId: text("message_id"),
+  channelId: text("channel_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const suggestionVotesTable = pgTable(
+  "suggestion_votes",
+  {
+    id: serial("id").primaryKey(),
+    suggestionId: integer("suggestion_id").notNull(),
+    userId: text("user_id").notNull(),
+    voteType: text("vote_type").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [unique("uniq_suggestion_user").on(table.suggestionId, table.userId)]
+);
 
 export const triviaTable = pgTable("trivia", {
   id: serial("id").primaryKey(),

@@ -70,6 +70,8 @@ import {
   buildSuggestionPanel,
   handleSuggestionButton,
   handleSuggestionModal,
+  handleSuggestionVote,
+  handleSuggestionStatus,
 } from "./handlers/suggestionHandler.js";
 import {
   getConfig,
@@ -133,6 +135,10 @@ import {
   SET_SUGGESTION_CHANNEL_CMD,
   SUGGESTION_PANEL_CUSTOM_ID,
   SUGGESTION_MODAL_ID,
+  SUGGESTION_UPVOTE_PREFIX,
+  SUGGESTION_DOWNVOTE_PREFIX,
+  SUGGESTION_ACCEPT_PREFIX,
+  SUGGESTION_REJECT_PREFIX,
 } from "./constants.js";
 import { decodeFileInfo } from "./filenameCodec.js";
 import { db, artworkWatermarksTable } from "@workspace/db";
@@ -533,6 +539,22 @@ export async function startBot(token: string) {
 
         } else if (customId === SUGGESTION_PANEL_CUSTOM_ID) {
           await handleSuggestionButton(interaction);
+
+        } else if (customId.startsWith(SUGGESTION_UPVOTE_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_UPVOTE_PREFIX.length), 10);
+          await handleSuggestionVote(interaction, id, "up", client);
+
+        } else if (customId.startsWith(SUGGESTION_DOWNVOTE_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_DOWNVOTE_PREFIX.length), 10);
+          await handleSuggestionVote(interaction, id, "down", client);
+
+        } else if (customId.startsWith(SUGGESTION_ACCEPT_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_ACCEPT_PREFIX.length), 10);
+          await handleSuggestionStatus(interaction, id, "accepted", client);
+
+        } else if (customId.startsWith(SUGGESTION_REJECT_PREFIX)) {
+          const id = parseInt(customId.slice(SUGGESTION_REJECT_PREFIX.length), 10);
+          await handleSuggestionStatus(interaction, id, "rejected", client);
         }
 
       } else if (interaction.isChannelSelectMenu()) {
