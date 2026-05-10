@@ -85,3 +85,11 @@ export const ARTWORK_NOTIFY_BTN_PREFIX = "artwork_notify_btn_";
 export const ARTWORK_NOTIFY_MODAL_PREFIX = "artwork_notify_modal_";
 export const ARTWORK_NOTIFY_TEXT_INPUT = "artwork_notify_text_input";
 export const NOTIFY_SUBSCRIBERS_CMD = "通知订阅者";
+
+export const BAN_PANEL_CMD = "setup_封禁面板";
+export const SET_BAN_CHANNEL_CMD = "set_ban_channel";
+export const BAN_SELECT_ID = "ban_member_select";
+export const BAN_MODAL_PREFIX = "ban_modal_";
+export const BAN_REASON_INPUT = "ban_reason_input";
+export const BAN_EVIDENCE_INPUT = "ban_evidence_input";
+export const BAN_ADMIN_CONTACT = "vincentsk__31051";

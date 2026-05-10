@@ -28,6 +28,8 @@ import {
   SUGGESTION_PANEL_CMD,
   SET_SUGGESTION_CHANNEL_CMD,
   NOTIFY_SUBSCRIBERS_CMD,
+  BAN_PANEL_CMD,
+  SET_BAN_CHANNEL_CMD,
 } from "./constants.js";
 
 const uploadArtworkCmd = new SlashCommandBuilder()
@@ -216,4 +218,15 @@ export const commands = [
   new SlashCommandBuilder()
     .setName(NOTIFY_SUBSCRIBERS_CMD)
     .setDescription("向当前作品帖的订阅者发送更新通知（仅作品作者可用）"),
+
+  new SlashCommandBuilder()
+    .setName(BAN_PANEL_CMD)
+    .setDescription("在当前频道发送封禁管理面板（仅管理员可用）"),
+
+  new SlashCommandBuilder()
+    .setName(SET_BAN_CHANNEL_CMD)
+    .setDescription("设置封禁公告发送的频道（仅管理员可用）")
+    .addChannelOption((opt) =>
+      opt.setName("channel").setDescription("封禁公告频道").setRequired(true)
+    ),
 ].map((cmd) => cmd.toJSON());

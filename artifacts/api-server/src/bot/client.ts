@@ -68,6 +68,11 @@ import {
   handleListTrivia,
 } from "./handlers/triviaHandler.js";
 import {
+  buildBanPanel,
+  handleBanMemberSelect,
+  handleBanModal,
+} from "./handlers/banHandler.js";
+import {
   buildSuggestionPanel,
   handleSuggestionButton,
   handleSuggestionModal,
@@ -88,6 +93,7 @@ import {
   CONFIG_KEY_APPROVE_ROLE,
   CONFIG_KEY_COMPLAINT_CHANNEL,
   CONFIG_KEY_SUGGESTION_CHANNEL,
+  CONFIG_KEY_BAN_CHANNEL,
 } from "./config.js";
 import {
   REVIEW_PANEL_CUSTOM_ID,
@@ -138,6 +144,10 @@ import {
   TRIVIA_DRAW_BTN_ID,
   TRIVIA_ADD_MODAL_ID,
   NOTIFY_SUBSCRIBERS_CMD,
+  BAN_PANEL_CMD,
+  SET_BAN_CHANNEL_CMD,
+  BAN_SELECT_ID,
+  BAN_MODAL_PREFIX,
   SUGGESTION_PANEL_CMD,
   SET_SUGGESTION_CHANNEL_CMD,
   SUGGESTION_PANEL_CUSTOM_ID,
@@ -472,6 +482,20 @@ export async function startBot(token: string) {
           await setConfig(interaction.guildId, CONFIG_KEY_SUGGESTION_CHANNEL, channel.id);
           await interaction.reply({ content: `已将意见箱工单接收频道设置为 <#${channel.id}>`, flags: 64 });
 
+        } else if (commandName === BAN_PANEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          const panel = buildBanPanel();
+          const guildChannel = interaction.channel as GuildTextBasedChannel | null;
+          if (guildChannel) await guildChannel.send(panel);
+          await interaction.reply({ content: "封禁管理面板已发送！", flags: 64 });
+
+        } else if (commandName === SET_BAN_CHANNEL_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          const channel = interaction.options.getChannel("channel", true);
+          if (!interaction.guildId) return;
+          await setConfig(interaction.guildId, CONFIG_KEY_BAN_CHANNEL, channel.id);
+          await interaction.reply({ content: `已将封禁公告频道设置为 <#${channel.id}>`, flags: 64 });
+
         } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
           if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
           const panel = buildTriviaPanel();
@@ -570,6 +594,13 @@ export async function startBot(token: string) {
           await handleSuggestionRejectBtn(interaction, id);
         }
 
+      } else if (interaction.isUserSelectMenu()) {
+        const { customId } = interaction;
+
+        if (customId === BAN_SELECT_ID) {
+          await handleBanMemberSelect(interaction);
+        }
+
       } else if (interaction.isChannelSelectMenu()) {
         const { customId } = interaction;
 
@@ -592,6 +623,10 @@ export async function startBot(token: string) {
 
         } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
           await handleSearchNicknameModal(interaction);
+
+        } else if (customId.startsWith(BAN_MODAL_PREFIX)) {
+          const targetId = customId.slice(BAN_MODAL_PREFIX.length);
+          await handleBanModal(interaction, targetId, client);
 
         } else if (customId.startsWith(ARTWORK_NOTIFY_MODAL_PREFIX)) {
           const channelId = customId.slice(ARTWORK_NOTIFY_MODAL_PREFIX.length);
