@@ -112492,6 +112492,7 @@ var BAN_EVIDENCE_INPUT = "ban_evidence_input";
 var BAN_ADMIN_CONTACT = "vincentsk__31051";
 
 // src/bot/commands.ts
+var ADMIN = import_discord.PermissionFlagsBits.Administrator;
 var uploadArtworkCmd = new import_discord.SlashCommandBuilder().setName(ARTWORK_UPLOAD_CMD).setDescription("\u4E0A\u4F20\u4F60\u7684\u4F5C\u54C1\uFF08\u6700\u591A10\u4E2A\u6587\u4EF6\uFF09").addStringOption(
   (opt) => opt.setName("title").setDescription("\u4F5C\u54C1\u540D\u79F0").setRequired(true)
 ).addStringOption(
@@ -112507,34 +112508,34 @@ for (let i = 2; i <= 10; i++) {
   );
 }
 var commands = [
-  new import_discord.SlashCommandBuilder().setName(REVIEW_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5BA1\u6838\u4EA4\u4E92\u9762\u677F"),
-  new import_discord.SlashCommandBuilder().setName(ARTWORK_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u4F5C\u54C1\u4EA4\u4E92\u9762\u677F\u8BF4\u660E"),
-  new import_discord.SlashCommandBuilder().setName(SET_LOG_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55\u53D1\u9001\u7684\u79C1\u5BC6\u9891\u9053").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(REVIEW_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5BA1\u6838\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(ARTWORK_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u4F5C\u54C1\u4EA4\u4E92\u9762\u677F\u8BF4\u660E").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(SET_LOG_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u4F5C\u54C1\u83B7\u53D6\u8BB0\u5F55\u53D1\u9001\u7684\u79C1\u5BC6\u9891\u9053").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_ROLE_CMD).setDescription("\u8BBE\u7F6E\u62E5\u6709\u5BA1\u6838\u6743\u9650\u7684\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").addRoleOption(
+  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_ROLE_CMD).setDescription("\u8BBE\u7F6E\u62E5\u6709\u5BA1\u6838\u6743\u9650\u7684\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").setDefaultMemberPermissions(ADMIN).addRoleOption(
     (opt) => opt.setName("role").setDescription("\u7BA1\u7406\u5458\u8EAB\u4EFD\u7EC4").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SET_APPROVE_ROLE_CMD).setDescription("\u8BBE\u7F6E\u5BA1\u6838\u901A\u8FC7\u540E\u81EA\u52A8\u8D4B\u4E88\u7684\u8EAB\u4EFD\u7EC4").addRoleOption(
+  new import_discord.SlashCommandBuilder().setName(SET_APPROVE_ROLE_CMD).setDescription("\u8BBE\u7F6E\u5BA1\u6838\u901A\u8FC7\u540E\u81EA\u52A8\u8D4B\u4E88\u7684\u8EAB\u4EFD\u7EC4").setDefaultMemberPermissions(ADMIN).addRoleOption(
     (opt) => opt.setName("role").setDescription("\u5BA1\u6838\u901A\u8FC7\u8EAB\u4EFD\u7EC4").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(DECODE_FILENAME_CMD).setDescription("\u89E3\u7801\u4F5C\u54C1\u6587\u4EF6\u540D\uFF0C\u8FD8\u539F\u83B7\u53D6\u65F6\u95F4\u4E0E\u83B7\u53D6\u8005\u4FE1\u606F").addStringOption(
+  new import_discord.SlashCommandBuilder().setName(DECODE_FILENAME_CMD).setDescription("\u89E3\u7801\u4F5C\u54C1\u6587\u4EF6\u540D\uFF0C\u8FD8\u539F\u83B7\u53D6\u65F6\u95F4\u4E0E\u83B7\u53D6\u8005\u4FE1\u606F").setDefaultMemberPermissions(ADMIN).addStringOption(
     (opt) => opt.setName("code").setDescription("\u6587\u4EF6\u540D\u4E2D\u7684\u7F16\u7801\u90E8\u5206\uFF08\u53BB\u6389\u6269\u5C55\u540D\u7684\u90E8\u5206\uFF09").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(LOOKUP_TRACE_CMD).setDescription("\u4E0A\u4F20\u6CC4\u9732\u7684\u4F5C\u54C1\u6587\u4EF6\uFF0C\u81EA\u52A8\u63D0\u53D6\u6EAF\u6E90ID\u5E76\u67E5\u627E\u83B7\u53D6\u8005").addAttachmentOption(
+  new import_discord.SlashCommandBuilder().setName(LOOKUP_TRACE_CMD).setDescription("\u4E0A\u4F20\u6CC4\u9732\u7684\u4F5C\u54C1\u6587\u4EF6\uFF0C\u81EA\u52A8\u63D0\u53D6\u6EAF\u6E90ID\u5E76\u67E5\u627E\u83B7\u53D6\u8005").setDefaultMemberPermissions(ADMIN).addAttachmentOption(
     (opt) => opt.setName("file").setDescription("\u4E0A\u4F20\u7591\u4F3C\u6CC4\u9732\u7684\u539F\u59CB\u6587\u4EF6\uFF08\u652F\u6301 PNG / JSON / \u6587\u672C\u7C7B\u6587\u4EF6\uFF09").setRequired(true)
   ),
   new import_discord.SlashCommandBuilder().setName(GO_TOP_CMD).setDescription("\u53D1\u9001\u8DF3\u8F6C\u5230\u672C\u5E16\u9996\u697C\u7684\u94FE\u63A5"),
   new import_discord.SlashCommandBuilder().setName(DELETE_THREAD_CMD).setDescription("\u5220\u9664\u5F53\u524D\u5E16\u5B50\uFF08\u6B64\u64CD\u4F5C\u4E0D\u53EF\u9006\uFF09").setDefaultMemberPermissions(import_discord.PermissionFlagsBits.ManageThreads),
-  new import_discord.SlashCommandBuilder().setName(COMPLAINT_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u533F\u540D\u6295\u8BC9\u4EA4\u4E92\u9762\u677F"),
-  new import_discord.SlashCommandBuilder().setName(SET_COMPLAINT_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u6295\u8BC9\u5DE5\u5355\u7684\u9891\u9053").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(COMPLAINT_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u533F\u540D\u6295\u8BC9\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(SET_COMPLAINT_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u6295\u8BC9\u5DE5\u5355\u7684\u9891\u9053").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u6295\u8BC9\u5DE5\u5355\u63A5\u6536\u9891\u9053").setRequired(true)
   ),
-  new import_discord.SlashCommandBuilder().setName(SEARCH_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u641C\u7D22\u4EA4\u4E92\u9762\u677F"),
-  new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(SEARCH_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u641C\u7D22\u4EA4\u4E92\u9762\u677F").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("category").setDescription("\u5C06\u7EDF\u8BA1\u9891\u9053\u653E\u5728\u54EA\u4E2A\u5206\u7C7B\u4E0B\uFF08\u53EF\u9009\uFF09").setRequired(false).addChannelTypes(import_discord.ChannelType.GuildCategory)
   ),
-  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F\uFF0C\u652F\u6301\u9644\u4EF6\u3001\u56DE\u590D\u3001\u8868\u60C5\u3001\u827E\u7279\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F\uFF0C\u652F\u6301\u9644\u4EF6\u3001\u56DE\u590D\u3001\u8868\u60C5\u3001\u827E\u7279").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053\uFF08\u4E0D\u586B\u5219\u53D1\u9001\u5230\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
       import_discord.ChannelType.GuildText,
       import_discord.ChannelType.GuildAnnouncement,
@@ -112555,7 +112556,7 @@ var commands = [
   ).addAttachmentOption(
     (opt) => opt.setName("file5").setDescription("\u9644\u4EF6 5").setRequired(false)
   ),
-  new import_discord.SlashCommandBuilder().setName(BOT_EDIT_CMD).setDescription("\u7F16\u8F91 Bot \u53D1\u9001\u8FC7\u7684\u4E00\u6761\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addStringOption(
+  new import_discord.SlashCommandBuilder().setName(BOT_EDIT_CMD).setDescription("\u7F16\u8F91 Bot \u53D1\u9001\u8FC7\u7684\u4E00\u6761\u6D88\u606F").setDefaultMemberPermissions(ADMIN).addStringOption(
     (opt) => opt.setName("message_id").setDescription("\u8981\u7F16\u8F91\u7684\u6D88\u606F ID\uFF08\u53F3\u952E\u6D88\u606F \u2192 \u590D\u5236\u6D88\u606F ID\uFF09").setRequired(true)
   ).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u6D88\u606F\u6240\u5728\u9891\u9053\uFF08\u4E0D\u586B\u5219\u9ED8\u8BA4\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
@@ -112566,20 +112567,20 @@ var commands = [
       import_discord.ChannelType.GuildForum
     )
   ),
-  new import_discord.SlashCommandBuilder().setName(SETUP_TRIVIA_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u95F2\u8BDD\u968F\u673A\u62BD\u53D6\u9762\u677F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
-  new import_discord.SlashCommandBuilder().setName(ADD_TRIVIA_CMD).setDescription("\u6DFB\u52A0\u4E00\u5219\u95F2\u8BDD / \u51B7\u77E5\u8BC6\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
-  new import_discord.SlashCommandBuilder().setName(DELETE_TRIVIA_CMD).setDescription("\u5220\u9664\u4E00\u5219\u95F2\u8BDD\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addIntegerOption(
+  new import_discord.SlashCommandBuilder().setName(SETUP_TRIVIA_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u95F2\u8BDD\u968F\u673A\u62BD\u53D6\u9762\u677F").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(ADD_TRIVIA_CMD).setDescription("\u6DFB\u52A0\u4E00\u5219\u95F2\u8BDD / \u51B7\u77E5\u8BC6").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(DELETE_TRIVIA_CMD).setDescription("\u5220\u9664\u4E00\u5219\u95F2\u8BDD").setDefaultMemberPermissions(ADMIN).addIntegerOption(
     (opt) => opt.setName("id").setDescription("\u8981\u5220\u9664\u7684\u95F2\u8BDD ID\uFF08\u53EF\u5728 /\u5217\u51FA\u95F2\u8BDD \u4E2D\u67E5\u770B\uFF09").setRequired(true).setMinValue(1)
   ),
-  new import_discord.SlashCommandBuilder().setName(LIST_TRIVIA_CMD).setDescription("\u5217\u51FA\u6240\u6709\u95F2\u8BDD\u53CA\u5176 ID\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
-  new import_discord.SlashCommandBuilder().setName(SUGGESTION_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u533F\u540D\u610F\u89C1\u7BB1\u9762\u677F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
-  new import_discord.SlashCommandBuilder().setName(SET_SUGGESTION_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u610F\u89C1\u7BB1\u5DE5\u5355\u7684\u9891\u9053\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(LIST_TRIVIA_CMD).setDescription("\u5217\u51FA\u6240\u6709\u95F2\u8BDD\u53CA\u5176 ID").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(SUGGESTION_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u6C11\u4F17\u8BAE\u4F1A\u9762\u677F").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(SET_SUGGESTION_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u63A5\u6536\u610F\u89C1\u7BB1\u5DE5\u5355\u7684\u9891\u9053").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u610F\u89C1\u7BB1\u5DE5\u5355\u63A5\u6536\u9891\u9053").setRequired(true)
   ),
   uploadArtworkCmd,
-  new import_discord.SlashCommandBuilder().setName(NOTIFY_SUBSCRIBERS_CMD).setDescription("\u5411\u5F53\u524D\u4F5C\u54C1\u5E16\u7684\u8BA2\u9605\u8005\u53D1\u9001\u66F4\u65B0\u901A\u77E5\uFF08\u4EC5\u4F5C\u54C1\u4F5C\u8005\u53EF\u7528\uFF09"),
-  new import_discord.SlashCommandBuilder().setName(BAN_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5C01\u7981\u7BA1\u7406\u9762\u677F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09"),
-  new import_discord.SlashCommandBuilder().setName(SET_BAN_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u5C01\u7981\u516C\u544A\u53D1\u9001\u7684\u9891\u9053\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(NOTIFY_SUBSCRIBERS_CMD).setDescription("\u5411\u5F53\u524D\u4F5C\u54C1\u5E16\u7684\u8BA2\u9605\u8005\u53D1\u9001\u66F4\u65B0\u901A\u77E5"),
+  new import_discord.SlashCommandBuilder().setName(BAN_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5C01\u7981\u7BA1\u7406\u9762\u677F").setDefaultMemberPermissions(ADMIN),
+  new import_discord.SlashCommandBuilder().setName(SET_BAN_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u5C01\u7981\u516C\u544A\u53D1\u9001\u7684\u9891\u9053").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u5C01\u7981\u516C\u544A\u9891\u9053").setRequired(true)
   )
 ].map((cmd) => cmd.toJSON());
