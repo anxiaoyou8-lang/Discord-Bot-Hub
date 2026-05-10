@@ -8,10 +8,12 @@ import {
   TextInputBuilder,
   TextInputStyle,
   ActionRowBuilder,
+  AttachmentBuilder,
   type Interaction,
   type GuildMember,
   type GuildTextBasedChannel,
 } from "discord.js";
+
 import { logger } from "../lib/logger.js";
 import { registerCommands } from "./registerCommands.js";
 import {
@@ -168,6 +170,13 @@ import {
   extractJsonWatermark,
   extractTextWatermark,
 } from "./watermark.js";
+
+interface BotSaySession {
+  channelId: string;
+  replyTo: string | null;
+  files: Array<{ url: string; name: string }>;
+}
+const botSaySessions = new Map<string, BotSaySession>();
 
 function checkIsAdmin(
   guildId: string | null,
@@ -342,18 +351,35 @@ export async function startBot(token: string) {
 
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
+          const replyTo = interaction.options.getString("reply_to") ?? null;
+
+          const files: Array<{ url: string; name: string }> = [];
+          for (let i = 1; i <= 5; i++) {
+            const att = interaction.options.getAttachment(i === 1 ? "file1" : `file${i}`);
+            if (att) files.push({ url: att.url, name: att.name });
+          }
+
+          botSaySessions.set(interaction.user.id, { channelId, replyTo, files });
+
+          const titleParts: string[] = [];
+          if (files.length > 0) titleParts.push(`📎 ${files.length} 个附件`);
+          if (replyTo) titleParts.push("↩️ 回复模式");
 
           const modal = new ModalBuilder()
             .setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`)
-            .setTitle("以 Bot 身份发送消息");
+            .setTitle(titleParts.length ? `发送消息（${titleParts.join("・")}）` : "以 Bot 身份发送消息");
 
           const textInput = new TextInputBuilder()
             .setCustomId(BOT_SAY_TEXT_INPUT)
-            .setLabel("消息内容（支持 Enter 换行）")
+            .setLabel("消息内容（支持换行、Markdown、表情、艾特）")
             .setStyle(TextInputStyle.Paragraph)
-            .setPlaceholder("输入要发送的内容，支持 Discord Markdown 格式（**粗体**、*斜体* 等）")
+            .setPlaceholder(
+              "😀 表情：直接粘贴 Unicode 表情符号\n" +
+              "<:名字:ID> 自定义表情\n" +
+              "<@用户ID> 艾特成员　<@&身份组ID> 艾特身份组"
+            )
             .setMaxLength(2000)
-            .setRequired(true);
+            .setRequired(files.length === 0);
 
           modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(textInput));
           await interaction.showModal(modal);
@@ -634,17 +660,32 @@ export async function startBot(token: string) {
 
         } else if (customId.startsWith(BOT_SAY_MODAL_PREFIX)) {
           const channelId = customId.slice(BOT_SAY_MODAL_PREFIX.length);
-          const content = interaction.fields.getTextInputValue(BOT_SAY_TEXT_INPUT);
+          const content = interaction.fields.getTextInputValue(BOT_SAY_TEXT_INPUT).trim();
 
-          const ch = await client.channels.fetch(channelId).catch(() => null);
+          const session = botSaySessions.get(interaction.user.id);
+          botSaySessions.delete(interaction.user.id);
+
+          const effectiveChannelId = session?.channelId ?? channelId;
+          const replyTo = session?.replyTo ?? null;
+          const sessionFiles = session?.files ?? [];
+
+          const ch = await client.channels.fetch(effectiveChannelId).catch(() => null);
           if (!ch || !ch.isTextBased()) {
             await interaction.reply({ content: "❌ 找不到目标频道。", flags: 64 });
             return;
           }
 
-          await (ch as GuildTextBasedChannel).send({ content });
-          await interaction.reply({ content: `✅ 消息已发送至 <#${channelId}>`, flags: 64 });
-          logger.info({ adminId: interaction.user.id, channelId }, "Admin sent message via bot");
+          const attachments = sessionFiles.map((f) => new AttachmentBuilder(f.url, { name: f.name }));
+
+          const sendOptions: Parameters<GuildTextBasedChannel["send"]>[0] = {
+            ...(content ? { content } : {}),
+            ...(attachments.length ? { files: attachments } : {}),
+            ...(replyTo ? { reply: { messageReference: replyTo } } : {}),
+          };
+
+          await (ch as GuildTextBasedChannel).send(sendOptions);
+          await interaction.reply({ content: `✅ 消息已发送至 <#${effectiveChannelId}>`, flags: 64 });
+          logger.info({ adminId: interaction.user.id, channelId: effectiveChannelId, replyTo, fileCount: sessionFiles.length }, "Admin sent message via bot");
 
         } else if (customId.startsWith(BOT_EDIT_MODAL_PREFIX)) {
           const rest = customId.slice(BOT_EDIT_MODAL_PREFIX.length);

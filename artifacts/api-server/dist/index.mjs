@@ -102862,7 +102862,7 @@ var require_AttachmentBuilder = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/AttachmentBuilder.js"(exports2, module2) {
     "use strict";
     var { basename, flatten } = require_Util();
-    var AttachmentBuilder2 = class _AttachmentBuilder {
+    var AttachmentBuilder3 = class _AttachmentBuilder {
       /**
        * @param {BufferResolvable|Stream} attachment The file
        * @param {AttachmentData} [data] Extra data
@@ -102938,7 +102938,7 @@ var require_AttachmentBuilder = __commonJS({
         });
       }
     };
-    module2.exports = AttachmentBuilder2;
+    module2.exports = AttachmentBuilder3;
   }
 });
 
@@ -112534,7 +112534,7 @@ var commands = [
   new import_discord.SlashCommandBuilder().setName(SETUP_STATS_CMD).setDescription("\u521B\u5EFA\u4E09\u4E2A\u7EDF\u8BA1\u8BED\u97F3\u9891\u9053\uFF0C\u5B9E\u65F6\u663E\u793A\u68A6\u65C5\u8005/\u68A6\u4E2D\u8EAB/\u5931\u7720\u8005\u4EBA\u6570").addChannelOption(
     (opt) => opt.setName("category").setDescription("\u5C06\u7EDF\u8BA1\u9891\u9053\u653E\u5728\u54EA\u4E2A\u5206\u7C7B\u4E0B\uFF08\u53EF\u9009\uFF09").setRequired(false).addChannelTypes(import_discord.ChannelType.GuildCategory)
   ),
-  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u5728\u6307\u5B9A\u9891\u9053\u53D1\u9001\u4E00\u6761\u6587\u5B57\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
+  new import_discord.SlashCommandBuilder().setName(BOT_SAY_CMD).setDescription("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F\uFF0C\u652F\u6301\u9644\u4EF6\u3001\u56DE\u590D\u3001\u8868\u60C5\u3001\u827E\u7279\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u76EE\u6807\u9891\u9053\uFF08\u4E0D\u586B\u5219\u53D1\u9001\u5230\u5F53\u524D\u9891\u9053\uFF09").setRequired(false).addChannelTypes(
       import_discord.ChannelType.GuildText,
       import_discord.ChannelType.GuildAnnouncement,
@@ -112542,6 +112542,18 @@ var commands = [
       import_discord.ChannelType.PrivateThread,
       import_discord.ChannelType.GuildForum
     )
+  ).addStringOption(
+    (opt) => opt.setName("reply_to").setDescription("\u56DE\u590D\u67D0\u6761\u6D88\u606F\u7684 ID\uFF08\u53F3\u952E\u6D88\u606F \u2192 \u590D\u5236\u6D88\u606F ID\uFF09").setRequired(false)
+  ).addAttachmentOption(
+    (opt) => opt.setName("file1").setDescription("\u9644\u4EF6 1").setRequired(false)
+  ).addAttachmentOption(
+    (opt) => opt.setName("file2").setDescription("\u9644\u4EF6 2").setRequired(false)
+  ).addAttachmentOption(
+    (opt) => opt.setName("file3").setDescription("\u9644\u4EF6 3").setRequired(false)
+  ).addAttachmentOption(
+    (opt) => opt.setName("file4").setDescription("\u9644\u4EF6 4").setRequired(false)
+  ).addAttachmentOption(
+    (opt) => opt.setName("file5").setDescription("\u9644\u4EF6 5").setRequired(false)
   ),
   new import_discord.SlashCommandBuilder().setName(BOT_EDIT_CMD).setDescription("\u7F16\u8F91 Bot \u53D1\u9001\u8FC7\u7684\u4E00\u6761\u6D88\u606F\uFF08\u4EC5\u7BA1\u7406\u5458\u53EF\u7528\uFF09").addStringOption(
     (opt) => opt.setName("message_id").setDescription("\u8981\u7F16\u8F91\u7684\u6D88\u606F ID\uFF08\u53F3\u952E\u6D88\u606F \u2192 \u590D\u5236\u6D88\u606F ID\uFF09").setRequired(true)
@@ -133114,6 +133126,7 @@ async function handleSuggestionRejectModal(interaction, suggestionId, client) {
 }
 
 // src/bot/client.ts
+var botSaySessions = /* @__PURE__ */ new Map();
 function checkIsAdmin(guildId, member) {
   const adminRoleId = guildId ? getConfig(guildId, CONFIG_KEY_ADMIN_ROLE) : void 0;
   const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? !!(BigInt(member.permissions) & BigInt(import_discord12.PermissionFlagsBits.Administrator)) : member.permissions.has(import_discord12.PermissionFlagsBits.Administrator) : false;
@@ -133288,8 +133301,20 @@ async function startBot(token) {
           }
           const targetChannel = interaction.options.getChannel("channel");
           const channelId = targetChannel?.id ?? interaction.channelId;
-          const modal = new import_discord12.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle("\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
-          const textInput = new import_discord12.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301 Enter \u6362\u884C\uFF09").setStyle(import_discord12.TextInputStyle.Paragraph).setPlaceholder("\u8F93\u5165\u8981\u53D1\u9001\u7684\u5185\u5BB9\uFF0C\u652F\u6301 Discord Markdown \u683C\u5F0F\uFF08**\u7C97\u4F53**\u3001*\u659C\u4F53* \u7B49\uFF09").setMaxLength(2e3).setRequired(true);
+          const replyTo = interaction.options.getString("reply_to") ?? null;
+          const files = [];
+          for (let i = 1; i <= 5; i++) {
+            const att = interaction.options.getAttachment(i === 1 ? "file1" : `file${i}`);
+            if (att) files.push({ url: att.url, name: att.name });
+          }
+          botSaySessions.set(interaction.user.id, { channelId, replyTo, files });
+          const titleParts = [];
+          if (files.length > 0) titleParts.push(`\u{1F4CE} ${files.length} \u4E2A\u9644\u4EF6`);
+          if (replyTo) titleParts.push("\u21A9\uFE0F \u56DE\u590D\u6A21\u5F0F");
+          const modal = new import_discord12.ModalBuilder().setCustomId(`${BOT_SAY_MODAL_PREFIX}${channelId}`).setTitle(titleParts.length ? `\u53D1\u9001\u6D88\u606F\uFF08${titleParts.join("\u30FB")}\uFF09` : "\u4EE5 Bot \u8EAB\u4EFD\u53D1\u9001\u6D88\u606F");
+          const textInput = new import_discord12.TextInputBuilder().setCustomId(BOT_SAY_TEXT_INPUT).setLabel("\u6D88\u606F\u5185\u5BB9\uFF08\u652F\u6301\u6362\u884C\u3001Markdown\u3001\u8868\u60C5\u3001\u827E\u7279\uFF09").setStyle(import_discord12.TextInputStyle.Paragraph).setPlaceholder(
+            "\u{1F600} \u8868\u60C5\uFF1A\u76F4\u63A5\u7C98\u8D34 Unicode \u8868\u60C5\u7B26\u53F7\n<:\u540D\u5B57:ID> \u81EA\u5B9A\u4E49\u8868\u60C5\n<@\u7528\u6237ID> \u827E\u7279\u6210\u5458\u3000<@&\u8EAB\u4EFD\u7EC4ID> \u827E\u7279\u8EAB\u4EFD\u7EC4"
+          ).setMaxLength(2e3).setRequired(files.length === 0);
           modal.addComponents(new import_discord12.ActionRowBuilder().addComponents(textInput));
           await interaction.showModal(modal);
         } else if (commandName === BOT_EDIT_CMD) {
@@ -133521,15 +133546,26 @@ async function startBot(token) {
           await handleArtworkNotifyModal(interaction, channelId, client);
         } else if (customId.startsWith(BOT_SAY_MODAL_PREFIX)) {
           const channelId = customId.slice(BOT_SAY_MODAL_PREFIX.length);
-          const content = interaction.fields.getTextInputValue(BOT_SAY_TEXT_INPUT);
-          const ch = await client.channels.fetch(channelId).catch(() => null);
+          const content = interaction.fields.getTextInputValue(BOT_SAY_TEXT_INPUT).trim();
+          const session = botSaySessions.get(interaction.user.id);
+          botSaySessions.delete(interaction.user.id);
+          const effectiveChannelId = session?.channelId ?? channelId;
+          const replyTo = session?.replyTo ?? null;
+          const sessionFiles = session?.files ?? [];
+          const ch = await client.channels.fetch(effectiveChannelId).catch(() => null);
           if (!ch || !ch.isTextBased()) {
             await interaction.reply({ content: "\u274C \u627E\u4E0D\u5230\u76EE\u6807\u9891\u9053\u3002", flags: 64 });
             return;
           }
-          await ch.send({ content });
-          await interaction.reply({ content: `\u2705 \u6D88\u606F\u5DF2\u53D1\u9001\u81F3 <#${channelId}>`, flags: 64 });
-          logger.info({ adminId: interaction.user.id, channelId }, "Admin sent message via bot");
+          const attachments = sessionFiles.map((f) => new import_discord12.AttachmentBuilder(f.url, { name: f.name }));
+          const sendOptions = {
+            ...content ? { content } : {},
+            ...attachments.length ? { files: attachments } : {},
+            ...replyTo ? { reply: { messageReference: replyTo } } : {}
+          };
+          await ch.send(sendOptions);
+          await interaction.reply({ content: `\u2705 \u6D88\u606F\u5DF2\u53D1\u9001\u81F3 <#${effectiveChannelId}>`, flags: 64 });
+          logger.info({ adminId: interaction.user.id, channelId: effectiveChannelId, replyTo, fileCount: sessionFiles.length }, "Admin sent message via bot");
         } else if (customId.startsWith(BOT_EDIT_MODAL_PREFIX)) {
           const rest = customId.slice(BOT_EDIT_MODAL_PREFIX.length);
           const colonIdx = rest.indexOf(":");

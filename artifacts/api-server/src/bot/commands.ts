@@ -141,7 +141,7 @@ export const commands = [
 
   new SlashCommandBuilder()
     .setName(BOT_SAY_CMD)
-    .setDescription("以 Bot 身份在指定频道发送一条文字消息（仅管理员可用）")
+    .setDescription("以 Bot 身份发送消息，支持附件、回复、表情、艾特（仅管理员可用）")
     .addChannelOption((opt) =>
       opt
         .setName("channel")
@@ -154,6 +154,27 @@ export const commands = [
           ChannelType.PrivateThread,
           ChannelType.GuildForum
         )
+    )
+    .addStringOption((opt) =>
+      opt
+        .setName("reply_to")
+        .setDescription("回复某条消息的 ID（右键消息 → 复制消息 ID）")
+        .setRequired(false)
+    )
+    .addAttachmentOption((opt) =>
+      opt.setName("file1").setDescription("附件 1").setRequired(false)
+    )
+    .addAttachmentOption((opt) =>
+      opt.setName("file2").setDescription("附件 2").setRequired(false)
+    )
+    .addAttachmentOption((opt) =>
+      opt.setName("file3").setDescription("附件 3").setRequired(false)
+    )
+    .addAttachmentOption((opt) =>
+      opt.setName("file4").setDescription("附件 4").setRequired(false)
+    )
+    .addAttachmentOption((opt) =>
+      opt.setName("file5").setDescription("附件 5").setRequired(false)
     ),
 
   new SlashCommandBuilder()
