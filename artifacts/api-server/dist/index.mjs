@@ -112486,9 +112486,12 @@ var NOTIFY_SUBSCRIBERS_CMD = "\u901A\u77E5\u8BA2\u9605\u8005";
 var BAN_PANEL_CMD = "setup_\u5C01\u7981\u9762\u677F";
 var SET_BAN_CHANNEL_CMD = "set_ban_channel";
 var BAN_SELECT_ID = "ban_member_select";
+var BAN_ACTION_PREFIX = "ban_act_";
 var BAN_MODAL_PREFIX = "ban_modal_";
 var BAN_REASON_INPUT = "ban_reason_input";
 var BAN_EVIDENCE_INPUT = "ban_evidence_input";
+var MUTE_MODAL_PREFIX = "mute_modal_";
+var MUTE_REASON_INPUT = "mute_reason_input";
 var BAN_ADMIN_CONTACT = "vincentsk__31051";
 
 // src/bot/commands.ts
@@ -132743,6 +132746,12 @@ async function handleSetupStats(interaction, client) {
 
 // src/bot/handlers/banHandler.ts
 var import_discord10 = __toESM(require_src2(), 1);
+var MUTE_OPTIONS = [
+  { label: "\u7981\u8A00 3 \u5929", days: 3 },
+  { label: "\u7981\u8A00 7 \u5929", days: 7 },
+  { label: "\u7981\u8A00 14 \u5929", days: 14 },
+  { label: "\u7981\u8A00 28 \u5929", days: 28 }
+];
 function isAdmin(guildId, member) {
   const adminRoleId = getConfig(guildId, CONFIG_KEY_ADMIN_ROLE);
   const isDiscordAdmin = member?.permissions ? typeof member.permissions === "string" ? !!(BigInt(member.permissions) & BigInt(import_discord10.PermissionFlagsBits.Administrator)) : member.permissions.has(import_discord10.PermissionFlagsBits.Administrator) : false;
@@ -132750,18 +132759,16 @@ function isAdmin(guildId, member) {
   return isDiscordAdmin || hasAdminRole;
 }
 function buildBanPanel() {
-  const embed = new import_discord10.EmbedBuilder().setTitle("\u{1F528} \u5C01\u7981\u7BA1\u7406\u9762\u677F").setDescription(
+  const embed = new import_discord10.EmbedBuilder().setTitle("\u{1F528} \u5C01\u7981 / \u7981\u8A00\u7BA1\u7406\u9762\u677F").setDescription(
     [
-      "\u4ECE\u4E0B\u65B9\u9009\u5355\u9009\u62E9\u8981\u5C01\u7981\u7684\u6210\u5458\u3002",
+      "\u4ECE\u4E0B\u65B9\u9009\u5355\u9009\u62E9\u8981\u5904\u7406\u7684\u6210\u5458\u3002",
       "",
-      "\u9009\u5B9A\u540E\u5C06\u5F39\u51FA\u8868\u5355\uFF0C\u586B\u5199\u5C01\u7981\u539F\u56E0\u53CA\u8BC1\u636E\u94FE\u63A5\uFF08\u9009\u586B\uFF09\u3002",
-      "Bot \u5C06\u81EA\u52A8\u5B8C\u6210\u4EE5\u4E0B\u64CD\u4F5C\uFF1A",
-      "\u2022 \u79C1\u4FE1\u901A\u77E5\u88AB\u5C01\u7981\u6210\u5458\uFF0C\u9644\u4E0A\u539F\u56E0\u3001\u8BC1\u636E\u53CA\u7533\u8BC9\u65B9\u5F0F",
-      "\u2022 \u6267\u884C Discord \u5C01\u7981",
-      "\u2022 \u5728\u516C\u544A\u9891\u9053\u53D1\u5E03\u6B63\u5F0F\u5C01\u7981\u516C\u544A"
+      "\u9009\u5B9A\u540E\u5C06\u5F39\u51FA\u64CD\u4F5C\u6309\u94AE\uFF0C\u53EF\u9009\u62E9\uFF1A",
+      "\u2022 \u{1F528} **\u5C01\u7981** \u2014 \u6C38\u4E45\u79FB\u51FA\u670D\u52A1\u5668\uFF0C\u81EA\u52A8\u79C1\u4FE1\u901A\u77E5\u5E76\u53D1\u5E03\u516C\u544A",
+      "\u2022 \u{1F507} **\u7981\u8A00** \u2014 \u9650\u5236\u53D1\u8A00\u4E00\u6BB5\u65F6\u95F4\uFF0C\u76F4\u63A5\u6267\u884C\u5E76\u53D1\u5E03\u516C\u544A\uFF08\u4E0D\u53D1\u79C1\u4FE1\uFF09"
     ].join("\n")
   ).setColor(15548997).setFooter({ text: "\u4EC5\u7BA1\u7406\u5458\u53EF\u64CD\u4F5C" });
-  const select = new import_discord10.UserSelectMenuBuilder().setCustomId(BAN_SELECT_ID).setPlaceholder("\u9009\u62E9\u8981\u5C01\u7981\u7684\u6210\u5458\u2026").setMinValues(1).setMaxValues(1);
+  const select = new import_discord10.UserSelectMenuBuilder().setCustomId(BAN_SELECT_ID).setPlaceholder("\u9009\u62E9\u8981\u5904\u7406\u7684\u6210\u5458\u2026").setMinValues(1).setMaxValues(1);
   return {
     embeds: [embed],
     components: [new import_discord10.ActionRowBuilder().addComponents(select)]
@@ -132771,7 +132778,7 @@ async function handleBanMemberSelect(interaction) {
   const member = interaction.member;
   const guildId = interaction.guildId ?? "";
   if (!isAdmin(guildId, member)) {
-    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u4F7F\u7528\u5C01\u7981\u9762\u677F\u3002", flags: 64 });
+    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u4F7F\u7528\u6B64\u9762\u677F\u3002", flags: 64 });
     return;
   }
   const targetId = interaction.values[0];
@@ -132780,17 +132787,52 @@ async function handleBanMemberSelect(interaction) {
     return;
   }
   if (targetId === interaction.user.id) {
-    await interaction.reply({ content: "\u274C \u4E0D\u80FD\u5C01\u7981\u81EA\u5DF1\u3002", flags: 64 });
+    await interaction.reply({ content: "\u274C \u4E0D\u80FD\u5BF9\u81EA\u5DF1\u6267\u884C\u6B64\u64CD\u4F5C\u3002", flags: 64 });
     return;
   }
-  const modal = new import_discord10.ModalBuilder().setCustomId(`${BAN_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u5C01\u7981\u4FE1\u606F");
-  const reasonInput = new import_discord10.TextInputBuilder().setCustomId(BAN_REASON_INPUT).setLabel("\u5C01\u7981\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BE6\u7EC6\u8BF4\u660E\u5C01\u7981\u539F\u56E0\u2026").setMinLength(5).setMaxLength(500).setRequired(true);
-  const evidenceInput = new import_discord10.TextInputBuilder().setCustomId(BAN_EVIDENCE_INPUT).setLabel("\u8BC1\u636E\u94FE\u63A5\u6216\u8BF4\u660E\uFF08\u9009\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Short).setPlaceholder("\u53EF\u7C98\u8D34\u56FE\u7247\u94FE\u63A5\u3001\u622A\u56FE\u94FE\u63A5\u7B49\u2026").setMaxLength(500).setRequired(false);
-  modal.addComponents(
-    new import_discord10.ActionRowBuilder().addComponents(reasonInput),
-    new import_discord10.ActionRowBuilder().addComponents(evidenceInput)
+  const banBtn = new import_discord10.ButtonBuilder().setCustomId(`${BAN_ACTION_PREFIX}ban_${targetId}`).setLabel("\u{1F528} \u5C01\u7981").setStyle(import_discord10.ButtonStyle.Danger);
+  const muteBtns = MUTE_OPTIONS.map(
+    (opt) => new import_discord10.ButtonBuilder().setCustomId(`${BAN_ACTION_PREFIX}mute_${opt.days}_${targetId}`).setLabel(`\u{1F507} ${opt.label}`).setStyle(import_discord10.ButtonStyle.Secondary)
   );
-  await interaction.showModal(modal);
+  const row1 = new import_discord10.ActionRowBuilder().addComponents(banBtn, muteBtns[0], muteBtns[1]);
+  const row2 = new import_discord10.ActionRowBuilder().addComponents(muteBtns[2], muteBtns[3]);
+  await interaction.reply({
+    content: `\u5DF2\u9009\u62E9 <@${targetId}>\uFF0C\u8BF7\u9009\u62E9\u64CD\u4F5C\uFF1A`,
+    components: [row1, row2],
+    flags: 64
+  });
+}
+async function handleBanActionButton(interaction, actionPart) {
+  const member = interaction.member;
+  const guildId = interaction.guildId ?? "";
+  if (!isAdmin(guildId, member)) {
+    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u6267\u884C\u6B64\u64CD\u4F5C\u3002", flags: 64 });
+    return;
+  }
+  if (actionPart.startsWith("ban_")) {
+    const targetId = actionPart.slice("ban_".length);
+    const modal = new import_discord10.ModalBuilder().setCustomId(`${BAN_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u5C01\u7981\u4FE1\u606F");
+    const reasonInput = new import_discord10.TextInputBuilder().setCustomId(BAN_REASON_INPUT).setLabel("\u5C01\u7981\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BE6\u7EC6\u8BF4\u660E\u5C01\u7981\u539F\u56E0\u2026").setMinLength(5).setMaxLength(500).setRequired(true);
+    const evidenceInput = new import_discord10.TextInputBuilder().setCustomId(BAN_EVIDENCE_INPUT).setLabel("\u8BC1\u636E\u94FE\u63A5\u6216\u8BF4\u660E\uFF08\u9009\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Short).setPlaceholder("\u53EF\u7C98\u8D34\u56FE\u7247\u94FE\u63A5\u3001\u622A\u56FE\u94FE\u63A5\u7B49\u2026").setMaxLength(500).setRequired(false);
+    modal.addComponents(
+      new import_discord10.ActionRowBuilder().addComponents(reasonInput),
+      new import_discord10.ActionRowBuilder().addComponents(evidenceInput)
+    );
+    await interaction.showModal(modal);
+  } else if (actionPart.startsWith("mute_")) {
+    const rest = actionPart.slice("mute_".length);
+    const underscoreIdx = rest.indexOf("_");
+    const days = Number(rest.slice(0, underscoreIdx));
+    const targetId = rest.slice(underscoreIdx + 1);
+    const modal = new import_discord10.ModalBuilder().setCustomId(`${MUTE_MODAL_PREFIX}${days}_${targetId}`).setTitle(`\u586B\u5199\u7981\u8A00\u539F\u56E0\uFF08${days} \u5929\uFF09`);
+    const reasonInput = new import_discord10.TextInputBuilder().setCustomId(MUTE_REASON_INPUT).setLabel("\u7981\u8A00\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord10.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BF4\u660E\u7981\u8A00\u539F\u56E0\u2026").setMinLength(2).setMaxLength(500).setRequired(true);
+    modal.addComponents(
+      new import_discord10.ActionRowBuilder().addComponents(reasonInput)
+    );
+    await interaction.showModal(modal);
+  } else {
+    await interaction.reply({ content: "\u274C \u672A\u77E5\u64CD\u4F5C\u3002", flags: 64 });
+  }
 }
 async function handleBanModal(interaction, targetId, client) {
   await interaction.deferReply({ flags: 64 });
@@ -132817,7 +132859,7 @@ async function handleBanModal(interaction, targetId, client) {
     const targetMember = await guild.members.fetch(targetId).catch(() => null);
     if (targetMember) {
       const executorMember = interaction.member;
-      if (targetMember.roles.highest.position >= executorMember.roles.highest.position && !guild.ownerId !== interaction.user.id) {
+      if (targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
         await interaction.editReply("\u274C \u65E0\u6CD5\u5C01\u7981\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u6216\u7B49\u4E8E\u4F60\u7684\u6210\u5458\u3002");
         return;
       }
@@ -132832,8 +132874,7 @@ ${reason}`,
 **\u8BC1\u636E\uFF1A**
 ${evidence}`] : [],
         "",
-        "\u5982\u5BF9\u6B64\u51B3\u5B9A\u6709\u5F02\u8BAE\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\uFF1A",
-        `**${BAN_ADMIN_CONTACT}**`
+        `\u5982\u6709\u8BEF\u5224\u53EF\u79C1\u804A\u7BA1\u7406\uFF1A**${BAN_ADMIN_CONTACT}**`
       ].join("\n")
     ).setColor(15548997).setTimestamp();
     await targetUser.send({ embeds: [dmEmbed] }).catch((err) => {
@@ -132848,20 +132889,11 @@ ${evidence}`] : [],
       const banChannel = await client.channels.fetch(banChannelId).catch(() => null);
       if (banChannel && banChannel.isTextBased()) {
         const announcementEmbed = new import_discord10.EmbedBuilder().setTitle("\u{1F528} \u5C01\u7981\u516C\u544A").setColor(15548997).addFields(
-          {
-            name: "\u88AB\u5C01\u7981\u6210\u5458",
-            value: `<@${targetId}>\uFF08${targetUser.tag} | ID: ${targetId}\uFF09`
-          },
+          { name: "\u88AB\u5C01\u7981\u6210\u5458", value: `<@${targetId}>\uFF08${targetUser.tag} | ID: ${targetId}\uFF09` },
           { name: "\u5C01\u7981\u539F\u56E0", value: reason },
           ...evidence ? [{ name: "\u{1F4CE} \u8BC1\u636E", value: evidence }] : [],
-          {
-            name: "\u6267\u884C\u4EBA",
-            value: `<@${interaction.user.id}>`,
-            inline: true
-          }
-        ).setFooter({
-          text: `\u5982\u6709\u5F02\u8BAE\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\uFF1A${BAN_ADMIN_CONTACT}`
-        }).setTimestamp();
+          { name: "\u6267\u884C\u4EBA", value: `<@${interaction.user.id}>`, inline: true }
+        ).setFooter({ text: `\u5982\u6709\u8BEF\u5224\u53EF\u79C1\u804A\u7BA1\u7406\uFF1A${BAN_ADMIN_CONTACT}` }).setTimestamp();
         await banChannel.send({
           content: `<@${targetId}>`,
           embeds: [announcementEmbed]
@@ -132878,6 +132910,71 @@ ${evidence}`] : [],
       await interaction.editReply("\u274C Bot \u6743\u9650\u4E0D\u8DB3\uFF0C\u8BF7\u786E\u4FDD Bot \u62E5\u6709\u300C\u5C01\u7981\u6210\u5458\u300D\u6743\u9650\uFF0C\u4E14\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u76EE\u6807\u6210\u5458\u3002");
     } else {
       await interaction.editReply(`\u274C \u5C01\u7981\u5931\u8D25\uFF1A${msg}`);
+    }
+  }
+}
+async function handleMuteModal(interaction, days, targetId, client) {
+  await interaction.deferReply({ flags: 64 });
+  const member = interaction.member;
+  const guildId = interaction.guildId ?? "";
+  if (!isAdmin(guildId, member)) {
+    await interaction.editReply("\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u6267\u884C\u7981\u8A00\u3002");
+    return;
+  }
+  const guild = interaction.guild;
+  if (!guild) {
+    await interaction.editReply("\u274C \u6B64\u64CD\u4F5C\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
+    return;
+  }
+  const reason = interaction.fields.getTextInputValue(MUTE_REASON_INPUT).trim();
+  try {
+    const targetUser = await client.users.fetch(targetId).catch(() => null);
+    if (!targetUser) {
+      await interaction.editReply("\u274C \u627E\u4E0D\u5230\u8BE5\u7528\u6237\uFF0C\u8BF7\u786E\u8BA4 ID \u662F\u5426\u6B63\u786E\u3002");
+      return;
+    }
+    const targetMember = await guild.members.fetch(targetId).catch(() => null);
+    if (!targetMember) {
+      await interaction.editReply("\u274C \u8BE5\u6210\u5458\u5DF2\u4E0D\u5728\u670D\u52A1\u5668\u4E2D\uFF0C\u65E0\u6CD5\u7981\u8A00\u3002");
+      return;
+    }
+    const executorMember = interaction.member;
+    if (targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
+      await interaction.editReply("\u274C \u65E0\u6CD5\u7981\u8A00\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u6216\u7B49\u4E8E\u4F60\u7684\u6210\u5458\u3002");
+      return;
+    }
+    const durationMs = days * 24 * 60 * 60 * 1e3;
+    const until = new Date(Date.now() + durationMs);
+    await targetMember.disableCommunicationUntil(
+      until,
+      `\u7981\u8A00\u539F\u56E0\uFF1A${reason} \u2014 \u6267\u884C\u4EBA\uFF1A${interaction.user.tag}`
+    );
+    logger.info({ targetId, executorId: interaction.user.id, days, reason }, "Member muted");
+    const banChannelId = getConfig(guildId, CONFIG_KEY_BAN_CHANNEL);
+    if (banChannelId) {
+      const banChannel = await client.channels.fetch(banChannelId).catch(() => null);
+      if (banChannel && banChannel.isTextBased()) {
+        const announcementEmbed = new import_discord10.EmbedBuilder().setTitle("\u{1F507} \u7981\u8A00\u516C\u544A").setColor(16426522).addFields(
+          { name: "\u88AB\u7981\u8A00\u6210\u5458", value: `<@${targetId}>\uFF08${targetUser.tag}\uFF09` },
+          { name: "\u7981\u8A00\u65F6\u957F", value: `${days} \u5929\uFF08\u81F3 ${until.toISOString().slice(0, 10)}\uFF09` },
+          { name: "\u7981\u8A00\u539F\u56E0", value: reason },
+          { name: "\u6267\u884C\u4EBA", value: `<@${interaction.user.id}>`, inline: true }
+        ).setTimestamp();
+        await banChannel.send({
+          embeds: [announcementEmbed]
+        });
+      }
+    }
+    await interaction.editReply(
+      `\u2705 \u5DF2\u5BF9 **${targetUser.tag}** \u7981\u8A00 ${days} \u5929${banChannelId ? "\uFF0C\u516C\u544A\u5DF2\u53D1\u9001" : ""}\u3002`
+    );
+  } catch (err) {
+    logger.error({ err }, "Failed to execute mute");
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes("Missing Permissions")) {
+      await interaction.editReply("\u274C Bot \u6743\u9650\u4E0D\u8DB3\uFF0C\u8BF7\u786E\u4FDD Bot \u62E5\u6709\u300C\u7981\u8A00\u6210\u5458\u300D\u6743\u9650\uFF0C\u4E14\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u76EE\u6807\u6210\u5458\u3002");
+    } else {
+      await interaction.editReply(`\u274C \u7981\u8A00\u5931\u8D25\uFF1A${msg}`);
     }
   }
 }
@@ -133517,6 +133614,9 @@ async function startBot(token) {
         } else if (customId.startsWith(SUGGESTION_REJECT_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_REJECT_PREFIX.length), 10);
           await handleSuggestionRejectBtn(interaction, id);
+        } else if (customId.startsWith(BAN_ACTION_PREFIX)) {
+          const actionPart = customId.slice(BAN_ACTION_PREFIX.length);
+          await handleBanActionButton(interaction, actionPart);
         }
       } else if (interaction.isUserSelectMenu()) {
         const { customId } = interaction;
@@ -133539,6 +133639,12 @@ async function startBot(token) {
           await handleSearchKeywordModal(interaction);
         } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
           await handleSearchNicknameModal(interaction);
+        } else if (customId.startsWith(MUTE_MODAL_PREFIX)) {
+          const rest = customId.slice(MUTE_MODAL_PREFIX.length);
+          const underscoreIdx = rest.indexOf("_");
+          const days = Number(rest.slice(0, underscoreIdx));
+          const targetId = rest.slice(underscoreIdx + 1);
+          await handleMuteModal(interaction, days, targetId, client);
         } else if (customId.startsWith(BAN_MODAL_PREFIX)) {
           const targetId = customId.slice(BAN_MODAL_PREFIX.length);
           await handleBanModal(interaction, targetId, client);

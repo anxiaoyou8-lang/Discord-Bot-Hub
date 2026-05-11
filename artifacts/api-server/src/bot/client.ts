@@ -72,7 +72,9 @@ import {
 import {
   buildBanPanel,
   handleBanMemberSelect,
+  handleBanActionButton,
   handleBanModal,
+  handleMuteModal,
 } from "./handlers/banHandler.js";
 import {
   buildSuggestionPanel,
@@ -149,7 +151,9 @@ import {
   BAN_PANEL_CMD,
   SET_BAN_CHANNEL_CMD,
   BAN_SELECT_ID,
+  BAN_ACTION_PREFIX,
   BAN_MODAL_PREFIX,
+  MUTE_MODAL_PREFIX,
   SUGGESTION_PANEL_CMD,
   SET_SUGGESTION_CHANNEL_CMD,
   SUGGESTION_PANEL_CUSTOM_ID,
@@ -618,6 +622,10 @@ export async function startBot(token: string) {
         } else if (customId.startsWith(SUGGESTION_REJECT_PREFIX)) {
           const id = parseInt(customId.slice(SUGGESTION_REJECT_PREFIX.length), 10);
           await handleSuggestionRejectBtn(interaction, id);
+
+        } else if (customId.startsWith(BAN_ACTION_PREFIX)) {
+          const actionPart = customId.slice(BAN_ACTION_PREFIX.length);
+          await handleBanActionButton(interaction, actionPart);
         }
 
       } else if (interaction.isUserSelectMenu()) {
@@ -649,6 +657,13 @@ export async function startBot(token: string) {
 
         } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
           await handleSearchNicknameModal(interaction);
+
+        } else if (customId.startsWith(MUTE_MODAL_PREFIX)) {
+          const rest = customId.slice(MUTE_MODAL_PREFIX.length);
+          const underscoreIdx = rest.indexOf("_");
+          const days = Number(rest.slice(0, underscoreIdx));
+          const targetId = rest.slice(underscoreIdx + 1);
+          await handleMuteModal(interaction, days, targetId, client);
 
         } else if (customId.startsWith(BAN_MODAL_PREFIX)) {
           const targetId = customId.slice(BAN_MODAL_PREFIX.length);
