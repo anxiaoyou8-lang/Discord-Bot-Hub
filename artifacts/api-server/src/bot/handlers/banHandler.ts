@@ -281,7 +281,6 @@ export async function handleBanModal(
             ...(evidence ? [{ name: "📎 证据", value: evidence }] : []),
             { name: "执行人", value: `<@${interaction.user.id}>`, inline: true },
           )
-          .setFooter({ text: `如有误判可私聊管理：${BAN_ADMIN_CONTACT}` })
           .setTimestamp();
 
         await (banChannel as GuildTextBasedChannel).send({
@@ -374,6 +373,7 @@ export async function handleMuteModal(
             { name: "禁言原因", value: reason },
             { name: "执行人", value: `<@${interaction.user.id}>`, inline: true },
           )
+          .setFooter({ text: `如有误判可私聊管理：${BAN_ADMIN_CONTACT}` })
           .setTimestamp();
 
         await (banChannel as GuildTextBasedChannel).send({
