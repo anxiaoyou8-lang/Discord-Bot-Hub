@@ -32,7 +32,7 @@ import {
   SET_BAN_CHANNEL_CMD,
 } from "./constants.js";
 
-const ADMIN = 0n;
+const ADMIN = PermissionFlagsBits.Administrator;
 
 const uploadArtworkCmd = new SlashCommandBuilder()
   .setName(ARTWORK_UPLOAD_CMD)

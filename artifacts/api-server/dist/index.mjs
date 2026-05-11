@@ -112495,7 +112495,7 @@ var MUTE_REASON_INPUT = "mute_reason_input";
 var BAN_ADMIN_CONTACT = "vincentsk__31051";
 
 // src/bot/commands.ts
-var ADMIN = 0n;
+var ADMIN = import_discord.PermissionFlagsBits.Administrator;
 var uploadArtworkCmd = new import_discord.SlashCommandBuilder().setName(ARTWORK_UPLOAD_CMD).setDescription("\u4E0A\u4F20\u4F60\u7684\u4F5C\u54C1\uFF08\u6700\u591A10\u4E2A\u6587\u4EF6\uFF09").addStringOption(
   (opt) => opt.setName("title").setDescription("\u4F5C\u54C1\u540D\u79F0").setRequired(true)
 ).addStringOption(
