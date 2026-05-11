@@ -373,7 +373,7 @@ export async function handleMuteModal(
             { name: "禁言原因", value: reason },
             { name: "执行人", value: `<@${interaction.user.id}>`, inline: true },
           )
-          .setFooter({ text: `如有误判可私聊管理：${BAN_ADMIN_CONTACT}` })
+          .setFooter({ text: "如有误判可私聊管理" })
           .setTimestamp();
 
         await (banChannel as GuildTextBasedChannel).send({

@@ -132959,7 +132959,7 @@ async function handleMuteModal(interaction, days, targetId, client) {
           { name: "\u7981\u8A00\u65F6\u957F", value: `${days} \u5929\uFF08\u81F3 ${until.toISOString().slice(0, 10)}\uFF09` },
           { name: "\u7981\u8A00\u539F\u56E0", value: reason },
           { name: "\u6267\u884C\u4EBA", value: `<@${interaction.user.id}>`, inline: true }
-        ).setFooter({ text: `\u5982\u6709\u8BEF\u5224\u53EF\u79C1\u804A\u7BA1\u7406\uFF1A${BAN_ADMIN_CONTACT}` }).setTimestamp();
+        ).setFooter({ text: "\u5982\u6709\u8BEF\u5224\u53EF\u79C1\u804A\u7BA1\u7406" }).setTimestamp();
         await banChannel.send({
           embeds: [announcementEmbed]
         });
