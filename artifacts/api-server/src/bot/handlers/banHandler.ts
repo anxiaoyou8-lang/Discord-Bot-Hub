@@ -188,7 +188,7 @@ export async function handleBanModal(
   targetId: string,
   client: Client
 ) {
-  await interaction.deferReply({ flags: 64 });
+  await interaction.deferReply({ ephemeral: true });
 
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
@@ -211,9 +211,10 @@ export async function handleBanModal(
 
     const targetMember = await guild.members.fetch(targetId).catch(() => null);
     if (targetMember) {
-      const executorMember = interaction.member as GuildMember;
+      const executorMember = await guild.members.fetch(interaction.user.id).catch(() => null);
       if (
-        targetMember.roles.highest.position >= executorMember.roles.highest.position
+        executorMember
+        && targetMember.roles.highest.position >= executorMember.roles.highest.position
         && guild.ownerId !== interaction.user.id
       ) {
         await interaction.editReply("❌ 无法封禁权限等级高于或等于你的成员。");
@@ -283,7 +284,7 @@ export async function handleKickModal(
   targetId: string,
   client: Client
 ) {
-  await interaction.deferReply({ flags: 64 });
+  await interaction.deferReply({ ephemeral: true });
 
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
@@ -305,9 +306,10 @@ export async function handleKickModal(
     const targetMember = await guild.members.fetch(targetId).catch(() => null);
     if (!targetMember) { await interaction.editReply("❌ 该成员已不在服务器中。"); return; }
 
-    const executorMember = interaction.member as GuildMember;
+    const executorMember = await guild.members.fetch(interaction.user.id).catch(() => null);
     if (
-      targetMember.roles.highest.position >= executorMember.roles.highest.position
+      executorMember
+      && targetMember.roles.highest.position >= executorMember.roles.highest.position
       && guild.ownerId !== interaction.user.id
     ) {
       await interaction.editReply("❌ 无法踢出权限等级高于或等于你的成员。");
@@ -353,7 +355,7 @@ export async function handleMuteModal(
   targetId: string,
   client: Client
 ) {
-  await interaction.deferReply({ flags: 64 });
+  await interaction.deferReply({ ephemeral: true });
 
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
@@ -382,9 +384,10 @@ export async function handleMuteModal(
     const targetMember = await guild.members.fetch(targetId).catch(() => null);
     if (!targetMember) { await interaction.editReply("❌ 该成员已不在服务器中，无法禁言。"); return; }
 
-    const executorMember = interaction.member as GuildMember;
+    const executorMember = await guild.members.fetch(interaction.user.id).catch(() => null);
     if (
-      targetMember.roles.highest.position >= executorMember.roles.highest.position
+      executorMember
+      && targetMember.roles.highest.position >= executorMember.roles.highest.position
       && guild.ownerId !== interaction.user.id
     ) {
       await interaction.editReply("❌ 无法禁言权限等级高于或等于你的成员。");

@@ -132851,7 +132851,7 @@ async function handleBanTargetSelect(interaction, action) {
   }
 }
 async function handleBanModal(interaction, targetId, client) {
-  await interaction.deferReply({ flags: 64 });
+  await interaction.deferReply({ ephemeral: true });
   const member = interaction.member;
   const guildId = interaction.guildId ?? "";
   if (!checkIsAdmin(guildId, member)) {
@@ -132874,8 +132874,8 @@ async function handleBanModal(interaction, targetId, client) {
     }
     const targetMember = await guild.members.fetch(targetId).catch(() => null);
     if (targetMember) {
-      const executorMember = interaction.member;
-      if (targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
+      const executorMember = await guild.members.fetch(interaction.user.id).catch(() => null);
+      if (executorMember && targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
         await interaction.editReply("\u274C \u65E0\u6CD5\u5C01\u7981\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u6216\u7B49\u4E8E\u4F60\u7684\u6210\u5458\u3002");
         return;
       }
@@ -132923,7 +132923,7 @@ ${evidence}`] : [],
   }
 }
 async function handleKickModal(interaction, targetId, client) {
-  await interaction.deferReply({ flags: 64 });
+  await interaction.deferReply({ ephemeral: true });
   const member = interaction.member;
   const guildId = interaction.guildId ?? "";
   if (!checkIsAdmin(guildId, member)) {
@@ -132947,8 +132947,8 @@ async function handleKickModal(interaction, targetId, client) {
       await interaction.editReply("\u274C \u8BE5\u6210\u5458\u5DF2\u4E0D\u5728\u670D\u52A1\u5668\u4E2D\u3002");
       return;
     }
-    const executorMember = interaction.member;
-    if (targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
+    const executorMember = await guild.members.fetch(interaction.user.id).catch(() => null);
+    if (executorMember && targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
       await interaction.editReply("\u274C \u65E0\u6CD5\u8E22\u51FA\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u6216\u7B49\u4E8E\u4F60\u7684\u6210\u5458\u3002");
       return;
     }
@@ -132976,7 +132976,7 @@ async function handleKickModal(interaction, targetId, client) {
   }
 }
 async function handleMuteModal(interaction, targetId, client) {
-  await interaction.deferReply({ flags: 64 });
+  await interaction.deferReply({ ephemeral: true });
   const member = interaction.member;
   const guildId = interaction.guildId ?? "";
   if (!checkIsAdmin(guildId, member)) {
@@ -133006,8 +133006,8 @@ async function handleMuteModal(interaction, targetId, client) {
       await interaction.editReply("\u274C \u8BE5\u6210\u5458\u5DF2\u4E0D\u5728\u670D\u52A1\u5668\u4E2D\uFF0C\u65E0\u6CD5\u7981\u8A00\u3002");
       return;
     }
-    const executorMember = interaction.member;
-    if (targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
+    const executorMember = await guild.members.fetch(interaction.user.id).catch(() => null);
+    if (executorMember && targetMember.roles.highest.position >= executorMember.roles.highest.position && guild.ownerId !== interaction.user.id) {
       await interaction.editReply("\u274C \u65E0\u6CD5\u7981\u8A00\u6743\u9650\u7B49\u7EA7\u9AD8\u4E8E\u6216\u7B49\u4E8E\u4F60\u7684\u6210\u5458\u3002");
       return;
     }
