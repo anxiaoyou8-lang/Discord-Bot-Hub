@@ -71,9 +71,10 @@ import {
 } from "./handlers/triviaHandler.js";
 import {
   buildBanPanel,
-  handleBanMemberSelect,
-  handleBanActionButton,
+  handleBanActionSelect,
+  handleBanTargetSelect,
   handleBanModal,
+  handleKickModal,
   handleMuteModal,
 } from "./handlers/banHandler.js";
 import {
@@ -151,9 +152,10 @@ import {
   NOTIFY_SUBSCRIBERS_CMD,
   BAN_PANEL_CMD,
   SET_BAN_CHANNEL_CMD,
-  BAN_SELECT_ID,
-  BAN_ACTION_PREFIX,
+  BAN_ACTION_SELECT_ID,
+  BAN_TARGET_SELECT_PREFIX,
   BAN_MODAL_PREFIX,
+  KICK_MODAL_PREFIX,
   MUTE_MODAL_PREFIX,
   SUGGESTION_PANEL_CMD,
   SET_SUGGESTION_CHANNEL_CMD,
@@ -606,16 +608,21 @@ export async function startBot(token: string) {
           const id = parseInt(customId.slice(SUGGESTION_REJECT_PREFIX.length), 10);
           await handleSuggestionRejectBtn(interaction, id);
 
-        } else if (customId.startsWith(BAN_ACTION_PREFIX)) {
-          const actionPart = customId.slice(BAN_ACTION_PREFIX.length);
-          await handleBanActionButton(interaction, actionPart);
+        }
+
+      } else if (interaction.isStringSelectMenu()) {
+        const { customId } = interaction;
+
+        if (customId === BAN_ACTION_SELECT_ID) {
+          await handleBanActionSelect(interaction);
         }
 
       } else if (interaction.isUserSelectMenu()) {
         const { customId } = interaction;
 
-        if (customId === BAN_SELECT_ID) {
-          await handleBanMemberSelect(interaction);
+        if (customId.startsWith(BAN_TARGET_SELECT_PREFIX)) {
+          const action = customId.slice(BAN_TARGET_SELECT_PREFIX.length);
+          await handleBanTargetSelect(interaction, action);
         }
 
       } else if (interaction.isChannelSelectMenu()) {
@@ -640,6 +647,10 @@ export async function startBot(token: string) {
 
         } else if (customId === SEARCH_NICKNAME_MODAL_ID) {
           await handleSearchNicknameModal(interaction);
+
+        } else if (customId.startsWith(KICK_MODAL_PREFIX)) {
+          const targetId = customId.slice(KICK_MODAL_PREFIX.length);
+          await handleKickModal(interaction, targetId, client);
 
         } else if (customId.startsWith(MUTE_MODAL_PREFIX)) {
           const rest = customId.slice(MUTE_MODAL_PREFIX.length);
