@@ -29,8 +29,8 @@ import {
 import {
   getConfig,
   CONFIG_KEY_BAN_CHANNEL,
-  CONFIG_KEY_ADMIN_ROLE,
 } from "../config.js";
+import { checkIsAdmin } from "../utils/adminCheck.js";
 
 const MUTE_OPTIONS = [
   { label: "禁言 3 天",  days: 3  },
@@ -38,21 +38,6 @@ const MUTE_OPTIONS = [
   { label: "禁言 14 天", days: 14 },
   { label: "禁言 28 天", days: 28 },
 ];
-
-function isAdmin(guildId: string, member: GuildMember | null): boolean {
-  const adminRoleId = getConfig(guildId, CONFIG_KEY_ADMIN_ROLE);
-  const isDiscordAdmin = member?.permissions
-    ? typeof member.permissions === "string"
-      ? !!(BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator))
-      : member.permissions.has(PermissionFlagsBits.Administrator)
-    : false;
-  const hasAdminRole = adminRoleId
-    ? member?.roles instanceof Object && "cache" in member.roles
-      ? member.roles.cache.has(adminRoleId)
-      : false
-    : false;
-  return isDiscordAdmin || hasAdminRole;
-}
 
 export function buildBanPanel() {
   const embed = new EmbedBuilder()
@@ -87,7 +72,7 @@ export async function handleBanMemberSelect(
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
 
-  if (!isAdmin(guildId, member)) {
+  if (!checkIsAdmin(guildId, member)) {
     await interaction.reply({ content: "❌ 只有管理员可以使用此面板。", flags: 64 });
     return;
   }
@@ -132,7 +117,7 @@ export async function handleBanActionButton(
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
 
-  if (!isAdmin(guildId, member)) {
+  if (!checkIsAdmin(guildId, member)) {
     await interaction.reply({ content: "❌ 只有管理员可以执行此操作。", flags: 64 });
     return;
   }
@@ -208,7 +193,7 @@ export async function handleBanModal(
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
 
-  if (!isAdmin(guildId, member)) {
+  if (!checkIsAdmin(guildId, member)) {
     await interaction.editReply("❌ 只有管理员可以执行封禁。");
     return;
   }
@@ -315,7 +300,7 @@ export async function handleMuteModal(
   const member = interaction.member as GuildMember | null;
   const guildId = interaction.guildId ?? "";
 
-  if (!isAdmin(guildId, member)) {
+  if (!checkIsAdmin(guildId, member)) {
     await interaction.editReply("❌ 只有管理员可以执行禁言。");
     return;
   }

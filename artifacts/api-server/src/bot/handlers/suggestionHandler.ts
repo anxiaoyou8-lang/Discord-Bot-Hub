@@ -28,22 +28,8 @@ import {
   SUGGESTION_REJECT_MODAL_PREFIX,
   SUGGESTION_REJECT_REASON_INPUT,
 } from "../constants.js";
-import { getConfig, CONFIG_KEY_SUGGESTION_CHANNEL, CONFIG_KEY_ADMIN_ROLE } from "../config.js";
-
-function isAdmin(guildId: string, member: GuildMember | null): boolean {
-  const adminRoleId = getConfig(guildId, CONFIG_KEY_ADMIN_ROLE);
-  const isDiscordAdmin = member?.permissions
-    ? typeof member.permissions === "string"
-      ? !!(BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator))
-      : member.permissions.has(PermissionFlagsBits.Administrator)
-    : false;
-  const hasAdminRole = adminRoleId
-    ? member?.roles instanceof Object && "cache" in member.roles
-      ? member.roles.cache.has(adminRoleId)
-      : false
-    : false;
-  return isDiscordAdmin || hasAdminRole;
-}
+import { getConfig, CONFIG_KEY_SUGGESTION_CHANNEL } from "../config.js";
+import { checkIsAdmin } from "../utils/adminCheck.js";
 
 async function buildSuggestionEmbed(
   id: number,
@@ -396,7 +382,7 @@ export async function handleSuggestionAccept(
 ) {
   const guildId = interaction.guildId ?? "";
   const member = interaction.member as GuildMember | null;
-  if (!isAdmin(guildId, member)) {
+  if (!checkIsAdmin(guildId, member)) {
     await interaction.reply({ content: "❌ 只有管理员可以归档投稿。", flags: 64 });
     return;
   }
@@ -419,7 +405,7 @@ export async function handleSuggestionRejectBtn(
 ) {
   const guildId = interaction.guildId ?? "";
   const member = interaction.member as GuildMember | null;
-  if (!isAdmin(guildId, member)) {
+  if (!checkIsAdmin(guildId, member)) {
     await interaction.reply({ content: "❌ 只有管理员可以归档投稿。", flags: 64 });
     return;
   }

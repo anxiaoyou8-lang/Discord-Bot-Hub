@@ -88,6 +88,7 @@ import {
   handleSuggestionRejectBtn,
   handleSuggestionRejectModal,
 } from "./handlers/suggestionHandler.js";
+import { checkIsAdmin } from "./utils/adminCheck.js";
 import {
   getConfig,
   setConfig,
@@ -181,24 +182,6 @@ interface BotSaySession {
   files: Array<{ url: string; name: string }>;
 }
 const botSaySessions = new Map<string, BotSaySession>();
-
-function checkIsAdmin(
-  guildId: string | null,
-  member: GuildMember | null
-): boolean {
-  const adminRoleId = guildId ? getConfig(guildId, CONFIG_KEY_ADMIN_ROLE) : undefined;
-  const isDiscordAdmin = member?.permissions
-    ? typeof member.permissions === "string"
-      ? !!(BigInt(member.permissions) & BigInt(PermissionFlagsBits.Administrator))
-      : member.permissions.has(PermissionFlagsBits.Administrator)
-    : false;
-  const hasAdminRole = adminRoleId
-    ? member?.roles instanceof Object && "cache" in member.roles
-      ? member.roles.cache.has(adminRoleId)
-      : false
-    : false;
-  return isDiscordAdmin || hasAdminRole;
-}
 
 export async function startBot(token: string) {
   const client = new Client({

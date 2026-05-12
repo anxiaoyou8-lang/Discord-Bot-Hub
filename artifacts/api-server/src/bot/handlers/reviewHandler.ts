@@ -29,6 +29,7 @@ import {
   REVIEW_DONE_PREFIX,
 } from "../constants.js";
 import { getConfig, CONFIG_KEY_ADMIN_ROLE, CONFIG_KEY_APPROVE_ROLE } from "../config.js";
+import { checkIsAdmin } from "../utils/adminCheck.js";
 
 export function buildReviewPanel() {
   const embed = new EmbedBuilder()
@@ -61,10 +62,9 @@ function isAdminMember(
   interaction: ButtonInteraction,
   adminRoleId: string | undefined
 ): boolean {
-  const isAdmin = interaction.memberPermissions?.has(PermissionFlagsBits.Administrator) ?? false;
-  const member = interaction.member as GuildMember;
-  const hasAdminRole = adminRoleId ? member.roles.cache.has(adminRoleId) : false;
-  return isAdmin || hasAdminRole;
+  const member = interaction.member as GuildMember | null;
+  const guildId = interaction.guildId ?? "";
+  return checkIsAdmin(guildId, member);
 }
 
 export async function handleReviewPanelButton(
