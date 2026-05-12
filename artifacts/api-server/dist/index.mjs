@@ -132790,53 +132790,64 @@ function buildBanPanel() {
   };
 }
 async function handleBanTargetSelect(interaction, action) {
-  const member = interaction.member;
-  const guildId = interaction.guildId ?? "";
-  if (!checkIsAdmin(guildId, member)) {
-    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u6267\u884C\u6B64\u64CD\u4F5C\u3002", flags: 64 });
-    return;
-  }
-  const targetId = interaction.values[0];
-  if (!targetId) {
-    await interaction.reply({ content: "\u274C \u672A\u9009\u62E9\u6210\u5458\u3002", flags: 64 });
-    return;
-  }
-  if (targetId === interaction.user.id) {
-    await interaction.reply({ content: "\u274C \u4E0D\u80FD\u5BF9\u81EA\u5DF1\u6267\u884C\u6B64\u64CD\u4F5C\u3002", flags: 64 });
-    return;
-  }
-  if (action === "ban") {
-    const modal = new import_discord11.ModalBuilder().setCustomId(`${BAN_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u5C01\u7981\u4FE1\u606F");
-    modal.addComponents(
-      new import_discord11.ActionRowBuilder().addComponents(
-        new import_discord11.TextInputBuilder().setCustomId(BAN_REASON_INPUT).setLabel("\u5C01\u7981\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BE6\u7EC6\u8BF4\u660E\u5C01\u7981\u539F\u56E0\u2026").setMinLength(5).setMaxLength(500).setRequired(true)
-      ),
-      new import_discord11.ActionRowBuilder().addComponents(
-        new import_discord11.TextInputBuilder().setCustomId(BAN_EVIDENCE_INPUT).setLabel("\u8BC1\u636E\u94FE\u63A5\u6216\u8BF4\u660E\uFF08\u9009\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Short).setPlaceholder("\u53EF\u7C98\u8D34\u56FE\u7247\u94FE\u63A5\u3001\u622A\u56FE\u94FE\u63A5\u7B49\u2026").setMaxLength(500).setRequired(false)
-      )
-    );
+  try {
+    const member = interaction.member;
+    const guildId = interaction.guildId ?? "";
+    if (!checkIsAdmin(guildId, member)) {
+      await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u6267\u884C\u6B64\u64CD\u4F5C\u3002", ephemeral: true });
+      return;
+    }
+    const targetId = interaction.values[0];
+    if (!targetId) {
+      await interaction.reply({ content: "\u274C \u672A\u9009\u62E9\u6210\u5458\u3002", ephemeral: true });
+      return;
+    }
+    if (targetId === interaction.user.id) {
+      await interaction.reply({ content: "\u274C \u4E0D\u80FD\u5BF9\u81EA\u5DF1\u6267\u884C\u6B64\u64CD\u4F5C\u3002", ephemeral: true });
+      return;
+    }
+    let modal;
+    if (action === "ban") {
+      modal = new import_discord11.ModalBuilder().setCustomId(`${BAN_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u5C01\u7981\u4FE1\u606F");
+      modal.addComponents(
+        new import_discord11.ActionRowBuilder().addComponents(
+          new import_discord11.TextInputBuilder().setCustomId(BAN_REASON_INPUT).setLabel("\u5C01\u7981\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BE6\u7EC6\u8BF4\u660E\u5C01\u7981\u539F\u56E0\u2026").setMinLength(5).setMaxLength(500).setRequired(true)
+        ),
+        new import_discord11.ActionRowBuilder().addComponents(
+          new import_discord11.TextInputBuilder().setCustomId(BAN_EVIDENCE_INPUT).setLabel("\u8BC1\u636E\u94FE\u63A5\u6216\u8BF4\u660E\uFF08\u9009\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Short).setPlaceholder("\u53EF\u7C98\u8D34\u56FE\u7247\u94FE\u63A5\u3001\u622A\u56FE\u94FE\u63A5\u7B49\u2026").setMaxLength(500).setRequired(false)
+        )
+      );
+    } else if (action === "kick") {
+      modal = new import_discord11.ModalBuilder().setCustomId(`${KICK_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u8E22\u51FA\u539F\u56E0");
+      modal.addComponents(
+        new import_discord11.ActionRowBuilder().addComponents(
+          new import_discord11.TextInputBuilder().setCustomId(KICK_REASON_INPUT).setLabel("\u8E22\u51FA\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BF4\u660E\u8E22\u51FA\u539F\u56E0\u2026").setMinLength(2).setMaxLength(500).setRequired(true)
+        )
+      );
+    } else if (action === "mute") {
+      modal = new import_discord11.ModalBuilder().setCustomId(`${MUTE_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u7981\u8A00\u4FE1\u606F");
+      modal.addComponents(
+        new import_discord11.ActionRowBuilder().addComponents(
+          new import_discord11.TextInputBuilder().setCustomId(MUTE_DURATION_INPUT).setLabel("\u7981\u8A00\u5929\u6570\uFF081\u201328\uFF09").setStyle(import_discord11.TextInputStyle.Short).setPlaceholder("\u4F8B\uFF1A7").setMinLength(1).setMaxLength(2).setRequired(true)
+        ),
+        new import_discord11.ActionRowBuilder().addComponents(
+          new import_discord11.TextInputBuilder().setCustomId(MUTE_REASON_INPUT).setLabel("\u7981\u8A00\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BF4\u660E\u7981\u8A00\u539F\u56E0\u2026").setMinLength(2).setMaxLength(500).setRequired(true)
+        )
+      );
+    } else {
+      await interaction.reply({ content: "\u274C \u672A\u77E5\u64CD\u4F5C\u7C7B\u578B\u3002", ephemeral: true });
+      return;
+    }
     await interaction.showModal(modal);
-  } else if (action === "kick") {
-    const modal = new import_discord11.ModalBuilder().setCustomId(`${KICK_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u8E22\u51FA\u539F\u56E0");
-    modal.addComponents(
-      new import_discord11.ActionRowBuilder().addComponents(
-        new import_discord11.TextInputBuilder().setCustomId(KICK_REASON_INPUT).setLabel("\u8E22\u51FA\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BF4\u660E\u8E22\u51FA\u539F\u56E0\u2026").setMinLength(2).setMaxLength(500).setRequired(true)
-      )
-    );
-    await interaction.showModal(modal);
-  } else if (action === "mute") {
-    const modal = new import_discord11.ModalBuilder().setCustomId(`${MUTE_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u7981\u8A00\u4FE1\u606F");
-    modal.addComponents(
-      new import_discord11.ActionRowBuilder().addComponents(
-        new import_discord11.TextInputBuilder().setCustomId(MUTE_DURATION_INPUT).setLabel("\u7981\u8A00\u5929\u6570\uFF081\u201328\uFF09").setStyle(import_discord11.TextInputStyle.Short).setPlaceholder("\u4F8B\uFF1A7").setMinLength(1).setMaxLength(2).setRequired(true)
-      ),
-      new import_discord11.ActionRowBuilder().addComponents(
-        new import_discord11.TextInputBuilder().setCustomId(MUTE_REASON_INPUT).setLabel("\u7981\u8A00\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BF4\u660E\u7981\u8A00\u539F\u56E0\u2026").setMinLength(2).setMaxLength(500).setRequired(true)
-      )
-    );
-    await interaction.showModal(modal);
-  } else {
-    await interaction.reply({ content: "\u274C \u672A\u77E5\u64CD\u4F5C\u7C7B\u578B\u3002", flags: 64 });
+  } catch (err) {
+    logger.error({ err }, "handleBanTargetSelect failed");
+    const msg = err instanceof Error ? err.message : String(err);
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: `\u274C \u64CD\u4F5C\u5931\u8D25\uFF1A${msg}`, ephemeral: true });
+      }
+    } catch {
+    }
   }
 }
 async function handleBanModal(interaction, targetId, client) {

@@ -72,99 +72,112 @@ export async function handleBanTargetSelect(
   interaction: UserSelectMenuInteraction,
   action: string
 ) {
-  const member = interaction.member as GuildMember | null;
-  const guildId = interaction.guildId ?? "";
+  try {
+    const member = interaction.member as GuildMember | null;
+    const guildId = interaction.guildId ?? "";
 
-  if (!checkIsAdmin(guildId, member)) {
-    await interaction.reply({ content: "❌ 只有管理员可以执行此操作。", flags: 64 });
-    return;
-  }
+    if (!checkIsAdmin(guildId, member)) {
+      await interaction.reply({ content: "❌ 只有管理员可以执行此操作。", ephemeral: true });
+      return;
+    }
 
-  const targetId = interaction.values[0];
-  if (!targetId) {
-    await interaction.reply({ content: "❌ 未选择成员。", flags: 64 });
-    return;
-  }
-  if (targetId === interaction.user.id) {
-    await interaction.reply({ content: "❌ 不能对自己执行此操作。", flags: 64 });
-    return;
-  }
+    const targetId = interaction.values[0];
+    if (!targetId) {
+      await interaction.reply({ content: "❌ 未选择成员。", ephemeral: true });
+      return;
+    }
+    if (targetId === interaction.user.id) {
+      await interaction.reply({ content: "❌ 不能对自己执行此操作。", ephemeral: true });
+      return;
+    }
 
-  if (action === "ban") {
-    const modal = new ModalBuilder()
-      .setCustomId(`${BAN_MODAL_PREFIX}${targetId}`)
-      .setTitle("填写封禁信息");
-    modal.addComponents(
-      new ActionRowBuilder<TextInputBuilder>().addComponents(
-        new TextInputBuilder()
-          .setCustomId(BAN_REASON_INPUT)
-          .setLabel("封禁原因（必填）")
-          .setStyle(TextInputStyle.Paragraph)
-          .setPlaceholder("请详细说明封禁原因…")
-          .setMinLength(5)
-          .setMaxLength(500)
-          .setRequired(true)
-      ),
-      new ActionRowBuilder<TextInputBuilder>().addComponents(
-        new TextInputBuilder()
-          .setCustomId(BAN_EVIDENCE_INPUT)
-          .setLabel("证据链接或说明（选填）")
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder("可粘贴图片链接、截图链接等…")
-          .setMaxLength(500)
-          .setRequired(false)
-      )
-    );
+    let modal: ModalBuilder;
+
+    if (action === "ban") {
+      modal = new ModalBuilder()
+        .setCustomId(`${BAN_MODAL_PREFIX}${targetId}`)
+        .setTitle("填写封禁信息");
+      modal.addComponents(
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId(BAN_REASON_INPUT)
+            .setLabel("封禁原因（必填）")
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder("请详细说明封禁原因…")
+            .setMinLength(5)
+            .setMaxLength(500)
+            .setRequired(true)
+        ),
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId(BAN_EVIDENCE_INPUT)
+            .setLabel("证据链接或说明（选填）")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("可粘贴图片链接、截图链接等…")
+            .setMaxLength(500)
+            .setRequired(false)
+        )
+      );
+
+    } else if (action === "kick") {
+      modal = new ModalBuilder()
+        .setCustomId(`${KICK_MODAL_PREFIX}${targetId}`)
+        .setTitle("填写踢出原因");
+      modal.addComponents(
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId(KICK_REASON_INPUT)
+            .setLabel("踢出原因（必填）")
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder("请说明踢出原因…")
+            .setMinLength(2)
+            .setMaxLength(500)
+            .setRequired(true)
+        )
+      );
+
+    } else if (action === "mute") {
+      modal = new ModalBuilder()
+        .setCustomId(`${MUTE_MODAL_PREFIX}${targetId}`)
+        .setTitle("填写禁言信息");
+      modal.addComponents(
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId(MUTE_DURATION_INPUT)
+            .setLabel("禁言天数（1–28）")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("例：7")
+            .setMinLength(1)
+            .setMaxLength(2)
+            .setRequired(true)
+        ),
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId(MUTE_REASON_INPUT)
+            .setLabel("禁言原因（必填）")
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder("请说明禁言原因…")
+            .setMinLength(2)
+            .setMaxLength(500)
+            .setRequired(true)
+        )
+      );
+
+    } else {
+      await interaction.reply({ content: "❌ 未知操作类型。", ephemeral: true });
+      return;
+    }
+
     await interaction.showModal(modal);
 
-  } else if (action === "kick") {
-    const modal = new ModalBuilder()
-      .setCustomId(`${KICK_MODAL_PREFIX}${targetId}`)
-      .setTitle("填写踢出原因");
-    modal.addComponents(
-      new ActionRowBuilder<TextInputBuilder>().addComponents(
-        new TextInputBuilder()
-          .setCustomId(KICK_REASON_INPUT)
-          .setLabel("踢出原因（必填）")
-          .setStyle(TextInputStyle.Paragraph)
-          .setPlaceholder("请说明踢出原因…")
-          .setMinLength(2)
-          .setMaxLength(500)
-          .setRequired(true)
-      )
-    );
-    await interaction.showModal(modal);
-
-  } else if (action === "mute") {
-    const modal = new ModalBuilder()
-      .setCustomId(`${MUTE_MODAL_PREFIX}${targetId}`)
-      .setTitle("填写禁言信息");
-    modal.addComponents(
-      new ActionRowBuilder<TextInputBuilder>().addComponents(
-        new TextInputBuilder()
-          .setCustomId(MUTE_DURATION_INPUT)
-          .setLabel("禁言天数（1–28）")
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder("例：7")
-          .setMinLength(1)
-          .setMaxLength(2)
-          .setRequired(true)
-      ),
-      new ActionRowBuilder<TextInputBuilder>().addComponents(
-        new TextInputBuilder()
-          .setCustomId(MUTE_REASON_INPUT)
-          .setLabel("禁言原因（必填）")
-          .setStyle(TextInputStyle.Paragraph)
-          .setPlaceholder("请说明禁言原因…")
-          .setMinLength(2)
-          .setMaxLength(500)
-          .setRequired(true)
-      )
-    );
-    await interaction.showModal(modal);
-
-  } else {
-    await interaction.reply({ content: "❌ 未知操作类型。", flags: 64 });
+  } catch (err: unknown) {
+    logger.error({ err }, "handleBanTargetSelect failed");
+    const msg = err instanceof Error ? err.message : String(err);
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: `❌ 操作失败：${msg}`, ephemeral: true });
+      }
+    } catch { /* ignore secondary error */ }
   }
 }
 
