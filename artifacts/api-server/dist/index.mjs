@@ -70997,7 +70997,7 @@ var require_dist9 = __commonJS({
       RoleSelectMenuBuilder: () => RoleSelectMenuBuilder,
       SectionBuilder: () => SectionBuilder,
       SelectMenuAssertions: () => Assertions_exports6,
-      SelectMenuBuilder: () => StringSelectMenuBuilder2,
+      SelectMenuBuilder: () => StringSelectMenuBuilder,
       SelectMenuOptionBuilder: () => StringSelectMenuOptionBuilder,
       SeparatorBuilder: () => SeparatorBuilder,
       SharedNameAndDescription: () => SharedNameAndDescription,
@@ -71017,7 +71017,7 @@ var require_dist9 = __commonJS({
       SlashCommandSubcommandBuilder: () => SlashCommandSubcommandBuilder,
       SlashCommandSubcommandGroupBuilder: () => SlashCommandSubcommandGroupBuilder,
       SlashCommandUserOption: () => SlashCommandUserOption,
-      StringSelectMenuBuilder: () => StringSelectMenuBuilder2,
+      StringSelectMenuBuilder: () => StringSelectMenuBuilder,
       StringSelectMenuOptionBuilder: () => StringSelectMenuOptionBuilder,
       TextDisplayBuilder: () => TextDisplayBuilder,
       TextInputAssertions: () => Assertions_exports5,
@@ -72709,7 +72709,7 @@ var require_dist9 = __commonJS({
       }
       return import_shapeshift6.Result.ok(value);
     }).setValidationEnabled(isValidationEnabled);
-    var StringSelectMenuBuilder2 = class extends BaseSelectMenuBuilder {
+    var StringSelectMenuBuilder = class extends BaseSelectMenuBuilder {
       static {
         __name(this, "StringSelectMenuBuilder");
       }
@@ -73108,7 +73108,7 @@ var require_dist9 = __commonJS({
        * @param input - A function that returns a component builder or an already built builder
        */
       setStringSelectMenuComponent(input) {
-        this.data.component = resolveBuilder(input, StringSelectMenuBuilder2);
+        this.data.component = resolveBuilder(input, StringSelectMenuBuilder);
         return this;
       }
       /**
@@ -73959,7 +73959,7 @@ var require_dist9 = __commonJS({
         case import_v1027.ComponentType.Button:
           return new ButtonBuilder8(data);
         case import_v1027.ComponentType.StringSelect:
-          return new StringSelectMenuBuilder2(data);
+          return new StringSelectMenuBuilder(data);
         case import_v1027.ComponentType.TextInput:
           return new TextInputBuilder8(data);
         case import_v1027.ComponentType.UserSelect:
@@ -77419,7 +77419,7 @@ var require_StringSelectMenuBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolvePartialEmoji } = require_Util();
-    var StringSelectMenuBuilder2 = class _StringSelectMenuBuilder extends BuildersSelectMenu {
+    var StringSelectMenuBuilder = class _StringSelectMenuBuilder extends BuildersSelectMenu {
       constructor({ options, ...data } = {}) {
         super(
           toSnakeCase2({
@@ -77475,7 +77475,7 @@ var require_StringSelectMenuBuilder = __commonJS({
         return new this(other);
       }
     };
-    module2.exports = StringSelectMenuBuilder2;
+    module2.exports = StringSelectMenuBuilder;
   }
 });
 
@@ -77687,7 +77687,7 @@ var require_Components = __commonJS({
     var RoleSelectMenuComponent = require_RoleSelectMenuComponent();
     var SectionComponent = require_SectionComponent();
     var SeparatorComponent = require_SeparatorComponent();
-    var StringSelectMenuBuilder2 = require_StringSelectMenuBuilder();
+    var StringSelectMenuBuilder = require_StringSelectMenuBuilder();
     var StringSelectMenuComponent = require_StringSelectMenuComponent();
     var TextDisplayComponent = require_TextDisplayComponent();
     var TextInputBuilder8 = require_TextInputBuilder();
@@ -77716,7 +77716,7 @@ var require_Components = __commonJS({
     var ComponentTypeToBuilder = {
       [ComponentType.ActionRow]: ActionRowBuilder10,
       [ComponentType.Button]: ButtonBuilder8,
-      [ComponentType.StringSelect]: StringSelectMenuBuilder2,
+      [ComponentType.StringSelect]: StringSelectMenuBuilder,
       [ComponentType.TextInput]: TextInputBuilder8,
       [ComponentType.UserSelect]: UserSelectMenuBuilder2,
       [ComponentType.RoleSelect]: RoleSelectMenuBuilder,
@@ -102976,9 +102976,9 @@ var require_SelectMenuBuilder = __commonJS({
   "../../node_modules/.pnpm/discord.js@14.26.3/node_modules/discord.js/src/structures/SelectMenuBuilder.js"(exports2, module2) {
     "use strict";
     var process2 = __require("node:process");
-    var StringSelectMenuBuilder2 = require_StringSelectMenuBuilder();
+    var StringSelectMenuBuilder = require_StringSelectMenuBuilder();
     var deprecationEmitted = false;
-    var SelectMenuBuilder2 = class extends StringSelectMenuBuilder2 {
+    var SelectMenuBuilder2 = class extends StringSelectMenuBuilder {
       constructor(...params) {
         super(...params);
         if (!deprecationEmitted) {
@@ -112485,7 +112485,6 @@ var ARTWORK_NOTIFY_TEXT_INPUT = "artwork_notify_text_input";
 var NOTIFY_SUBSCRIBERS_CMD = "\u901A\u77E5\u8BA2\u9605\u8005";
 var BAN_PANEL_CMD = "setup_\u5C01\u7981\u9762\u677F";
 var SET_BAN_CHANNEL_CMD = "set_ban_channel";
-var BAN_ACTION_SELECT_ID = "ban_action_select";
 var BAN_TARGET_SELECT_PREFIX = "ban_target_";
 var BAN_MODAL_PREFIX = "ban_modal_";
 var BAN_REASON_INPUT = "ban_reason_input";
@@ -112494,6 +112493,7 @@ var KICK_MODAL_PREFIX = "kick_modal_";
 var KICK_REASON_INPUT = "kick_reason_input";
 var MUTE_MODAL_PREFIX = "mute_modal_";
 var MUTE_REASON_INPUT = "mute_reason_input";
+var MUTE_DURATION_INPUT = "mute_duration_input";
 var BAN_ADMIN_CONTACT = "vincentsk__31051";
 
 // src/bot/commands.ts
@@ -132768,55 +132768,26 @@ async function handleSetupStats(interaction, client) {
 // src/bot/handlers/banHandler.ts
 var import_discord11 = __toESM(require_src2(), 1);
 function buildBanPanel() {
-  const embed = new import_discord11.EmbedBuilder().setTitle("\u{1F528} \u5C01\u7981 / \u8E22\u51FA / \u7981\u8A00\u7BA1\u7406\u9762\u677F").setDescription(
+  const embed = new import_discord11.EmbedBuilder().setTitle("\u{1F528} \u6210\u5458\u7BA1\u7406\u9762\u677F").setDescription(
     [
-      "**\u7B2C\u4E00\u6B65\uFF1A** \u4ECE\u4E0B\u65B9\u9009\u5355\u9009\u62E9\u64CD\u4F5C\u7C7B\u578B",
-      "**\u7B2C\u4E8C\u6B65\uFF1A** \u9009\u62E9\u76EE\u6807\u6210\u5458",
-      "**\u7B2C\u4E09\u6B65\uFF1A** \u586B\u5199\u539F\u56E0",
+      "\u4ECE\u5BF9\u5E94\u9009\u5355\u9009\u62E9\u6210\u5458\u540E\uFF0C\u76F4\u63A5\u5F39\u51FA\u539F\u56E0\u586B\u5199\u6846\u3002",
       "",
-      "\u2022 \u{1F528} **\u5C01\u7981** \u2014 \u6C38\u4E45\u79FB\u51FA\uFF0C\u79C1\u4FE1\u901A\u77E5 + \u53D1\u5E03\u516C\u544A",
-      "\u2022 \u{1F462} **\u8E22\u51FA** \u2014 \u79FB\u51FA\u670D\u52A1\u5668\uFF0C\u4E0D\u53D1\u79C1\u4FE1\uFF0C\u53D1\u5E03\u516C\u544A",
-      "\u2022 \u{1F507} **\u7981\u8A00** \u2014 \u9650\u5236\u53D1\u8A00\uFF0C\u4E0D\u53D1\u79C1\u4FE1\uFF0C\u53D1\u5E03\u516C\u544A"
+      "\u2022 \u{1F528} **\u5C01\u7981** \u2014 \u6C38\u4E45\u79FB\u51FA\uFF0C\u81EA\u52A8\u79C1\u4FE1\u901A\u77E5 + \u53D1\u5E03\u516C\u544A",
+      "\u2022 \u{1F462} **\u8E22\u51FA** \u2014 \u79FB\u51FA\u670D\u52A1\u5668\uFF08\u53EF\u91CD\u65B0\u52A0\u5165\uFF09\uFF0C\u53D1\u5E03\u516C\u544A",
+      "\u2022 \u{1F507} **\u7981\u8A00** \u2014 \u586B\u5199\u539F\u56E0\u4E0E\u5929\u6570\uFF081\u201328\u5929\uFF09\uFF0C\u53D1\u5E03\u516C\u544A"
     ].join("\n")
   ).setColor(15548997).setFooter({ text: "\u4EC5\u7BA1\u7406\u5458\u53EF\u64CD\u4F5C" });
-  const actionSelect = new import_discord11.StringSelectMenuBuilder().setCustomId(BAN_ACTION_SELECT_ID).setPlaceholder("\u2460 \u9009\u62E9\u64CD\u4F5C\u7C7B\u578B\u2026").addOptions(
-    { label: "\u{1F528} \u5C01\u7981", value: "ban", description: "\u6C38\u4E45\u79FB\u51FA\u670D\u52A1\u5668\uFF0C\u79C1\u4FE1\u901A\u77E5" },
-    { label: "\u{1F462} \u8E22\u51FA\u670D\u52A1\u5668", value: "kick", description: "\u79FB\u51FA\u670D\u52A1\u5668\uFF0C\u53EF\u91CD\u65B0\u52A0\u5165" },
-    { label: "\u{1F507} \u7981\u8A00 3 \u5929", value: "mute_3" },
-    { label: "\u{1F507} \u7981\u8A00 7 \u5929", value: "mute_7" },
-    { label: "\u{1F507} \u7981\u8A00 14 \u5929", value: "mute_14" },
-    { label: "\u{1F507} \u7981\u8A00 28 \u5929", value: "mute_28" }
-  );
+  const banSelect = new import_discord11.UserSelectMenuBuilder().setCustomId(`${BAN_TARGET_SELECT_PREFIX}ban`).setPlaceholder("\u{1F528} \u5C01\u7981 \u2014 \u9009\u62E9\u6210\u5458\u2026");
+  const kickSelect = new import_discord11.UserSelectMenuBuilder().setCustomId(`${BAN_TARGET_SELECT_PREFIX}kick`).setPlaceholder("\u{1F462} \u8E22\u51FA \u2014 \u9009\u62E9\u6210\u5458\u2026");
+  const muteSelect = new import_discord11.UserSelectMenuBuilder().setCustomId(`${BAN_TARGET_SELECT_PREFIX}mute`).setPlaceholder("\u{1F507} \u7981\u8A00 \u2014 \u9009\u62E9\u6210\u5458\u2026");
   return {
     embeds: [embed],
     components: [
-      new import_discord11.ActionRowBuilder().addComponents(actionSelect)
+      new import_discord11.ActionRowBuilder().addComponents(banSelect),
+      new import_discord11.ActionRowBuilder().addComponents(kickSelect),
+      new import_discord11.ActionRowBuilder().addComponents(muteSelect)
     ]
   };
-}
-async function handleBanActionSelect(interaction) {
-  const member = interaction.member;
-  const guildId = interaction.guildId ?? "";
-  if (!checkIsAdmin(guildId, member)) {
-    await interaction.reply({ content: "\u274C \u53EA\u6709\u7BA1\u7406\u5458\u53EF\u4EE5\u4F7F\u7528\u6B64\u9762\u677F\u3002", flags: 64 });
-    return;
-  }
-  const action = interaction.values[0];
-  const actionLabels = {
-    ban: "\u{1F528} \u5C01\u7981",
-    kick: "\u{1F462} \u8E22\u51FA\u670D\u52A1\u5668",
-    mute_3: "\u{1F507} \u7981\u8A00 3 \u5929",
-    mute_7: "\u{1F507} \u7981\u8A00 7 \u5929",
-    mute_14: "\u{1F507} \u7981\u8A00 14 \u5929",
-    mute_28: "\u{1F507} \u7981\u8A00 28 \u5929"
-  };
-  const userSelect = new import_discord11.UserSelectMenuBuilder().setCustomId(`${BAN_TARGET_SELECT_PREFIX}${action}`).setPlaceholder("\u2461 \u9009\u62E9\u8981\u5904\u7406\u7684\u6210\u5458\u2026").setMinValues(1).setMaxValues(1);
-  await interaction.reply({
-    content: `\u5DF2\u9009\u62E9\u64CD\u4F5C\uFF1A**${actionLabels[action] ?? action}**
-\u8BF7\u9009\u62E9\u8981\u5904\u7406\u7684\u6210\u5458\uFF1A`,
-    components: [new import_discord11.ActionRowBuilder().addComponents(userSelect)],
-    flags: 64
-  });
 }
 async function handleBanTargetSelect(interaction, action) {
   const member = interaction.member;
@@ -132853,10 +132824,12 @@ async function handleBanTargetSelect(interaction, action) {
       )
     );
     await interaction.showModal(modal);
-  } else if (action.startsWith("mute_")) {
-    const days = action.split("_")[1];
-    const modal = new import_discord11.ModalBuilder().setCustomId(`${MUTE_MODAL_PREFIX}${days}_${targetId}`).setTitle(`\u586B\u5199\u7981\u8A00\u539F\u56E0\uFF08${days} \u5929\uFF09`);
+  } else if (action === "mute") {
+    const modal = new import_discord11.ModalBuilder().setCustomId(`${MUTE_MODAL_PREFIX}${targetId}`).setTitle("\u586B\u5199\u7981\u8A00\u4FE1\u606F");
     modal.addComponents(
+      new import_discord11.ActionRowBuilder().addComponents(
+        new import_discord11.TextInputBuilder().setCustomId(MUTE_DURATION_INPUT).setLabel("\u7981\u8A00\u5929\u6570\uFF081\u201328\uFF09").setStyle(import_discord11.TextInputStyle.Short).setPlaceholder("\u4F8B\uFF1A7").setMinLength(1).setMaxLength(2).setRequired(true)
+      ),
       new import_discord11.ActionRowBuilder().addComponents(
         new import_discord11.TextInputBuilder().setCustomId(MUTE_REASON_INPUT).setLabel("\u7981\u8A00\u539F\u56E0\uFF08\u5FC5\u586B\uFF09").setStyle(import_discord11.TextInputStyle.Paragraph).setPlaceholder("\u8BF7\u8BF4\u660E\u7981\u8A00\u539F\u56E0\u2026").setMinLength(2).setMaxLength(500).setRequired(true)
       )
@@ -132991,7 +132964,7 @@ async function handleKickModal(interaction, targetId, client) {
     );
   }
 }
-async function handleMuteModal(interaction, days, targetId, client) {
+async function handleMuteModal(interaction, targetId, client) {
   await interaction.deferReply({ flags: 64 });
   const member = interaction.member;
   const guildId = interaction.guildId ?? "";
@@ -133002,6 +132975,12 @@ async function handleMuteModal(interaction, days, targetId, client) {
   const guild = interaction.guild;
   if (!guild) {
     await interaction.editReply("\u274C \u6B64\u64CD\u4F5C\u53EA\u80FD\u5728\u670D\u52A1\u5668\u4E2D\u4F7F\u7528\u3002");
+    return;
+  }
+  const daysRaw = interaction.fields.getTextInputValue(MUTE_DURATION_INPUT).trim();
+  const days = parseInt(daysRaw, 10);
+  if (isNaN(days) || days < 1 || days > 28) {
+    await interaction.editReply("\u274C \u7981\u8A00\u5929\u6570\u5FC5\u987B\u4E3A 1\u201328 \u7684\u6574\u6570\u3002");
     return;
   }
   const reason = interaction.fields.getTextInputValue(MUTE_REASON_INPUT).trim();
@@ -133674,11 +133653,6 @@ async function startBot(token) {
           const id = parseInt(customId.slice(SUGGESTION_REJECT_PREFIX.length), 10);
           await handleSuggestionRejectBtn(interaction, id);
         }
-      } else if (interaction.isStringSelectMenu()) {
-        const { customId } = interaction;
-        if (customId === BAN_ACTION_SELECT_ID) {
-          await handleBanActionSelect(interaction);
-        }
       } else if (interaction.isUserSelectMenu()) {
         const { customId } = interaction;
         if (customId.startsWith(BAN_TARGET_SELECT_PREFIX)) {
@@ -133705,11 +133679,8 @@ async function startBot(token) {
           const targetId = customId.slice(KICK_MODAL_PREFIX.length);
           await handleKickModal(interaction, targetId, client);
         } else if (customId.startsWith(MUTE_MODAL_PREFIX)) {
-          const rest = customId.slice(MUTE_MODAL_PREFIX.length);
-          const underscoreIdx = rest.indexOf("_");
-          const days = Number(rest.slice(0, underscoreIdx));
-          const targetId = rest.slice(underscoreIdx + 1);
-          await handleMuteModal(interaction, days, targetId, client);
+          const targetId = customId.slice(MUTE_MODAL_PREFIX.length);
+          await handleMuteModal(interaction, targetId, client);
         } else if (customId.startsWith(BAN_MODAL_PREFIX)) {
           const targetId = customId.slice(BAN_MODAL_PREFIX.length);
           await handleBanModal(interaction, targetId, client);

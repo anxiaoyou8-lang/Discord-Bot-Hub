@@ -71,7 +71,6 @@ import {
 } from "./handlers/triviaHandler.js";
 import {
   buildBanPanel,
-  handleBanActionSelect,
   handleBanTargetSelect,
   handleBanModal,
   handleKickModal,
@@ -152,7 +151,6 @@ import {
   NOTIFY_SUBSCRIBERS_CMD,
   BAN_PANEL_CMD,
   SET_BAN_CHANNEL_CMD,
-  BAN_ACTION_SELECT_ID,
   BAN_TARGET_SELECT_PREFIX,
   BAN_MODAL_PREFIX,
   KICK_MODAL_PREFIX,
@@ -610,13 +608,6 @@ export async function startBot(token: string) {
 
         }
 
-      } else if (interaction.isStringSelectMenu()) {
-        const { customId } = interaction;
-
-        if (customId === BAN_ACTION_SELECT_ID) {
-          await handleBanActionSelect(interaction);
-        }
-
       } else if (interaction.isUserSelectMenu()) {
         const { customId } = interaction;
 
@@ -653,11 +644,8 @@ export async function startBot(token: string) {
           await handleKickModal(interaction, targetId, client);
 
         } else if (customId.startsWith(MUTE_MODAL_PREFIX)) {
-          const rest = customId.slice(MUTE_MODAL_PREFIX.length);
-          const underscoreIdx = rest.indexOf("_");
-          const days = Number(rest.slice(0, underscoreIdx));
-          const targetId = rest.slice(underscoreIdx + 1);
-          await handleMuteModal(interaction, days, targetId, client);
+          const targetId = customId.slice(MUTE_MODAL_PREFIX.length);
+          await handleMuteModal(interaction, targetId, client);
 
         } else if (customId.startsWith(BAN_MODAL_PREFIX)) {
           const targetId = customId.slice(BAN_MODAL_PREFIX.length);

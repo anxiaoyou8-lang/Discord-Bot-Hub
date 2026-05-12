@@ -2,11 +2,9 @@ import {
   ActionRowBuilder,
   EmbedBuilder,
   ModalBuilder,
-  StringSelectMenuBuilder,
   TextInputBuilder,
   TextInputStyle,
   UserSelectMenuBuilder,
-  type StringSelectMenuInteraction,
   type UserSelectMenuInteraction,
   type ModalSubmitInteraction,
   type GuildMember,
@@ -15,7 +13,6 @@ import {
 } from "discord.js";
 import { logger } from "../../lib/logger.js";
 import {
-  BAN_ACTION_SELECT_ID,
   BAN_TARGET_SELECT_PREFIX,
   BAN_MODAL_PREFIX,
   BAN_REASON_INPUT,
@@ -24,6 +21,7 @@ import {
   KICK_REASON_INPUT,
   MUTE_MODAL_PREFIX,
   MUTE_REASON_INPUT,
+  MUTE_DURATION_INPUT,
   BAN_ADMIN_CONTACT,
 } from "../constants.js";
 import { getConfig, CONFIG_KEY_BAN_CHANNEL } from "../config.js";
@@ -33,78 +31,42 @@ import { checkIsAdmin } from "../utils/adminCheck.js";
 
 export function buildBanPanel() {
   const embed = new EmbedBuilder()
-    .setTitle("🔨 封禁 / 踢出 / 禁言管理面板")
+    .setTitle("🔨 成员管理面板")
     .setDescription(
       [
-        "**第一步：** 从下方选单选择操作类型",
-        "**第二步：** 选择目标成员",
-        "**第三步：** 填写原因",
+        "从对应选单选择成员后，直接弹出原因填写框。",
         "",
-        "• 🔨 **封禁** — 永久移出，私信通知 + 发布公告",
-        "• 👢 **踢出** — 移出服务器，不发私信，发布公告",
-        "• 🔇 **禁言** — 限制发言，不发私信，发布公告",
+        "• 🔨 **封禁** — 永久移出，自动私信通知 + 发布公告",
+        "• 👢 **踢出** — 移出服务器（可重新加入），发布公告",
+        "• 🔇 **禁言** — 填写原因与天数（1–28天），发布公告",
       ].join("\n")
     )
     .setColor(0xed4245)
     .setFooter({ text: "仅管理员可操作" });
 
-  const actionSelect = new StringSelectMenuBuilder()
-    .setCustomId(BAN_ACTION_SELECT_ID)
-    .setPlaceholder("① 选择操作类型…")
-    .addOptions(
-      { label: "🔨 封禁", value: "ban", description: "永久移出服务器，私信通知" },
-      { label: "👢 踢出服务器", value: "kick", description: "移出服务器，可重新加入" },
-      { label: "🔇 禁言 3 天", value: "mute_3" },
-      { label: "🔇 禁言 7 天", value: "mute_7" },
-      { label: "🔇 禁言 14 天", value: "mute_14" },
-      { label: "🔇 禁言 28 天", value: "mute_28" },
-    );
+  const banSelect = new UserSelectMenuBuilder()
+    .setCustomId(`${BAN_TARGET_SELECT_PREFIX}ban`)
+    .setPlaceholder("🔨 封禁 — 选择成员…");
+
+  const kickSelect = new UserSelectMenuBuilder()
+    .setCustomId(`${BAN_TARGET_SELECT_PREFIX}kick`)
+    .setPlaceholder("👢 踢出 — 选择成员…");
+
+  const muteSelect = new UserSelectMenuBuilder()
+    .setCustomId(`${BAN_TARGET_SELECT_PREFIX}mute`)
+    .setPlaceholder("🔇 禁言 — 选择成员…");
 
   return {
     embeds: [embed],
     components: [
-      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(actionSelect),
+      new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(banSelect),
+      new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(kickSelect),
+      new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(muteSelect),
     ],
   };
 }
 
-// ── Step 1: Action type selected → show UserSelectMenu ───────────────────────
-
-export async function handleBanActionSelect(
-  interaction: StringSelectMenuInteraction
-) {
-  const member = interaction.member as GuildMember | null;
-  const guildId = interaction.guildId ?? "";
-
-  if (!checkIsAdmin(guildId, member)) {
-    await interaction.reply({ content: "❌ 只有管理员可以使用此面板。", flags: 64 });
-    return;
-  }
-
-  const action = interaction.values[0];
-  const actionLabels: Record<string, string> = {
-    ban: "🔨 封禁",
-    kick: "👢 踢出服务器",
-    mute_3: "🔇 禁言 3 天",
-    mute_7: "🔇 禁言 7 天",
-    mute_14: "🔇 禁言 14 天",
-    mute_28: "🔇 禁言 28 天",
-  };
-
-  const userSelect = new UserSelectMenuBuilder()
-    .setCustomId(`${BAN_TARGET_SELECT_PREFIX}${action}`)
-    .setPlaceholder("② 选择要处理的成员…")
-    .setMinValues(1)
-    .setMaxValues(1);
-
-  await interaction.reply({
-    content: `已选择操作：**${actionLabels[action] ?? action}**\n请选择要处理的成员：`,
-    components: [new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(userSelect)],
-    flags: 64,
-  });
-}
-
-// ── Step 2: Target user selected → show Modal directly ───────────────────────
+// ── User selected → Modal directly ───────────────────────────────────────────
 
 export async function handleBanTargetSelect(
   interaction: UserSelectMenuInteraction,
@@ -173,12 +135,21 @@ export async function handleBanTargetSelect(
     );
     await interaction.showModal(modal);
 
-  } else if (action.startsWith("mute_")) {
-    const days = action.split("_")[1];
+  } else if (action === "mute") {
     const modal = new ModalBuilder()
-      .setCustomId(`${MUTE_MODAL_PREFIX}${days}_${targetId}`)
-      .setTitle(`填写禁言原因（${days} 天）`);
+      .setCustomId(`${MUTE_MODAL_PREFIX}${targetId}`)
+      .setTitle("填写禁言信息");
     modal.addComponents(
+      new ActionRowBuilder<TextInputBuilder>().addComponents(
+        new TextInputBuilder()
+          .setCustomId(MUTE_DURATION_INPUT)
+          .setLabel("禁言天数（1–28）")
+          .setStyle(TextInputStyle.Short)
+          .setPlaceholder("例：7")
+          .setMinLength(1)
+          .setMaxLength(2)
+          .setRequired(true)
+      ),
       new ActionRowBuilder<TextInputBuilder>().addComponents(
         new TextInputBuilder()
           .setCustomId(MUTE_REASON_INPUT)
@@ -197,7 +168,7 @@ export async function handleBanTargetSelect(
   }
 }
 
-// ── Ban Modal Submit ──────────────────────────────────────────────────────────
+// ── Ban Modal ─────────────────────────────────────────────────────────────────
 
 export async function handleBanModal(
   interaction: ModalSubmitInteraction,
@@ -237,7 +208,6 @@ export async function handleBanModal(
       }
     }
 
-    // 先发私信（封禁后无法 DM）
     const dmEmbed = new EmbedBuilder()
       .setTitle("📋 封禁通知")
       .setDescription(
@@ -293,7 +263,7 @@ export async function handleBanModal(
   }
 }
 
-// ── Kick Modal Submit ─────────────────────────────────────────────────────────
+// ── Kick Modal ────────────────────────────────────────────────────────────────
 
 export async function handleKickModal(
   interaction: ModalSubmitInteraction,
@@ -332,7 +302,6 @@ export async function handleKickModal(
     }
 
     await targetMember.kick(`${reason} — 执行人：${interaction.user.tag}`);
-
     logger.info({ targetId, executorId: interaction.user.id, reason }, "Member kicked");
 
     const banChannelId = getConfig(guildId, CONFIG_KEY_BAN_CHANNEL);
@@ -364,11 +333,10 @@ export async function handleKickModal(
   }
 }
 
-// ── Mute Modal Submit ─────────────────────────────────────────────────────────
+// ── Mute Modal ────────────────────────────────────────────────────────────────
 
 export async function handleMuteModal(
   interaction: ModalSubmitInteraction,
-  days: number,
   targetId: string,
   client: Client
 ) {
@@ -384,6 +352,13 @@ export async function handleMuteModal(
 
   const guild = interaction.guild;
   if (!guild) { await interaction.editReply("❌ 此操作只能在服务器中使用。"); return; }
+
+  const daysRaw = interaction.fields.getTextInputValue(MUTE_DURATION_INPUT).trim();
+  const days = parseInt(daysRaw, 10);
+  if (isNaN(days) || days < 1 || days > 28) {
+    await interaction.editReply("❌ 禁言天数必须为 1–28 的整数。");
+    return;
+  }
 
   const reason = interaction.fields.getTextInputValue(MUTE_REASON_INPUT).trim();
 
