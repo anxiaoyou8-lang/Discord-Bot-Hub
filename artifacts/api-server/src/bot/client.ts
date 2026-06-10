@@ -99,6 +99,7 @@ import {
   CONFIG_KEY_COMPLAINT_CHANNEL,
   CONFIG_KEY_SUGGESTION_CHANNEL,
   CONFIG_KEY_BAN_CHANNEL,
+  CONFIG_KEY_ADMIN_CONTACT,
 } from "./config.js";
 import {
   REVIEW_PANEL_CUSTOM_ID,
@@ -151,6 +152,7 @@ import {
   NOTIFY_SUBSCRIBERS_CMD,
   BAN_PANEL_CMD,
   SET_BAN_CHANNEL_CMD,
+  SET_ADMIN_CONTACT_CMD,
   BAN_TARGET_SELECT_PREFIX,
   BAN_MODAL_PREFIX,
   KICK_MODAL_PREFIX,
@@ -508,6 +510,13 @@ export async function startBot(token: string) {
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_BAN_CHANNEL, channel.id);
           await interaction.reply({ content: `已将封禁公告频道设置为 <#${channel.id}>`, flags: 64 });
+
+        } else if (commandName === SET_ADMIN_CONTACT_CMD) {
+          if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }
+          if (!interaction.guildId) return;
+          const username = interaction.options.getString("username", true).trim();
+          await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_CONTACT, username);
+          await interaction.reply({ content: `✅ 封禁私信联系方式已设置为 **${username}**`, flags: 64 });
 
         } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
           if (!isAdmin) { await interaction.reply({ content: "❌ 你没有权限使用此指令。", flags: 64 }); return; }

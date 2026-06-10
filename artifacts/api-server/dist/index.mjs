@@ -112485,6 +112485,7 @@ var ARTWORK_NOTIFY_TEXT_INPUT = "artwork_notify_text_input";
 var NOTIFY_SUBSCRIBERS_CMD = "\u901A\u77E5\u8BA2\u9605\u8005";
 var BAN_PANEL_CMD = "setup_\u5C01\u7981\u9762\u677F";
 var SET_BAN_CHANNEL_CMD = "set_ban_channel";
+var SET_ADMIN_CONTACT_CMD = "set_admin_contact";
 var BAN_TARGET_SELECT_PREFIX = "ban_target_";
 var BAN_MODAL_PREFIX = "ban_modal_";
 var BAN_REASON_INPUT = "ban_reason_input";
@@ -112494,7 +112495,6 @@ var KICK_REASON_INPUT = "kick_reason_input";
 var MUTE_MODAL_PREFIX = "mute_modal_";
 var MUTE_REASON_INPUT = "mute_reason_input";
 var MUTE_DURATION_INPUT = "mute_duration_input";
-var BAN_ADMIN_CONTACT = "vincentsk__31051";
 
 // src/bot/commands.ts
 var ADMIN = import_discord.PermissionFlagsBits.Administrator;
@@ -112587,6 +112587,9 @@ var commands = [
   new import_discord.SlashCommandBuilder().setName(BAN_PANEL_CMD).setDescription("\u5728\u5F53\u524D\u9891\u9053\u53D1\u9001\u5C01\u7981\u7BA1\u7406\u9762\u677F").setDefaultMemberPermissions(ADMIN),
   new import_discord.SlashCommandBuilder().setName(SET_BAN_CHANNEL_CMD).setDescription("\u8BBE\u7F6E\u5C01\u7981\u516C\u544A\u53D1\u9001\u7684\u9891\u9053").setDefaultMemberPermissions(ADMIN).addChannelOption(
     (opt) => opt.setName("channel").setDescription("\u5C01\u7981\u516C\u544A\u9891\u9053").setRequired(true)
+  ),
+  new import_discord.SlashCommandBuilder().setName(SET_ADMIN_CONTACT_CMD).setDescription("\u8BBE\u7F6E\u5C01\u7981\u79C1\u4FE1\u4E2D\u663E\u793A\u7684\u7BA1\u7406\u5458\u8054\u7CFB\u65B9\u5F0F\uFF08\u7528\u6237\u540D\uFF09").setDefaultMemberPermissions(ADMIN).addStringOption(
+    (opt) => opt.setName("username").setDescription("\u7BA1\u7406\u5458\u7684 Discord \u7528\u6237\u540D\uFF08\u4F8B\uFF1Avincentsk__31051\uFF09").setRequired(true)
   )
 ].map((cmd) => cmd.toJSON());
 
@@ -131118,6 +131121,7 @@ var CONFIG_KEY_STATS_TOTAL_CHANNEL = "stats_total_channel";
 var CONFIG_KEY_STATS_ROLE_CHANNEL = "stats_role_channel";
 var CONFIG_KEY_STATS_NO_ROLE_CHANNEL = "stats_no_role_channel";
 var CONFIG_KEY_BAN_CHANNEL = "ban_channel";
+var CONFIG_KEY_ADMIN_CONTACT = "admin_contact";
 var configCache = /* @__PURE__ */ new Map();
 function cacheKey(guildId, key) {
   return `${guildId}:${key}`;
@@ -132890,7 +132894,7 @@ ${reason}`,
 **\u8BC1\u636E\uFF1A**
 ${evidence}`] : [],
         "",
-        `\u5982\u6709\u8BEF\u5224\u53EF\u79C1\u804A\u7BA1\u7406\uFF1A**${BAN_ADMIN_CONTACT}**`
+        ...getConfig(guildId, CONFIG_KEY_ADMIN_CONTACT) ? [`\u5982\u6709\u8BEF\u5224\u53EF\u79C1\u804A\u7BA1\u7406\uFF1A**${getConfig(guildId, CONFIG_KEY_ADMIN_CONTACT)}**`] : []
       ].join("\n")
     ).setColor(15548997).setTimestamp();
     await targetUser.send({ embeds: [dmEmbed] }).catch((err) => {
@@ -133580,6 +133584,15 @@ async function startBot(token) {
           if (!interaction.guildId) return;
           await setConfig(interaction.guildId, CONFIG_KEY_BAN_CHANNEL, channel.id);
           await interaction.reply({ content: `\u5DF2\u5C06\u5C01\u7981\u516C\u544A\u9891\u9053\u8BBE\u7F6E\u4E3A <#${channel.id}>`, flags: 64 });
+        } else if (commandName === SET_ADMIN_CONTACT_CMD) {
+          if (!isAdmin) {
+            await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });
+            return;
+          }
+          if (!interaction.guildId) return;
+          const username = interaction.options.getString("username", true).trim();
+          await setConfig(interaction.guildId, CONFIG_KEY_ADMIN_CONTACT, username);
+          await interaction.reply({ content: `\u2705 \u5C01\u7981\u79C1\u4FE1\u8054\u7CFB\u65B9\u5F0F\u5DF2\u8BBE\u7F6E\u4E3A **${username}**`, flags: 64 });
         } else if (commandName === SETUP_TRIVIA_PANEL_CMD) {
           if (!isAdmin) {
             await interaction.reply({ content: "\u274C \u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u6B64\u6307\u4EE4\u3002", flags: 64 });

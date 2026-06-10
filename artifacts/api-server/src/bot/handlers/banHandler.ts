@@ -22,9 +22,8 @@ import {
   MUTE_MODAL_PREFIX,
   MUTE_REASON_INPUT,
   MUTE_DURATION_INPUT,
-  BAN_ADMIN_CONTACT,
 } from "../constants.js";
-import { getConfig, CONFIG_KEY_BAN_CHANNEL } from "../config.js";
+import { getConfig, CONFIG_KEY_BAN_CHANNEL, CONFIG_KEY_ADMIN_CONTACT } from "../config.js";
 import { checkIsAdmin } from "../utils/adminCheck.js";
 
 // ── Panel ────────────────────────────────────────────────────────────────────
@@ -231,7 +230,9 @@ export async function handleBanModal(
           `**封禁原因：**\n${reason}`,
           ...(evidence ? [`\n**证据：**\n${evidence}`] : []),
           "",
-          `如有误判可私聊管理：**${BAN_ADMIN_CONTACT}**`,
+          ...(getConfig(guildId, CONFIG_KEY_ADMIN_CONTACT)
+            ? [`如有误判可私聊管理：**${getConfig(guildId, CONFIG_KEY_ADMIN_CONTACT)}**`]
+            : []),
         ].join("\n")
       )
       .setColor(0xed4245)

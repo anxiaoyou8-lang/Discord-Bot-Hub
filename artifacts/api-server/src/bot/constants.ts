@@ -88,6 +88,7 @@ export const NOTIFY_SUBSCRIBERS_CMD = "通知订阅者";
 
 export const BAN_PANEL_CMD = "setup_封禁面板";
 export const SET_BAN_CHANNEL_CMD = "set_ban_channel";
+export const SET_ADMIN_CONTACT_CMD = "set_admin_contact";
 export const BAN_TARGET_SELECT_PREFIX = "ban_target_";
 export const BAN_MODAL_PREFIX = "ban_modal_";
 export const BAN_REASON_INPUT = "ban_reason_input";
@@ -97,4 +98,3 @@ export const KICK_REASON_INPUT = "kick_reason_input";
 export const MUTE_MODAL_PREFIX = "mute_modal_";
 export const MUTE_REASON_INPUT = "mute_reason_input";
 export const MUTE_DURATION_INPUT = "mute_duration_input";
-export const BAN_ADMIN_CONTACT = "vincentsk__31051";

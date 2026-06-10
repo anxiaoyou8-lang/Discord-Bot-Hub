@@ -30,6 +30,7 @@ import {
   NOTIFY_SUBSCRIBERS_CMD,
   BAN_PANEL_CMD,
   SET_BAN_CHANNEL_CMD,
+  SET_ADMIN_CONTACT_CMD,
 } from "./constants.js";
 
 const ADMIN = PermissionFlagsBits.Administrator;
@@ -272,5 +273,16 @@ export const commands = [
     .setDefaultMemberPermissions(ADMIN)
     .addChannelOption((opt) =>
       opt.setName("channel").setDescription("封禁公告频道").setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName(SET_ADMIN_CONTACT_CMD)
+    .setDescription("设置封禁私信中显示的管理员联系方式（用户名）")
+    .setDefaultMemberPermissions(ADMIN)
+    .addStringOption((opt) =>
+      opt
+        .setName("username")
+        .setDescription("管理员的 Discord 用户名（例：vincentsk__31051）")
+        .setRequired(true)
     ),
 ].map((cmd) => cmd.toJSON());
